@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">AcelanAndroid</string>
+    <string name="host_name">https://acelan.ru</string>
+
+    <string name="PROFILE">Profile</string>
+    <string name="HOME">Home</string>
+    <string name="SETTINGS">Settings</string>
+</resources>
