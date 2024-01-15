@@ -1,4 +1,4 @@
-package com.example.acelanandroid.screens.home.models
+package com.example.acelanandroid.screens.appScreens.models
 
 import androidx.compose.runtime.Composable
 

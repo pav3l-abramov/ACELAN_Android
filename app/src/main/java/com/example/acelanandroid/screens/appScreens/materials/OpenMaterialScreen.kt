@@ -1,4 +1,4 @@
-package com.example.acelanandroid.screens.home.materials
+package com.example.acelanandroid.screens.appScreens.materials
 
 import androidx.compose.runtime.Composable
 
