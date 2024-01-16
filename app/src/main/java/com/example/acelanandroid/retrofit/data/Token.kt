@@ -1,5 +1,5 @@
 package com.example.acelanandroid.retrofit.data
 
-data class User(
+data class Token(
     val token: String
 )

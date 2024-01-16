@@ -2,34 +2,30 @@ package com.example.acelanandroid.screens.profile
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.acelanandroid.HOST_NAME
-import com.example.acelanandroid.retrofit.GetDataApi
 import com.example.acelanandroid.retrofit.PostDataApi
-import com.example.acelanandroid.retrofit.data.User
+import com.example.acelanandroid.screens.AppRetrofit
 import dagger.hilt.android.lifecycle.HiltViewModel
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel:ViewModel() {
+class LoginViewModel @Inject constructor(
+    private val appViewModel: AppRetrofit
+) : ViewModel() {
 
-    val retrofit = Retrofit.Builder()
-        .baseUrl(HOST_NAME)
-        .client(buildOkHttpClient())
-        .addConverterFactory(GsonConverterFactory.create()).build()
-
-    private fun buildOkHttpClient(): OkHttpClient {
-        val interceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        }
-        return OkHttpClient.Builder()
-            .addInterceptor(interceptor)
-            .build()
-    }
-    val mainApi = retrofit.create(PostDataApi::class.java)
+    //    val retrofit = Retrofit.Builder()
+//        .baseUrl(HOST_NAME)
+//        .client(buildOkHttpClient())
+//        .addConverterFactory(GsonConverterFactory.create()).build()
+//
+//    private fun buildOkHttpClient(): OkHttpClient {
+//        val interceptor = HttpLoggingInterceptor().apply {
+//            level = HttpLoggingInterceptor.Level.BODY
+//        }
+//        return OkHttpClient.Builder()
+//            .addInterceptor(interceptor)
+//            .build()
+//    }
+    val mainApi = appViewModel.retrofit.create(PostDataApi::class.java)
 
     var uiState = mutableStateOf(LoginUiState())
         private set
@@ -54,8 +50,8 @@ class LoginViewModel:ViewModel() {
 
 
     suspend fun onSignInClick() {
-        val user = mainApi.auth(
-            LoginUiState(email,password)
+        val token = mainApi.auth(
+            LoginUiState(email, password)
         )
 //        uiStateToken.value= uiStateToken.value.copy(token = user.token)
 //        if (!email.isValidEmail()) {

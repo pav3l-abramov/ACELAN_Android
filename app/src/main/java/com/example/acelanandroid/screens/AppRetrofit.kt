@@ -1,15 +1,14 @@
 package com.example.acelanandroid.screens
 
-import androidx.lifecycle.ViewModel
 import com.example.acelanandroid.HOST_NAME
-import dagger.hilt.android.lifecycle.HiltViewModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
 
-@HiltViewModel
-class AppViewModel:ViewModel() {
+
+class AppRetrofit @Inject constructor() {
 
 
     val retrofit = Retrofit.Builder()

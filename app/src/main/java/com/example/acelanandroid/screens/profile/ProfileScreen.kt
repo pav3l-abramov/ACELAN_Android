@@ -8,13 +8,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.acelanandroid.common.composable.BasicButton
 import com.example.acelanandroid.common.composable.BasicTextButton
 import com.example.acelanandroid.common.composable.EmailField
@@ -22,7 +21,6 @@ import com.example.acelanandroid.common.composable.PasswordField
 import com.example.acelanandroid.common.ext.basicButton
 import com.example.acelanandroid.common.ext.fieldModifier
 import com.example.acelanandroid.common.ext.textButton
-import com.example.acelanandroid.screens.AppViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -30,8 +28,7 @@ import kotlinx.coroutines.withContext
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
-    appViewModel: AppViewModel = viewModel(),
-    loginViewModel: LoginViewModel = viewModel()
+    loginViewModel: LoginViewModel = hiltViewModel()
 ) {
     val uiState by loginViewModel.uiState
     val coroutineScope = rememberCoroutineScope()
