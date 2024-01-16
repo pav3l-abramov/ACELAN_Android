@@ -90,5 +90,7 @@ dependencies {
     kapt("com.google.dagger:hilt-android:2.48")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
+    //picasso (download image)
+    implementation("com.squareup.picasso:picasso:2.8")
 
 }

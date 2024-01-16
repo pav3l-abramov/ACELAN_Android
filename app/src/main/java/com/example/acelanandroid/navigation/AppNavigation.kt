@@ -17,11 +17,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.acelanandroid.screens.appScreens.HomeScreen
-import com.example.acelanandroid.screens.appScreens.materials.MaterialsScreen
-import com.example.acelanandroid.screens.appScreens.models.ModelsScreen
-import com.example.acelanandroid.screens.appScreens.profile.ProfileScreen
-import com.example.acelanandroid.screens.appScreens.tasks.TasksScreen
+import com.example.acelanandroid.screens.home.HomeScreen
+import com.example.acelanandroid.screens.materials.MaterialsScreen
+import com.example.acelanandroid.screens.profile.ProfileScreen
+import com.example.acelanandroid.screens.tasks.TasksScreen
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -68,9 +67,9 @@ fun AppNavigation() {
             composable(route = BottomBarScreen.Tasks.route) {
                 TasksScreen()
             }
-            composable(route = BottomBarScreen.Models.route) {
-                ModelsScreen()
-            }
+//            composable(route = BottomBarScreen.Models.route) {
+//                ModelsScreen()
+//            }
             composable(route = BottomBarScreen.Profile.route) {
                 ProfileScreen()
             }

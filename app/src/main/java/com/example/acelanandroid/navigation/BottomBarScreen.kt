@@ -26,11 +26,11 @@ sealed class BottomBarScreen(
         title = "Task",
         icon = R.drawable.baseline_task_24
     )
-    object Models : BottomBarScreen(
-        route = MODELS_SCREEN,
-        title = "Model",
-        icon = R.drawable.baseline_3d_rotation_24
-    )
+//    object Models : BottomBarScreen(
+//        route = MODELS_SCREEN,
+//        title = "Model",
+//        icon = R.drawable.baseline_3d_rotation_24
+//    )
 
     object Profile : BottomBarScreen(
         route = PROFILE_SCREEN,
@@ -46,7 +46,7 @@ sealed class BottomBarScreen(
 val screens = listOf(
     BottomBarScreen.Materials,
     BottomBarScreen.Tasks,
-    BottomBarScreen.Models,
+    //BottomBarScreen.Models,
     BottomBarScreen.Profile,
     BottomBarScreen.Home,
 )
