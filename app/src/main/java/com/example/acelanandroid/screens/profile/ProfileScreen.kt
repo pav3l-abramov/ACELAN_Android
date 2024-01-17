@@ -1,5 +1,6 @@
 package com.example.acelanandroid.screens.profile
 
+import android.annotation.SuppressLint
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -21,18 +23,26 @@ import com.example.acelanandroid.common.composable.PasswordField
 import com.example.acelanandroid.common.ext.basicButton
 import com.example.acelanandroid.common.ext.fieldModifier
 import com.example.acelanandroid.common.ext.textButton
+import com.example.acelanandroid.dataStore.DataStoreManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
     loginViewModel: LoginViewModel = hiltViewModel()
 ) {
     val uiState by loginViewModel.uiState
-    val coroutineScope = rememberCoroutineScope()
+    val uiStateUser by loginViewModel.uiStateUser
 
+    val coroutineScope = rememberCoroutineScope()
+    coroutineScope.launch {
+        withContext(Dispatchers.IO) {
+            loginViewModel.checkUser()
+        }
+    }
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -41,23 +51,39 @@ fun ProfileScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        EmailField(uiState.email, loginViewModel::onEmailChange, Modifier.fieldModifier())
-        PasswordField(uiState.password, loginViewModel::onPasswordChange, Modifier.fieldModifier())
+        if (!uiStateUser.isActive) {
+            EmailField(uiState.email, loginViewModel::onEmailChange, Modifier.fieldModifier())
+            PasswordField(
+                uiState.password,
+                loginViewModel::onPasswordChange,
+                Modifier.fieldModifier()
+            )
 
-        BasicButton("Sign In", Modifier.basicButton()) {
-            coroutineScope.launch {
-                withContext(Dispatchers.IO) {
-                    loginViewModel.onSignInClick()
+            BasicButton("Sign In", Modifier.basicButton()) {
+                coroutineScope.launch {
+                    withContext(Dispatchers.IO) {
+                        loginViewModel.onSignInClick()
+                    }
                 }
             }
-        }
 
-        val launcher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.StartIntentSenderForResult()){
-        }
+            val launcher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.StartIntentSenderForResult()
+            ) {
+            }
 
-        BasicTextButton("Forgot password", Modifier.textButton()) {
+            BasicTextButton("Forgot password", Modifier.textButton()) {
+            }
 
+        } else {
+            Text(text = "Hello ${uiStateUser.email}")
+            BasicButton("Log Out", Modifier.basicButton()) {
+                coroutineScope.launch {
+                    withContext(Dispatchers.IO) {
+                        loginViewModel.onLogOutClick()
+                    }
+                }
+            }
         }
     }
 

@@ -1,16 +1,14 @@
-package com.example.acelanandroid.screens
+package com.example.acelanandroid.retrofit
 
 import com.example.acelanandroid.HOST_NAME
+import dagger.hilt.android.scopes.ActivityScoped
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
 
-
 class AppRetrofit @Inject constructor() {
-
-
     val retrofit = Retrofit.Builder()
         .baseUrl(HOST_NAME)
         .client(buildOkHttpClient())

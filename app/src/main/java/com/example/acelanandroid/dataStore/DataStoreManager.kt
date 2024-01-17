@@ -11,11 +11,16 @@ import com.example.acelanandroid.ACTIVE_USER
 import com.example.acelanandroid.EMAIL_USER
 import com.example.acelanandroid.PASSWORD_USER
 import com.example.acelanandroid.TOKEN_USER
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.scopes.ActivityRetainedScoped
+import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("data_store")
 
-class DataStoreManager(val contex: Context) {
+class DataStoreManager @Inject constructor( @ApplicationContext val contex: Context) {
     suspend fun saveDataUser(userData: UserData) {
         contex.dataStore.edit { pref ->
             pref[stringPreferencesKey(EMAIL_USER)] = userData.email
@@ -32,5 +37,14 @@ class DataStoreManager(val contex: Context) {
             pref[stringPreferencesKey(TOKEN_USER)] ?: "",
             pref[booleanPreferencesKey(ACTIVE_USER)] ?: false
         )
+    }
+
+    suspend fun deleteDataUser() {
+        contex.dataStore.edit { pref ->
+            pref[stringPreferencesKey(EMAIL_USER)] = ""
+            pref[stringPreferencesKey(PASSWORD_USER)] = ""
+            pref[stringPreferencesKey(TOKEN_USER)] = ""
+            pref[booleanPreferencesKey(ACTIVE_USER)] = false
+        }
     }
 }
