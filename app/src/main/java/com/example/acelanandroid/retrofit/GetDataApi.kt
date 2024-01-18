@@ -8,7 +8,7 @@ import retrofit2.http.Path
 
 interface GetDataApi {
     @GET("/api/tasks/")
-    suspend fun getTasks(@Header("Authorization") token:String):Tasks
+    suspend fun getTasks(@Header("Authorization") token:String): Tasks
 
     @GET("/api/tasks/{id}")
     fun getTaskDetails(@Header("Authorization") token:String, @Path("id") id:Int):TaskDetails

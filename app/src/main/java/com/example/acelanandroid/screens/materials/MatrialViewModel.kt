@@ -1,20 +1,17 @@
-package com.example.acelanandroid.screens.profile
+package com.example.acelanandroid.screens.materials
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.acelanandroid.dataStore.DataStoreManager
 import com.example.acelanandroid.dataStore.UserData
-import com.example.acelanandroid.retrofit.PostDataApi
 import com.example.acelanandroid.retrofit.AppRetrofit
+import com.example.acelanandroid.retrofit.PostDataApi
+import com.example.acelanandroid.screens.profile.LoginUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(
+class MatrialViewModel  @Inject constructor(
     private val dataStoreManager: DataStoreManager,
     private val appRetrofit: AppRetrofit
 ) : ViewModel() {
@@ -44,13 +41,11 @@ class LoginViewModel @Inject constructor(
     }
 
     suspend fun checkUser() {
-        Log.d("login","login1")
         userData.collect(){checkActiveUser->
             uiStateUser.value=uiStateUser.value.copy(isActive = checkActiveUser.isActive)
             uiStateUser.value = uiStateUser.value.copy(email = checkActiveUser.email)
 
         }
-        Log.d("login","login2")
     }
     suspend fun onSignInClick() {
         val token = mainApi.auth(
