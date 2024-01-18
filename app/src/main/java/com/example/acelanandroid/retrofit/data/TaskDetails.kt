@@ -6,11 +6,11 @@ data class TaskDetails(
     val status: String,
     val started_at:String,
     val finished_at:String,
-    val artifacts: List<Artifact>
+    val artifacts: Array<Artifact>
 )
 
 data class Artifact(
-    val id: Int,
-    val file_type: String,
-    val url: String
+    val id: Int? =null,
+    val file_type: String? =null,
+    val url: String? =null
 )

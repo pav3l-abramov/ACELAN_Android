@@ -39,9 +39,7 @@ fun ProfileScreen(
 
     val coroutineScope = rememberCoroutineScope()
     coroutineScope.launch {
-
-            loginViewModel.checkUser()
-
+        loginViewModel.checkUser()
     }
     Column(
         modifier = modifier

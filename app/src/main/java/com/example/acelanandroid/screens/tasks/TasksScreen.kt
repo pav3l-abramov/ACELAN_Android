@@ -20,10 +20,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.example.acelanandroid.OPEN_TASK_SCREEN
 import com.example.acelanandroid.common.composable.BasicButton
 import com.example.acelanandroid.common.composable.RegularCardEditor
 import com.example.acelanandroid.common.ext.basicButton
 import com.example.acelanandroid.common.ext.card
+import com.example.acelanandroid.common.ext.fieldModifier
 import com.example.acelanandroid.retrofit.data.Task
 import com.example.acelanandroid.screens.profile.LoginViewModel
 import kotlinx.coroutines.Dispatchers
@@ -33,6 +36,7 @@ import kotlinx.coroutines.withContext
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun TasksScreen(
+    navController:NavController,
     modifier: Modifier = Modifier,
     loginViewModel: LoginViewModel = hiltViewModel(),
     tasksViewModel: TasksViewModel = hiltViewModel()
@@ -43,27 +47,28 @@ fun TasksScreen(
         Log.d("tasks", "startMain1")
         loginViewModel.checkUser()
     }
-
     val dataList: List<Task> by tasksViewModel.dataList.collectAsState()
-    val uiState by tasksViewModel.uiStateCheck
 
     if (!uiStateUser.isActive ) {
-        Text(text = "not Nice")
+        Column(        modifier = modifier
+            .fillMaxWidth()
+            .fillMaxHeight(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally){
+            Text(text = "Go to profile and login")
+        }
+
     } else {
         coroutineScope.launch {
-            Log.d("tasks", "startMain1")
             tasksViewModel.getToken()
         }
         coroutineScope.launch {
-            Log.d("tasks", "startMain2")
             tasksViewModel.getListTasks()
         }
         LazyColumn {
             itemsIndexed(items = dataList) { index, item ->
-                Text(
-                    text = "Item ${index + 1}: ${item.name}",
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
+                RegularCardEditor(item.name, Modifier.fieldModifier()
+                ) { navController.navigate(route = OPEN_TASK_SCREEN+"/${item.id}") }
             }
         }
     }

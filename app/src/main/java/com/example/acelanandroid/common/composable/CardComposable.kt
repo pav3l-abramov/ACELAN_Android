@@ -35,36 +35,19 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun DangerousCardEditor(
-  @StringRes title: Int,
-  @DrawableRes icon: Int,
-  content: String,
-  modifier: Modifier,
-  onEditClick: () -> Unit
-) {
-  CardEditor(title, icon, content, onEditClick, MaterialTheme.colorScheme.primary, modifier)
-}
-
-
-@Composable
 fun RegularCardEditor(
-  @StringRes title: Int,
-  @DrawableRes icon: Int,
   content: String,
   modifier: Modifier,
   onEditClick: () -> Unit
 ) {
-  CardEditor(title, icon, content, onEditClick, MaterialTheme.colorScheme.onSurface, modifier)
+  CardEditor( content, onEditClick, modifier)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CardEditor(
-  @StringRes title: Int,
-  @DrawableRes icon: Int,
   content: String,
   onEditClick: () -> Unit,
-  highlightColor: Color,
   modifier: Modifier
 ) {
   Card(
@@ -75,13 +58,10 @@ private fun CardEditor(
       verticalAlignment = Alignment.CenterVertically,
       modifier = Modifier.fillMaxWidth().padding(16.dp)
     ) {
-      Column(modifier = Modifier.weight(1f)) { Text(stringResource(title), color = highlightColor) }
 
       if (content.isNotBlank()) {
         Text(text = content, modifier = Modifier.padding(16.dp, 0.dp))
       }
-
-      Icon(painter = painterResource(icon), contentDescription = "Icon", tint = highlightColor)
     }
   }
 }

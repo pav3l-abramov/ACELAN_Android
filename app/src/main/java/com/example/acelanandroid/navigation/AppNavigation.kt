@@ -13,13 +13,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.acelanandroid.OPEN_TASK_SCREEN
 import com.example.acelanandroid.screens.home.HomeScreen
 import com.example.acelanandroid.screens.materials.MaterialsScreen
 import com.example.acelanandroid.screens.profile.ProfileScreen
+import com.example.acelanandroid.screens.tasks.OpenTaskScreen
 import com.example.acelanandroid.screens.tasks.TasksScreen
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -33,21 +37,23 @@ fun AppNavigation() {
                 val currentDestination = navBackStackEntry?.destination
 
                 screens.forEach { navItem ->
-                    NavigationBarItem(selected =currentDestination?.hierarchy?.any{it.route==navItem.route}==true,
+                    NavigationBarItem(selected = currentDestination?.hierarchy?.any { it.route == navItem.route } == true,
                         onClick = {
-                                  navController.navigate(navItem.route){
-                                      popUpTo(navController.graph.findStartDestination().id){
-                                          saveState=true
-                                      }
-                                      launchSingleTop=true
-                                      restoreState= true
-                                  }
+                            navController.navigate(navItem.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                         },
-                        icon = { 
-                            Icon(painter = painterResource(id = navItem.icon) ,
-                                contentDescription = null)
+                        icon = {
+                            Icon(
+                                painter = painterResource(id = navItem.icon),
+                                contentDescription = null
+                            )
                         },
-                        label = { Text(text = navItem.title)}
+                        label = { Text(text = navItem.title) }
                     )
                 }
             }
@@ -65,11 +71,15 @@ fun AppNavigation() {
                 MaterialsScreen()
             }
             composable(route = BottomBarScreen.Tasks.route) {
-                TasksScreen()
+                TasksScreen(navController = navController)
             }
-//            composable(route = BottomBarScreen.Models.route) {
-//                ModelsScreen()
-//            }
+            composable(route = OPEN_TASK_SCREEN + "/{id}", arguments = listOf(
+                navArgument(name = "id") {
+                    type = NavType.IntType
+                }
+            )) {idTask->
+                idTask.arguments?.getInt("id")?.let { OpenTaskScreen(idTask = it) }
+            }
             composable(route = BottomBarScreen.Profile.route) {
                 ProfileScreen()
             }

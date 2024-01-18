@@ -11,6 +11,6 @@ interface GetDataApi {
     suspend fun getTasks(@Header("Authorization") token:String): Tasks
 
     @GET("/api/tasks/{id}")
-    fun getTaskDetails(@Header("Authorization") token:String, @Path("id") id:Int):TaskDetails
+    suspend fun getTaskDetails(@Header("Authorization") token:String, @Path("id") id:Int):TaskDetails
 }
 
