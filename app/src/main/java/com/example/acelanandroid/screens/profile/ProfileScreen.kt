@@ -65,11 +65,6 @@ fun ProfileScreen(
                 }
             }
 
-            val launcher = rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.StartIntentSenderForResult()
-            ) {
-            }
-
             BasicTextButton("Forgot password", Modifier.textButton()) {
             }
 
