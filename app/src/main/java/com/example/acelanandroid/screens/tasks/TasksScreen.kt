@@ -63,7 +63,9 @@ fun TasksScreen(
             tasksViewModel.getToken()
         }
         coroutineScope.launch {
-            tasksViewModel.getListTasks()
+            if (uiStateUser.isActive ) {
+                tasksViewModel.getListTasks()
+            }
         }
         LazyColumn {
             itemsIndexed(items = dataList) { index, item ->
@@ -73,3 +75,4 @@ fun TasksScreen(
         }
     }
 }
+

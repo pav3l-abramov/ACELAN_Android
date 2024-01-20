@@ -32,7 +32,6 @@ class TasksViewModel @Inject constructor(
     val dataList: StateFlow<List<Task>> = _dataList.asStateFlow()
 
 
-
     suspend fun getToken() {
         Log.d("tasks", "start1")
 
@@ -50,26 +49,4 @@ class TasksViewModel @Inject constructor(
         }
 
     }
-
-    //OpenTaskScreen
-    //private val _dataDetail = MutableStateFlow<TaskDetails>()
-    var idTask=0
-        private set
-    fun getIdTask(newValue: Int) {
-        idTask = newValue
-    }
-
-    suspend fun getTaskById() {
-        Log.d("tasks", "start4")
-        if (tokenUser != null) {
-            Log.d("task detail","start5")
-            val task = mainApi.getTaskDetails("Bearer $tokenUser",1)
-            //_dataList.value = tasks.tasks
-            Log.d("task detail","start6")
-            Log.d("task detail", task.toString())
-          //  _dataDetail.value = task
-        }
-
-    }
-
 }

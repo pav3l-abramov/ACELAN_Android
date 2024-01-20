@@ -44,13 +44,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Paths
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun OpenTaskScreen(
     modifier: Modifier = Modifier,
     openTaskViewModel: OpenTaskViewModel = hiltViewModel(),
-    idTask:Int,
+    idTask: Int,
     context: Context = LocalContext.current
 ) {
     val uiState by openTaskViewModel.uiState
@@ -72,20 +75,27 @@ fun OpenTaskScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        LaunchAppButton(context)
-        if (uiState != "") {
-            Button(onClick = { downloadFile(context, uiState) }) {
+        Text(text = idTask.toString())
+        if (uiState != "" && uiState.substring(uiState.length - 3)=="obj") {
+            LaunchAppButton(context)
+            Button(onClick = {
+                downloadFile(context, uiState)
+            }) {
                 Text("Download File")
             }
         }
-        Text(text = idTask.toString())
-       // LinearProgressIndicator(progress)
+        else{
+            Text(text = "There is nothing to draw in this task")
+        }
+        // LinearProgressIndicator(progress)
     }
 }
+
 @Composable
 fun LaunchAppButton(context: Context) {
     Button(onClick = {
-        val packageName = "com.raywenderlich.android.targetpractice" // замените на пакетное имя нужного вам приложения
+        val packageName =
+            "com.raywenderlich.android.targetpractice" // замените на пакетное имя нужного вам приложения
         val intent = context.packageManager.getLaunchIntentForPackage(packageName)
         if (intent != null) {
             context.startActivity(intent)
@@ -104,16 +114,22 @@ private fun downloadFile(context: Context, fileUrl: String) {
     // Указываем путь для сохранения загруженного файла
     val fileName = "downloaded_file"
 
-//    val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), fileName)
-//
-//// Delete the file if it already exists
-//    if (file.exists()) {
-//        file.delete()
-//    }
+
 
     val fileExtension = MimeTypeMap.getFileExtensionFromUrl(fileUrl)
+
+    val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "$fileName.$fileExtension")
+
+// Delete the file if it already exists
+    if (file.exists()) {
+        file.delete()
+    }
+
     val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension)
-    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "$fileName.$fileExtension")
+    request.setDestinationInExternalPublicDir(
+        Environment.DIRECTORY_DOWNLOADS,
+        "$fileName.$fileExtension"
+    )
     request.setMimeType(mimeType)
 
     // Разрешение на запись во внешнее хранилище может потребоваться на Android 10 и выше
@@ -124,3 +140,4 @@ private fun downloadFile(context: Context, fileUrl: String) {
     val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
     downloadManager.enqueue(request)
 }
+
