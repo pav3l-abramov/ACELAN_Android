@@ -6,7 +6,7 @@ data class TaskDetails(
     val status: String,
     val started_at:String,
     val finished_at:String,
-    val artifacts: Array<Artifact>
+    val artifacts: List<Artifact>
 )
 
 data class Artifact(

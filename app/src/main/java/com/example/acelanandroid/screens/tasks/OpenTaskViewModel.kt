@@ -2,12 +2,20 @@ package com.example.acelanandroid.screens.tasks
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import com.example.acelanandroid.dataStore.DataStoreManager
 import com.example.acelanandroid.retrofit.AppRetrofit
 import com.example.acelanandroid.retrofit.GetDataApi
+import com.example.acelanandroid.retrofit.data.Artifact
+import com.example.acelanandroid.retrofit.data.Task
+import com.example.acelanandroid.retrofit.data.TaskDetails
+import com.example.acelanandroid.screens.profile.LoginUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -30,6 +38,10 @@ class OpenTaskViewModel @Inject constructor(
     var tokenUser: String? = null
     var idTask:Int? = null
 
+    var uiState = mutableStateOf("")
+        private set
+
+
     fun getIdTask(newValue: Int) {
         idTask = newValue
     }
@@ -48,8 +60,14 @@ class OpenTaskViewModel @Inject constructor(
             Log.d("task detail","start5")
             val task = idTask?.let { mainApi.getTaskDetails("Bearer $tokenUser", it) }
             //_dataList.value = tasks.tasks
+            if (task != null && task.artifacts.isNotEmpty()) {
+                uiState.value= task.artifacts[0].url.toString()
+
+            }
             Log.d("task detail","start6")
-            Log.d("task detail", task.toString())
+            if (task != null) {
+                Log.d("task detail", uiState.value)
+            }
             //  _dataDetail.value = task
         }
 
