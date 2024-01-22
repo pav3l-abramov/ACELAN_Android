@@ -82,34 +82,24 @@ fun OpenTaskScreen(
         Text(text = uiStateMain.started_at.toString())
         Text(text = uiStateMain.finished_at.toString())
         if (uiState.url != null && uiState.file_type == "obj") {
-            LaunchAppButton(context)
             Button(onClick = {
                 downloadFile(context, uiState.url!!, uiState.file_type!!)
+                val packageName =
+                    "com.raywenderlich.android.targetpractice" // замените на пакетное имя нужного вам приложения
+                val intent = context.packageManager.getLaunchIntentForPackage(packageName)
+                if (intent != null) {
+                    context.startActivity(intent)
+                } else {
+                    Toast.makeText(context, "Приложение не найдено", Toast.LENGTH_SHORT).show()
+                }
             }) {
-                Text("Download File")
+                Text(text = "Open app")
             }
         } else {
             Text(text = "There is nothing to draw in this task")
         }
         // LinearProgressIndicator(progress)
     }
-}
-
-@Composable
-fun LaunchAppButton(context: Context) {
-    Button(onClick = {
-        val packageName =
-            "com.raywenderlich.android.targetpractice" // замените на пакетное имя нужного вам приложения
-        val intent = context.packageManager.getLaunchIntentForPackage(packageName)
-        if (intent != null) {
-            context.startActivity(intent)
-        } else {
-            Toast.makeText(context, "Приложение не найдено", Toast.LENGTH_SHORT).show()
-        }
-    }) {
-        Text(text = "Open app")
-    }
-
 }
 
 private fun downloadFile(context: Context, fileUrl: String, fileExtension: String) {
