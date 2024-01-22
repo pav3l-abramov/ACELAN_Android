@@ -93,7 +93,7 @@ fun OpenTaskScreen(
                     Toast.makeText(context, "Приложение не найдено", Toast.LENGTH_SHORT).show()
                 }
             }) {
-                Text(text = "Open app")
+                Text(text = "Open in AR")
             }
         } else {
             Text(text = "There is nothing to draw in this task")
