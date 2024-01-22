@@ -76,10 +76,10 @@ fun OpenTaskScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = idTask.toString())
-        if (uiState != "" && uiState.substring(uiState.length - 3)=="obj") {
+        if (uiState.url != null && uiState.file_type=="obj") {
             LaunchAppButton(context)
             Button(onClick = {
-                downloadFile(context, uiState)
+                downloadFile(context, uiState.url!!, uiState.file_type!!)
             }) {
                 Text("Download File")
             }
@@ -103,12 +103,12 @@ fun LaunchAppButton(context: Context) {
             Toast.makeText(context, "Приложение не найдено", Toast.LENGTH_SHORT).show()
         }
     }) {
-        Text(text = "Запустить приложение")
+        Text(text = "Open app")
     }
 
 }
 
-private fun downloadFile(context: Context, fileUrl: String) {
+private fun downloadFile(context: Context, fileUrl: String,fileExtension:String) {
     val request = DownloadManager.Request(Uri.parse(fileUrl))
 
     // Указываем путь для сохранения загруженного файла
@@ -116,7 +116,7 @@ private fun downloadFile(context: Context, fileUrl: String) {
 
 
 
-    val fileExtension = MimeTypeMap.getFileExtensionFromUrl(fileUrl)
+   // val fileExtension = MimeTypeMap.getFileExtensionFromUrl(fileUrl)
 
     val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "$fileName.$fileExtension")
 

@@ -38,7 +38,7 @@ class OpenTaskViewModel @Inject constructor(
     var tokenUser: String? = null
     var idTask:Int? = null
 
-    var uiState = mutableStateOf("")
+    var uiState = mutableStateOf(Artifact())
         private set
 
 
@@ -61,12 +61,9 @@ class OpenTaskViewModel @Inject constructor(
             val task = idTask?.let { mainApi.getTaskDetails("Bearer $tokenUser", it) }
             //_dataList.value = tasks.tasks
             if (task != null && task.artifacts.isNotEmpty()) {
-                uiState.value= task.artifacts[0].url.toString()
+                uiState.value= uiState.value.copy(url =task.artifacts[0].url.toString())
+                uiState.value= uiState.value.copy(file_type =task.artifacts[0].file_type.toString())
 
-            }
-            Log.d("task detail","start6")
-            if (task != null) {
-                Log.d("task detail", uiState.value)
             }
             //  _dataDetail.value = task
         }
