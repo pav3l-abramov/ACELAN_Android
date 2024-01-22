@@ -18,6 +18,7 @@ package com.example.acelanandroid.common.composable
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material3.Card
@@ -38,15 +39,17 @@ import androidx.compose.ui.unit.dp
 fun RegularCardEditor(
   content: String,
   modifier: Modifier,
+  status:String,
   onEditClick: () -> Unit
 ) {
-  CardEditor( content, onEditClick, modifier)
+  CardEditor( content,status, onEditClick, modifier)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CardEditor(
   content: String,
+  status:String,
   onEditClick: () -> Unit,
   modifier: Modifier
 ) {
@@ -54,13 +57,34 @@ private fun CardEditor(
     modifier = modifier,
     onClick = onEditClick
   ) {
-    Row(
-      verticalAlignment = Alignment.CenterVertically,
-      modifier = Modifier.fillMaxWidth().padding(16.dp)
+    Box(
+      modifier = Modifier
+        .fillMaxSize()
+        .background(
+          if (status == "failure"){Color.Red}
+          else if (status == "working") {Color.Yellow}
+          else if (status == "queued") {Color.Blue}
+          else{Color.Green}
+        )
     ) {
+      Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth().padding(16.dp)
+          .background(
+            if (status == "failure"){Color.Red}
+            else if (status == "working") {Color.Yellow}
+            else if (status == "queued") {Color.Blue}
+            else{Color.Green}
+          )
+      ) {
 
-      if (content.isNotBlank()) {
-        Text(text = content, modifier = Modifier.padding(16.dp, 0.dp))
+        if (content.isNotBlank()) {
+          Text(text = content, modifier = Modifier.padding(16.dp, 0.dp),
+            color = if (status == "failure"){Color.Black}
+            else if (status == "working") {Color.Black}
+            else if (status == "queued") {Color.White}
+            else{Color.Black})
+        }
       }
     }
   }

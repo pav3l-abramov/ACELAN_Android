@@ -36,9 +36,13 @@ class OpenTaskViewModel @Inject constructor(
 
     val userData = dataStoreManager.getDataUser()
     var tokenUser: String? = null
-    var idTask:Int? = null
+    var idTask: Int? = null
+
 
     var uiState = mutableStateOf(Artifact())
+        private set
+
+    var uiStateMain = mutableStateOf(TaskDetails())
         private set
 
 
@@ -54,37 +58,24 @@ class OpenTaskViewModel @Inject constructor(
         }
         Log.d("tasks", "start2")
     }
+
     suspend fun getTaskById() {
         Log.d("tasks", "start4")
         if (tokenUser != null) {
-            Log.d("task detail","start5")
+            Log.d("task detail", "start5")
             val task = idTask?.let { mainApi.getTaskDetails("Bearer $tokenUser", it) }
-            //_dataList.value = tasks.tasks
-            if (task != null && task.artifacts.isNotEmpty()) {
-                uiState.value= uiState.value.copy(url =task.artifacts[0].url.toString())
-                uiState.value= uiState.value.copy(file_type =task.artifacts[0].file_type.toString())
+            if (task != null) {
+                uiStateMain.value = uiStateMain.value.copy(name = task.name)
+                uiStateMain.value = uiStateMain.value.copy(status = task.status)
+                uiStateMain.value = uiStateMain.value.copy(started_at = task.started_at)
+                uiStateMain.value = uiStateMain.value.copy(finished_at = task.finished_at)
+                if (!task.artifacts.isNullOrEmpty()) {
+                    uiState.value = uiState.value.copy(url = task.artifacts?.get(0)?.url.toString())
+                    uiState.value =
+                        uiState.value.copy(file_type = task.artifacts?.get(0)?.file_type.toString())
+                }
 
             }
-            //  _dataDetail.value = task
         }
-
-    }
-
-    suspend fun downloadFile(url: String, file: File) {
-        val request = Request.Builder()
-            .url(url)
-            .build()
-        val client = OkHttpClient()
-        client.newCall(request).enqueue(object : Callback {
-            override fun onResponse(call: Call, response: Response) {
-                val writer = FileWriter(file)
-                writer.write(response.body!!.string())
-                writer.close()
-            }
-
-            override fun onFailure(call: Call, e: IOException) {
-                Log.e("TAG", "Error downloading file: $e")
-            }
-        })
     }
 }

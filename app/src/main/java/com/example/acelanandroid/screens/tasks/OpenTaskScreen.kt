@@ -57,6 +57,7 @@ fun OpenTaskScreen(
     context: Context = LocalContext.current
 ) {
     val uiState by openTaskViewModel.uiState
+    val uiStateMain by openTaskViewModel.uiStateMain
     val coroutineScope = rememberCoroutineScope()
     coroutineScope.launch {
         openTaskViewModel.getToken()
@@ -76,15 +77,18 @@ fun OpenTaskScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = idTask.toString())
-        if (uiState.url != null && uiState.file_type=="obj") {
+        Text(text = uiStateMain.name.toString())
+        Text(text = uiStateMain.status.toString())
+        Text(text = uiStateMain.started_at.toString())
+        Text(text = uiStateMain.finished_at.toString())
+        if (uiState.url != null && uiState.file_type == "obj") {
             LaunchAppButton(context)
             Button(onClick = {
                 downloadFile(context, uiState.url!!, uiState.file_type!!)
             }) {
                 Text("Download File")
             }
-        }
-        else{
+        } else {
             Text(text = "There is nothing to draw in this task")
         }
         // LinearProgressIndicator(progress)
@@ -108,17 +112,19 @@ fun LaunchAppButton(context: Context) {
 
 }
 
-private fun downloadFile(context: Context, fileUrl: String,fileExtension:String) {
+private fun downloadFile(context: Context, fileUrl: String, fileExtension: String) {
     val request = DownloadManager.Request(Uri.parse(fileUrl))
 
     // Указываем путь для сохранения загруженного файла
     val fileName = "downloaded_file"
 
 
+    // val fileExtension = MimeTypeMap.getFileExtensionFromUrl(fileUrl)
 
-   // val fileExtension = MimeTypeMap.getFileExtensionFromUrl(fileUrl)
-
-    val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "$fileName.$fileExtension")
+    val file = File(
+        context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+        "$fileName.$fileExtension"
+    )
 
 // Delete the file if it already exists
     if (file.exists()) {

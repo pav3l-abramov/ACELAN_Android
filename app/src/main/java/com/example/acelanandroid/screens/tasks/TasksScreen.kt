@@ -69,7 +69,7 @@ fun TasksScreen(
         }
         LazyColumn {
             itemsIndexed(items = dataList) { index, item ->
-                RegularCardEditor(item.name, Modifier.fieldModifier()
+                RegularCardEditor(item.name, Modifier.fieldModifier(),item.status
                 ) { navController.navigate(route = OPEN_TASK_SCREEN+"/${item.id}") }
             }
         }

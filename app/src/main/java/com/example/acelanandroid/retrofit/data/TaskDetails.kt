@@ -1,12 +1,12 @@
 package com.example.acelanandroid.retrofit.data
 
 data class TaskDetails(
-    val id: Int,
-    val name: String,
-    val status: String,
-    val started_at:String,
-    val finished_at:String,
-    val artifacts: List<Artifact>
+    val id: Int? = null,
+    val name: String? = null,
+    val status: String? = null,
+    val started_at:String? = null,
+    val finished_at:String? = null,
+    val artifacts: List<Artifact>? = null
 )
 
 data class Artifact(
