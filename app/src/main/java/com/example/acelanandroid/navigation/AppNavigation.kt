@@ -19,9 +19,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.acelanandroid.OPEN_MATERIAL_SCREEN
 import com.example.acelanandroid.OPEN_TASK_SCREEN
 import com.example.acelanandroid.screens.home.HomeScreen
 import com.example.acelanandroid.screens.materials.MaterialsScreen
+import com.example.acelanandroid.screens.materials.OpenMaterialScreen
 import com.example.acelanandroid.screens.profile.ProfileScreen
 import com.example.acelanandroid.screens.tasks.OpenTaskScreen
 import com.example.acelanandroid.screens.tasks.TasksScreen
@@ -64,22 +66,36 @@ fun AppNavigation() {
             startDestination = BottomBarScreen.Home.route,
             modifier = Modifier.padding(paddingValues)
         ) {
+
             composable(route = BottomBarScreen.Home.route) {
                 HomeScreen()
             }
+
+
             composable(route = BottomBarScreen.Materials.route) {
-                MaterialsScreen()
+                MaterialsScreen(navController = navController)
             }
-            composable(route = BottomBarScreen.Tasks.route) {
-                TasksScreen(navController = navController)
-            }
-            composable(route = OPEN_TASK_SCREEN + "/{id}", arguments = listOf(
+            composable(route = "$OPEN_MATERIAL_SCREEN/{id}", arguments = listOf(
                 navArgument(name = "id") {
                     type = NavType.IntType
                 }
-            )) {idTask->
+            )) { idMaterial ->
+                idMaterial.arguments?.getInt("id")?.let { OpenMaterialScreen(idMaterial = it) }
+            }
+
+
+            composable(route = BottomBarScreen.Tasks.route) {
+                TasksScreen(navController = navController)
+            }
+            composable(route = "$OPEN_TASK_SCREEN/{id}", arguments = listOf(
+                navArgument(name = "id") {
+                    type = NavType.IntType
+                }
+            )) { idTask ->
                 idTask.arguments?.getInt("id")?.let { OpenTaskScreen(idTask = it) }
             }
+
+
             composable(route = BottomBarScreen.Profile.route) {
                 ProfileScreen()
             }

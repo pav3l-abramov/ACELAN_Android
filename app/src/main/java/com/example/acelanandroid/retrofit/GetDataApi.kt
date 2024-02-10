@@ -1,5 +1,7 @@
 package com.example.acelanandroid.retrofit
 
+
+import com.example.acelanandroid.retrofit.data.Materials
 import com.example.acelanandroid.retrofit.data.TaskDetails
 import com.example.acelanandroid.retrofit.data.Tasks
 import retrofit2.http.GET
@@ -12,5 +14,8 @@ interface GetDataApi {
 
     @GET("/api/tasks/{id}")
     suspend fun getTaskDetails(@Header("Authorization") token:String, @Path("id") id:Int):TaskDetails
+
+    @GET("/api/materials")
+    suspend fun getMaterials(@Header("Authorization") token:String): Materials
 }
 

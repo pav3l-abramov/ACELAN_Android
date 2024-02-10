@@ -13,6 +13,7 @@ import android.os.Looper
 import android.util.Log
 import android.webkit.MimeTypeMap
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,8 +36,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.rememberAsyncImagePainter
 import com.example.acelanandroid.MainActivity
 import com.example.acelanandroid.common.composable.BasicButton
+import com.example.acelanandroid.common.composable.CardImage
 import com.example.acelanandroid.common.ext.basicButton
 import com.example.acelanandroid.retrofit.data.Task
 import com.example.acelanandroid.retrofit.data.TaskDetails
@@ -60,14 +63,15 @@ fun OpenTaskScreen(
     val uiStateMain by openTaskViewModel.uiStateMain
     val coroutineScope = rememberCoroutineScope()
     coroutineScope.launch {
+        Log.d("tasks", "startDetailScreen1")
         openTaskViewModel.getToken()
+        Log.d("tasks", "startDetailScreen2")
     }
     openTaskViewModel.getIdTask(idTask)
     coroutineScope.launch {
-        Log.d("tasks", "startDetailScreen1")
+        Log.d("tasks", "startDetailScreen3")
         openTaskViewModel.getTaskById()
     }
-
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -81,59 +85,15 @@ fun OpenTaskScreen(
         Text(text = uiStateMain.status.toString())
         Text(text = uiStateMain.started_at.toString())
         Text(text = uiStateMain.finished_at.toString())
-        if (uiState.url != null && uiState.file_type == "obj") {
-            Button(onClick = {
-                downloadFile(context, uiState.url!!, uiState.file_type!!)
-                val packageName =
-                    "com.raywenderlich.android.targetpractice" // замените на пакетное имя нужного вам приложения
-                val intent = context.packageManager.getLaunchIntentForPackage(packageName)
-                if (intent != null) {
-                    context.startActivity(intent)
-                } else {
-                    Toast.makeText(context, "Приложение не найдено", Toast.LENGTH_SHORT).show()
-                }
-            }) {
-                Text(text = "Open in AR")
+        if (uiState.url != null ) {
+            if (uiState.file_type == "jpg" || uiState.file_type == "png"){
+                CardImage(uiState.url!!,modifier)
             }
+            if (uiState.file_type == "ply"){}
+            if (uiState.file_type == "obj"){}
         } else {
             Text(text = "There is nothing to draw in this task")
         }
-        // LinearProgressIndicator(progress)
     }
-}
-
-private fun downloadFile(context: Context, fileUrl: String, fileExtension: String) {
-    val request = DownloadManager.Request(Uri.parse(fileUrl))
-
-    // Указываем путь для сохранения загруженного файла
-    val fileName = "downloaded_file"
-
-
-    // val fileExtension = MimeTypeMap.getFileExtensionFromUrl(fileUrl)
-
-    val file = File(
-        context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
-        "$fileName.$fileExtension"
-    )
-
-// Delete the file if it already exists
-    if (file.exists()) {
-        file.delete()
-    }
-
-    val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension)
-    request.setDestinationInExternalPublicDir(
-        Environment.DIRECTORY_DOWNLOADS,
-        "$fileName.$fileExtension"
-    )
-    request.setMimeType(mimeType)
-
-    // Разрешение на запись во внешнее хранилище может потребоваться на Android 10 и выше
-    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-    request.setAllowedOverMetered(true)
-    request.setAllowedOverRoaming(true)
-
-    val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-    downloadManager.enqueue(request)
 }
 

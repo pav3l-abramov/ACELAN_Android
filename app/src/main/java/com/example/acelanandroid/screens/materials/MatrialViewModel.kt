@@ -1,13 +1,20 @@
 package com.example.acelanandroid.screens.materials
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.acelanandroid.dataStore.DataStoreManager
 import com.example.acelanandroid.dataStore.UserData
 import com.example.acelanandroid.retrofit.AppRetrofit
+import com.example.acelanandroid.retrofit.GetDataApi
 import com.example.acelanandroid.retrofit.PostDataApi
+import com.example.acelanandroid.retrofit.data.Material
+import com.example.acelanandroid.retrofit.data.Task
 import com.example.acelanandroid.screens.profile.LoginUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -15,60 +22,30 @@ class MatrialViewModel  @Inject constructor(
     private val dataStoreManager: DataStoreManager,
     private val appRetrofit: AppRetrofit
 ) : ViewModel() {
+    val mainApi = appRetrofit.retrofit.create(GetDataApi::class.java)
 
-
-    val mainApi = appRetrofit.retrofit.create(PostDataApi::class.java)
-
-    var uiState = mutableStateOf(LoginUiState())
-        private set
-    private val email
-        get() = uiState.value.email
-    private val password
-        get() = uiState.value.password
-
+    //MaterialsScreen
     val userData = dataStoreManager.getDataUser()
+    var tokenUser: String? = null
+    private val _dataListMaterial = MutableStateFlow<List<Material>>(emptyList())
+    val dataListMaterial: StateFlow<List<Material>> = _dataListMaterial.asStateFlow()
 
 
-    var uiStateUser = mutableStateOf(UserData())
-        private set
+    suspend fun getToken() {
+        Log.d("tasks", "start1")
 
-    fun onEmailChange(newValue: String) {
-        uiState.value = uiState.value.copy(email = newValue)
-    }
-
-    fun onPasswordChange(newValue: String) {
-        uiState.value = uiState.value.copy(password = newValue)
-    }
-
-    suspend fun checkUser() {
-        userData.collect(){checkActiveUser->
-            uiStateUser.value=uiStateUser.value.copy(isActive = checkActiveUser.isActive)
-            uiStateUser.value = uiStateUser.value.copy(email = checkActiveUser.email)
-
+        userData.collect() { data ->
+            tokenUser = data.token
         }
-    }
-    suspend fun onSignInClick() {
-        val token = mainApi.auth(
-            LoginUiState(email, password)
-        )
-        dataStoreManager.saveDataUser(UserData(email,password,token.token,true))
-        //uiStateUser.value=uiStateUser.value.copy(isActive = true)
-//        uiStateToken.value= uiStateToken.value.copy(token = user.token)
-//        if (!email.isValidEmail()) {
-//            SnackbarManager.showMessage(AppText.email_error)
-//            return
-//        }
-//
-//        if (password.isBlank()) {
-//            SnackbarManager.showMessage(AppText.empty_password_error)
-//            return
-//        }
-
-    }
-    suspend fun onLogOutClick() {
-        dataStoreManager.deleteDataUser()
-
+        Log.d("tasks", "start2")
     }
 
+    suspend fun getListMaterials() {
+        Log.d("tasks", "start3")
+        if (tokenUser != null) {
+            val materials = mainApi.getMaterials("Bearer $tokenUser")
+            _dataListMaterial.value = materials.materials
+        }
 
+    }
 }

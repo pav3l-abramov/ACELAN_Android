@@ -71,8 +71,7 @@ class OpenTaskViewModel @Inject constructor(
                 uiStateMain.value = uiStateMain.value.copy(finished_at = task.finished_at)
                 if (!task.artifacts.isNullOrEmpty()) {
                     uiState.value = uiState.value.copy(url = task.artifacts?.get(0)?.url.toString())
-                    uiState.value =
-                        uiState.value.copy(file_type = task.artifacts?.get(0)?.file_type.toString())
+                    uiState.value = uiState.value.copy(file_type = task.artifacts?.get(0)?.file_type.toString())
                 }
 
             }
