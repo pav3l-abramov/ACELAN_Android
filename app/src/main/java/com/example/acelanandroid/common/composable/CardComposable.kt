@@ -16,59 +16,53 @@ limitations under the License.
 
 package com.example.acelanandroid.common.composable
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
 import androidx.compose.material3.Card
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
+import com.example.acelanandroid.ui.theme.DarkBlue
+import com.example.acelanandroid.ui.theme.DarkGreen
+import com.example.acelanandroid.ui.theme.DarkRed
+import com.example.acelanandroid.ui.theme.DarkYellow
+import com.example.acelanandroid.ui.theme.DarkText
+import com.example.acelanandroid.ui.theme.LightBlue
+import com.example.acelanandroid.ui.theme.LightGreen
+import com.example.acelanandroid.ui.theme.LightRed
+import com.example.acelanandroid.ui.theme.LightText
+import com.example.acelanandroid.ui.theme.LightYellow
 
 
 @Composable
-fun RegularCardEditor(
+fun TaskCard(
     content: String,
     modifier: Modifier,
     status: String,
     onEditClick: () -> Unit
 ) {
-    CardEditor(content, status, onEditClick, modifier)
+    TaskCardMain(content, status, onEditClick, modifier)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CardEditor(
+private fun TaskCardMain(
     content: String,
     status: String,
     onEditClick: () -> Unit,
     modifier: Modifier
 ) {
-    val color = if (status == "failure") {
-        Color.Red
-    } else if (status == "working") {
-        Color.Yellow
-    } else if (status == "queued") {
-        Color.Cyan
-    } else {
-        Color.Green
-    }
+    val color = getColorStatus(status, isSystemInDarkTheme())
     Card(
         modifier = modifier,
         onClick = onEditClick
@@ -92,10 +86,6 @@ private fun CardEditor(
                 }
                 Column(
                     modifier = Modifier
-                        .background(
-                            color = Color.Gray,
-                            shape = RoundedCornerShape(10.dp)
-                        )
                         .border(2.dp, color, shape = RoundedCornerShape(10.dp))
                         .width(100.dp),
                     verticalArrangement = Arrangement.Center,
@@ -114,34 +104,17 @@ private fun CardEditor(
     }
 }
 
-
 @Composable
-fun CardImage(
-    content: String,
-    modifier: Modifier
-) {
-    Card(
-        modifier = modifier.size(300.dp),
-        shape = RoundedCornerShape(10.dp)
-    ) {
-        Image(
-            painter = rememberAsyncImagePainter(content),
-            contentDescription = "image",
-            contentScale = ContentScale.Crop
-        )
-    }
-}
-
-@Composable
-fun CardMaterial(
+fun MaterialCard(
     content: String,
     modifier: Modifier,
     onEditClick: () -> Unit
 ) {
-    CardMaterialQ(content, onEditClick, modifier)
+    MaterialCardMain(content, onEditClick, modifier)
 }
+
 @Composable
-private fun CardMaterialQ(
+private fun MaterialCardMain(
     content: String,
     onEditClick: () -> Unit,
     modifier: Modifier
@@ -170,5 +143,135 @@ private fun CardMaterialQ(
             }
         }
     }
+}
+
+@Composable
+fun TaskDetailCard(
+    contentFirst: String,
+    contentSecond: String,
+    timeBoolean: Boolean,
+    modifier: Modifier
+) {
+    val color = getColorStatus(contentSecond, isSystemInDarkTheme())
+    Card(
+        modifier = modifier
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(2.dp, Color.Gray, shape = RoundedCornerShape(10.dp))
+                    .padding(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .width(90.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.Start
+                ) {
+
+                    Text(
+                        text = contentFirst,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Column(
+                    modifier = Modifier,
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (contentSecond != "null") {
+                        if (timeBoolean) {
+                            val list = contentSecond.split("T", "Z")
+                            Text(
+                                text = "${list[1]} ${list[0]}",
+                                color = color
+                            )
+                        } else {
+                            Text(
+                                text = contentSecond,
+                                color = color
+                            )
+                        }
+
+                    } else {
+                        Text(
+                            text = "no data",
+                            color = color
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TextCard(content: String,
+             modifier: Modifier) {
+    val color = getColorStatus(content, isSystemInDarkTheme())
+    Card(
+        modifier = modifier
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background( MaterialTheme.colorScheme.background, shape = RoundedCornerShape(10.dp))
+                    .border(2.dp, Color.Gray, shape = RoundedCornerShape(10.dp))
+                    .padding(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier,
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    Text(
+                        text = content,
+                        color = color
+                    )
+                }
+            }
+        }
+    }
+}
+
+fun getColorStatus(status: String, systemTheme: Boolean): Color {
+    val color = if (systemTheme) {
+        if (status == "failure") {
+            LightRed
+        } else if (status == "working") {
+            LightYellow
+        } else if (status == "queued") {
+            LightBlue
+        } else if (status == "success") {
+            LightGreen
+        } else {
+            LightText
+        }
+    } else {
+        if (status == "failure") {
+            DarkRed
+        } else if (status == "working") {
+            DarkYellow
+        } else if (status == "queued") {
+            DarkBlue
+        } else if (status == "success") {
+            DarkGreen
+        } else {
+            DarkText
+        }
+    }
+    return color
 }
 

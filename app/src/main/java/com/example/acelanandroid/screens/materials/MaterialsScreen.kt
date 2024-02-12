@@ -18,14 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.acelanandroid.OPEN_MATERIAL_SCREEN
-import com.example.acelanandroid.OPEN_TASK_SCREEN
-import com.example.acelanandroid.common.composable.CardMaterial
-import com.example.acelanandroid.common.composable.RegularCardEditor
+import com.example.acelanandroid.common.composable.MaterialCard
 import com.example.acelanandroid.common.ext.fieldModifier
 import com.example.acelanandroid.retrofit.data.Material
-import com.example.acelanandroid.retrofit.data.Task
 import com.example.acelanandroid.screens.profile.LoginViewModel
-import com.example.acelanandroid.screens.tasks.TasksViewModel
 import kotlinx.coroutines.launch
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -66,7 +62,7 @@ fun MaterialsScreen(
         }
         LazyColumn {
             itemsIndexed(items = dataList) { index, item ->
-                CardMaterial(content = item.name, modifier = Modifier.fieldModifier()){navController.navigate(route = OPEN_MATERIAL_SCREEN+"/${item.id}")}
+                MaterialCard(content = item.name, modifier = Modifier.fieldModifier()){navController.navigate(route = OPEN_MATERIAL_SCREEN+"/${item.id}")}
             }
         }
     }
