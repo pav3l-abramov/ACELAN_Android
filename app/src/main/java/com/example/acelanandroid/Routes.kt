@@ -15,7 +15,7 @@ const val OPEN_TASK_SCREEN = "OpenTaskScreen"
 const val MATERIALS_SCREEN = "MaterialsScreen"
 const val OPEN_MATERIAL_SCREEN = "OpenMaterialScreen"
 
-const val MODELS_SCREEN = "ModelsScreen"
+const val MODEL_SCREEN = "ModelScreen"
 const val OPEN_MODEL_SCREEN = "OpenModelScreen"
 
 

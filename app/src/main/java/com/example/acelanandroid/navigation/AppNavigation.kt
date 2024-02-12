@@ -19,12 +19,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.acelanandroid.MODEL_SCREEN
 import com.example.acelanandroid.OPEN_MATERIAL_SCREEN
 import com.example.acelanandroid.OPEN_TASK_SCREEN
 import com.example.acelanandroid.screens.home.HomeScreen
 import com.example.acelanandroid.screens.materials.MaterialsScreen
 import com.example.acelanandroid.screens.materials.OpenMaterialScreen
 import com.example.acelanandroid.screens.profile.ProfileScreen
+import com.example.acelanandroid.screens.tasks.ModelData
+import com.example.acelanandroid.screens.tasks.ModelScreen
 import com.example.acelanandroid.screens.tasks.OpenTaskScreen
 import com.example.acelanandroid.screens.tasks.TasksScreen
 
@@ -92,7 +95,8 @@ fun AppNavigation() {
                     type = NavType.IntType
                 }
             )) { idTask ->
-                idTask.arguments?.getInt("id")?.let { OpenTaskScreen(idTask = it) }
+                idTask.arguments?.getInt("id")
+                    ?.let { OpenTaskScreen(idTask = it, navController = navController) }
             }
 
 
@@ -100,6 +104,14 @@ fun AppNavigation() {
                 ProfileScreen()
             }
 
+            composable(route = MODEL_SCREEN)
+            {
+                val result =
+                    navController.previousBackStackEntry?.savedStateHandle?.get<ModelData>("modelData")
+                if (result != null) {
+                    ModelScreen(urlModel = result.urlModel, typeModel = result.typeModel)
+                }
+            }
         }
 
     }

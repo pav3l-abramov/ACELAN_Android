@@ -6,7 +6,6 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import com.example.acelanandroid.HOME_SCREEN
 import com.example.acelanandroid.MATERIALS_SCREEN
-import com.example.acelanandroid.MODELS_SCREEN
 import com.example.acelanandroid.PROFILE_SCREEN
 import com.example.acelanandroid.R
 import com.example.acelanandroid.TASKS_SCREEN

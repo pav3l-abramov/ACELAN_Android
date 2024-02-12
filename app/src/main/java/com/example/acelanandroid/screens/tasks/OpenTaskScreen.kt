@@ -18,6 +18,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.example.acelanandroid.MODEL_SCREEN
+import com.example.acelanandroid.OPEN_TASK_SCREEN
 import com.example.acelanandroid.common.composable.BasicButton
 import com.example.acelanandroid.common.composable.TaskDetailCard
 import com.example.acelanandroid.common.composable.TextCard
@@ -34,7 +37,7 @@ fun OpenTaskScreen(
     modifier: Modifier = Modifier,
     openTaskViewModel: OpenTaskViewModel = hiltViewModel(),
     idTask: Int,
-    context: Context = LocalContext.current
+    navController: NavController
 ) {
     val uiState by openTaskViewModel.uiState
     val uiStateMain by openTaskViewModel.uiStateMain
@@ -64,9 +67,10 @@ fun OpenTaskScreen(
         if (uiState.url != null) {
             when (uiState.file_type) {
                 "jpg", "png" -> DrawImage(uiState.url!!, Modifier.fieldModifier())
-                "ply" -> BasicButton("View model", Modifier.basicButton()) {}
-                "obj" -> BasicButton("View model", Modifier.basicButton()) {}
-                "stl" -> BasicButton("View model", Modifier.basicButton()) {}
+                "ply","obj","stl" -> BasicButton("View model", Modifier.basicButton()) {
+                    val modelData=ModelData(urlModel = uiState.url!!, typeModel = uiState.file_type!!)
+                    navController.currentBackStackEntry?.savedStateHandle?.set(key="modelData",value = modelData)
+                    navController.navigate(route = MODEL_SCREEN)}
                 else -> TextCard("I don't know how to draw this file",Modifier.fieldModifier())
             }
         } else {
