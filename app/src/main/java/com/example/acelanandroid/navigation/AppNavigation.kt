@@ -1,6 +1,7 @@
 package com.example.acelanandroid.navigation
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -26,14 +27,12 @@ import com.example.acelanandroid.screens.home.HomeScreen
 import com.example.acelanandroid.screens.materials.MaterialsScreen
 import com.example.acelanandroid.screens.materials.OpenMaterialScreen
 import com.example.acelanandroid.screens.profile.ProfileScreen
-import com.example.acelanandroid.screens.tasks.ModelData
-import com.example.acelanandroid.screens.tasks.ModelScreen
 import com.example.acelanandroid.screens.tasks.OpenTaskScreen
 import com.example.acelanandroid.screens.tasks.TasksScreen
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun AppNavigation() {
+fun AppNavigation(context:Context) {
     val navController = rememberNavController()
     Scaffold(
         bottomBar = {
@@ -96,21 +95,12 @@ fun AppNavigation() {
                 }
             )) { idTask ->
                 idTask.arguments?.getInt("id")
-                    ?.let { OpenTaskScreen(idTask = it, navController = navController) }
+                    ?.let { OpenTaskScreen(idTask = it, context = context) }
             }
 
 
             composable(route = BottomBarScreen.Profile.route) {
                 ProfileScreen()
-            }
-
-            composable(route = MODEL_SCREEN)
-            {
-                val result =
-                    navController.previousBackStackEntry?.savedStateHandle?.get<ModelData>("modelData")
-                if (result != null) {
-                    ModelScreen(urlModel = result.urlModel, typeModel = result.typeModel)
-                }
             }
         }
 

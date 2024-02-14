@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Surface
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.rememberNavController
 import com.example.acelanandroid.navigation.AppNavigation
 import com.example.acelanandroid.ui.theme.AcelanAndroidTheme
@@ -19,7 +20,8 @@ class MainActivity : ComponentActivity() {
             AcelanAndroidTheme {
                 // A surface container using the 'background' color from the theme
                 Surface {
-                    AppNavigation()
+                    val context= LocalContext.current
+                    AppNavigation(context)
                 }
             }
         }

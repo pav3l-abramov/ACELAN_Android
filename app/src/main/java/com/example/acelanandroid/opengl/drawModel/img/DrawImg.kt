@@ -1,4 +1,4 @@
-package com.example.acelanandroid.common.drawModel.img
+package com.example.acelanandroid.opengl.drawModel.img
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size

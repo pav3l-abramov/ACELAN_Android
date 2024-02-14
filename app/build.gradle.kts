@@ -95,9 +95,6 @@ dependencies {
     //coil (download image)
     implementation("io.coil-kt:coil-compose:2.4.0")
 
-
-//    //draw obj model
-//    implementation ("io.github.jan-1:objloader:1.1.0")
 }
 kapt {
     correctErrorTypes = true

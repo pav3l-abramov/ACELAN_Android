@@ -2,34 +2,27 @@ package com.example.acelanandroid.screens.tasks
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.util.Log
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import com.example.acelanandroid.MODEL_SCREEN
-import com.example.acelanandroid.OPEN_TASK_SCREEN
 import com.example.acelanandroid.common.composable.BasicButton
 import com.example.acelanandroid.common.composable.TaskDetailCard
 import com.example.acelanandroid.common.composable.TextCard
-import com.example.acelanandroid.common.drawModel.img.DrawImage
+import com.example.acelanandroid.opengl.drawModel.img.DrawImage
 import com.example.acelanandroid.common.ext.basicButton
 import com.example.acelanandroid.common.ext.fieldModifier
-import kotlinx.coroutines.Dispatchers
+import com.example.acelanandroid.OpenGLES20Activity
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
@@ -37,7 +30,7 @@ fun OpenTaskScreen(
     modifier: Modifier = Modifier,
     openTaskViewModel: OpenTaskViewModel = hiltViewModel(),
     idTask: Int,
-    navController: NavController
+    context: Context
 ) {
     val uiState by openTaskViewModel.uiState
     val uiStateMain by openTaskViewModel.uiStateMain
@@ -68,9 +61,11 @@ fun OpenTaskScreen(
             when (uiState.file_type) {
                 "jpg", "png" -> DrawImage(uiState.url!!, Modifier.fieldModifier())
                 "ply","obj","stl" -> BasicButton("View model", Modifier.basicButton()) {
-                    val modelData=ModelData(urlModel = uiState.url!!, typeModel = uiState.file_type!!)
-                    navController.currentBackStackEntry?.savedStateHandle?.set(key="modelData",value = modelData)
-                    navController.navigate(route = MODEL_SCREEN)}
+                    val intent= Intent(context, OpenGLES20Activity::class.java)
+                    intent.putExtra("url", uiState.url)
+                    intent.putExtra("type", uiState.file_type)
+                    context.startActivity(intent)
+                }
                 else -> TextCard("I don't know how to draw this file",Modifier.fieldModifier())
             }
         } else {
