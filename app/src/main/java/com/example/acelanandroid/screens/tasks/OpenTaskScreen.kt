@@ -17,7 +17,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.acelanandroid.common.composable.BasicButton
 import com.example.acelanandroid.common.composable.TaskDetailCard
 import com.example.acelanandroid.common.composable.TextCard
-import com.example.acelanandroid.opengl.drawModel.img.DrawImage
 import com.example.acelanandroid.common.ext.basicButton
 import com.example.acelanandroid.common.ext.fieldModifier
 import com.example.acelanandroid.OpenGLES20Activity

@@ -30,8 +30,11 @@
 
         <activity
             android:name=".OpenGLES20Activity"
-            android:label="New Activity">
+            android:theme="@style/Theme.AppCompat.Light"
+            android:exported="true">
+
         </activity>
+
 
     </application>
 
