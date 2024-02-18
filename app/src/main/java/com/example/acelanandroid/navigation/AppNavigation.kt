@@ -100,7 +100,7 @@ fun AppNavigation(context:Context) {
 
 
             composable(route = BottomBarScreen.Profile.route) {
-                ProfileScreen()
+                ProfileScreen(context = context)
             }
         }
 
