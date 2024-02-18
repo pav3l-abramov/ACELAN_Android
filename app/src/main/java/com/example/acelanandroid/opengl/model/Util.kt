@@ -19,13 +19,6 @@ object Util {
         return program
     }
 
-    fun checkGLError(label: String) {
-        var error: Int
-        if (GLES20.glGetError().also { error = it } != GLES20.GL_NO_ERROR) {
-            throw RuntimeException("$label: glError $error")
-        }
-    }
-
     fun closeSilently(c: Closeable?) {
         try {
             c?.close()

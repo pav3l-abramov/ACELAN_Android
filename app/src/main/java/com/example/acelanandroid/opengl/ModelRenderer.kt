@@ -8,7 +8,6 @@ import javax.microedition.khronos.opengles.GL10
 
 class ModelRenderer(private val model: Model?) : GLSurfaceView.Renderer {
     private val light = Light(floatArrayOf(0.0f, 0.0f, MODEL_BOUND_SIZE * 10, 1.0f))
-    //private val floor = Floor()
 
     private val projectionMatrix = FloatArray(16)
     private val viewMatrix = FloatArray(16)
@@ -45,7 +44,6 @@ class ModelRenderer(private val model: Model?) : GLSurfaceView.Renderer {
 
     override fun onDrawFrame(unused: GL10) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
-        //floor.draw(viewMatrix, projectionMatrix, light)
         model?.draw(viewMatrix, projectionMatrix, light)
     }
 
@@ -72,16 +70,11 @@ class ModelRenderer(private val model: Model?) : GLSurfaceView.Renderer {
     }
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
-        GLES20.glClearColor(0.2f, 0.2f, 0.2f, 1f)
+        GLES20.glClearColor(0.95f, 0.95f, 0.95f, 1f)
         GLES20.glEnable(GLES20.GL_CULL_FACE)
         GLES20.glEnable(GLES20.GL_DEPTH_TEST)
-        //GLES20.glEnable(GLES20.GL_BLEND);
-        //GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
-
-        //floor.setup(MODEL_BOUND_SIZE)
         model?.let {
             it.setup(MODEL_BOUND_SIZE)
-            //floor.setOffsetY(it.floorOffset)
         }
     }
 

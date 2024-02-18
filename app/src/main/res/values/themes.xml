@@ -2,4 +2,11 @@
 <resources>
 
     <style name="Theme.AcelanAndroid" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.AcelanAndroid.NoTitle">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowTitleSize">0dp</item>
+    </style>
+
 </resources>

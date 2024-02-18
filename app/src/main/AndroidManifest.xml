@@ -27,15 +27,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".OpenGLES20Activity"
-            android:theme="@style/Theme.AppCompat.Light"
+            android:theme="@style/Theme.AcelanAndroid.NoTitle"
             android:exported="true">
-
         </activity>
-
-
     </application>
-
 </manifest>

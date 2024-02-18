@@ -1,5 +1,6 @@
 package com.example.acelanandroid.opengl
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.PointF
 import android.opengl.GLSurfaceView
@@ -15,6 +16,7 @@ class ModelSurfaceView(context: Context, model: Model?) : GLSurfaceView(context)
     private var pinchStartDistance = 0.0f
     private var touchMode = TOUCH_NONE
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action and MotionEvent.ACTION_MASK) {
             MotionEvent.ACTION_DOWN -> {
