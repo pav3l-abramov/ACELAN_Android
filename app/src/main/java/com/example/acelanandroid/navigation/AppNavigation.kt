@@ -20,7 +20,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.acelanandroid.MODEL_SCREEN
 import com.example.acelanandroid.OPEN_MATERIAL_SCREEN
 import com.example.acelanandroid.OPEN_TASK_SCREEN
 import com.example.acelanandroid.screens.home.HomeScreen

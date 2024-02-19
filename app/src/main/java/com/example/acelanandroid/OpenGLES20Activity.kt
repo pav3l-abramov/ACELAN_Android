@@ -7,7 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import com.example.acelanandroid.opengl.Model
-import com.example.acelanandroid.opengl.ModelSurfaceView
+import com.example.acelanandroid.opengl.OpenGLSurfaceView
 import com.example.acelanandroid.opengl.model.ObjModel
 import com.example.acelanandroid.opengl.model.PlyModel
 import com.example.acelanandroid.opengl.model.StlModel
@@ -22,95 +22,63 @@ import java.io.ByteArrayInputStream
 import java.io.InputStream
 
 class OpenGLES20Activity : AppCompatActivity() {
-    private var modelView: ModelSurfaceView? = null
     private val disposables = CompositeDisposable()
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val modelUrl: Uri? = intent.getStringExtra("url")?.toUri()
         val modelType: String = intent.getStringExtra("type").toString()
-        val model: Model? = null
-        setContentView(ModelSurfaceView(this, model))
-            if (modelUrl != null && savedInstanceState == null) {
-                beginLoadModel(modelUrl,modelType)
-            }
-    }
-    override fun onStart() {
-        super.onStart()
-           createNewModelView(MainActivityHiltApp.currentModel)
-        if (MainActivityHiltApp.currentModel != null) {
-            title = MainActivityHiltApp.currentModel!!.title
+        setContentView(OpenGLSurfaceView(this, MainActivityHiltApp.currentModel))
+        if (modelUrl != null && savedInstanceState == null) {
+            loadModel(modelUrl, modelType)
         }
     }
-    override fun onPause() {
-        super.onPause()
-        modelView?.onPause()
-    }
-    override fun onResume() {
-        super.onResume()
-        modelView?.onResume()
-    }
-    override fun onDestroy() {
-        disposables.clear()
-        super.onDestroy()
-    }
-    private fun createNewModelView(model: Model?) {
-        setContentView(ModelSurfaceView(this, model))
-    }
-    private fun beginLoadModel(uri: Uri,ModelType:String) {
+
+    private fun loadModel(uri: Uri, modelType: String) {
         disposables.add(
             Single.fromCallable {
-            var model: Model? = null
-            var stream: InputStream? = null
-            try {
-                val cr = applicationContext.contentResolver
-                stream = if ("http" == uri.scheme || "https" == uri.scheme) {
+                val model: Model?
+                var stream: InputStream? = null
+                try {
                     val client = OkHttpClient()
                     val request: Request = Request.Builder().url(uri.toString()).build()
                     val response = client.newCall(request).execute()
-                    ByteArrayInputStream(response.body!!.bytes())
-                } else {
-                    cr.openInputStream(uri)
-                }
-                if (stream != null) {
-                    if (ModelType.isNotEmpty()) {
-                        model = when {
-                            ModelType=="stl" -> {
-                                StlModel(stream)
-                            }
-                            ModelType=="obj" -> {
-                                ObjModel(stream)
-                            }
-                            ModelType=="ply" -> {
-                                PlyModel(stream)
-                            }
-                            else -> {
-                                Toast.makeText(applicationContext, "i don't know this format", Toast.LENGTH_SHORT).show()
-                                StlModel(stream)
-                            }
+                    stream = ByteArrayInputStream(response.body!!.bytes())
+                    model = when (modelType) {
+                        "stl" -> {
+                            StlModel(stream)
                         }
-                    } else {
-                        Toast.makeText(applicationContext, "type format is empty", Toast.LENGTH_SHORT).show()
+
+                        "obj" -> {
+                            ObjModel(stream)
+                        }
+
+                        "ply" -> {
+                            PlyModel(stream)
+                        }
+
+                        else -> {
+                            Toast.makeText(
+                                applicationContext,
+                                "i don't know this format",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            StlModel(stream)
+                        }
                     }
+                    MainActivityHiltApp.currentModel = model
+                    model
+                } finally {
+                    closeSilently(stream)
                 }
-                MainActivityHiltApp.currentModel = model
-                model!!
-            } finally {
-                closeSilently(stream)
-            }
-        }.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doAfterTerminate {
-            }
-            .subscribe({
-                setCurrentModel(it)
-            }, {
-                it.printStackTrace()
-                Toast.makeText(applicationContext, "Some problems", Toast.LENGTH_SHORT).show()
-            }))
-    }
-    private fun setCurrentModel(model: Model) {
-        createNewModelView(model)
-        Toast.makeText(applicationContext, "Success open model", Toast.LENGTH_SHORT).show()
-        title = model.title
+            }.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    setContentView(OpenGLSurfaceView(this, it))
+                }, {
+                    it.printStackTrace()
+                    Toast.makeText(applicationContext, "Some problems", Toast.LENGTH_SHORT).show()
+                })
+        )
     }
 }
