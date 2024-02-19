@@ -48,6 +48,7 @@ class LoginViewModel @Inject constructor(
         userData.collect(){checkActiveUser->
             uiStateUser.value=uiStateUser.value.copy(isActive = checkActiveUser.isActive)
             uiStateUser.value = uiStateUser.value.copy(email = checkActiveUser.email)
+            uiStateUser.value = uiStateUser.value.copy(token = checkActiveUser.token)
 
         }
         Log.d("login","login2")

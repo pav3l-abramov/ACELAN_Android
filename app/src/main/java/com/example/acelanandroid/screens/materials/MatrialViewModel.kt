@@ -24,26 +24,13 @@ class MatrialViewModel  @Inject constructor(
 ) : ViewModel() {
     val mainApi = appRetrofit.retrofit.create(GetDataApi::class.java)
 
-    //MaterialsScreen
-    val userData = dataStoreManager.getDataUser()
-    var tokenUser: String? = null
     private val _dataListMaterial = MutableStateFlow<List<Material>>(emptyList())
     val dataListMaterial: StateFlow<List<Material>> = _dataListMaterial.asStateFlow()
 
-
-    suspend fun getToken() {
-        Log.d("tasks", "start1")
-
-        userData.collect() { data ->
-            tokenUser = data.token
-        }
-        Log.d("tasks", "start2")
-    }
-
-    suspend fun getListMaterials() {
+    suspend fun getListMaterials(searchText:String, tokenUser:String) {
         Log.d("tasks", "start3")
         if (tokenUser != null) {
-            val materials = mainApi.getMaterials("Bearer $tokenUser")
+            val materials = mainApi.getMaterials("Bearer $tokenUser",searchText)
             _dataListMaterial.value = materials.materials
         }
 

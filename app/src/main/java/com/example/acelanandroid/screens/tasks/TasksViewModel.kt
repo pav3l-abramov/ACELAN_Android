@@ -25,23 +25,10 @@ class TasksViewModel @Inject constructor(
 ) : ViewModel() {
     val mainApi = appRetrofit.retrofit.create(GetDataApi::class.java)
 
-    //TasksScreen
-    val userData = dataStoreManager.getDataUser()
-    var tokenUser: String? = null
     private val _dataList = MutableStateFlow<List<Task>>(emptyList())
     val dataList: StateFlow<List<Task>> = _dataList.asStateFlow()
 
-
-    suspend fun getToken() {
-        Log.d("tasks", "start1")
-
-        userData.collect() { data ->
-            tokenUser = data.token
-        }
-        Log.d("tasks", "start2")
-    }
-
-    suspend fun getListTasks() {
+    suspend fun getListTasks(tokenUser:String) {
         Log.d("tasks", "start3")
         if (tokenUser != null) {
             val tasks = mainApi.getTasks("Bearer $tokenUser")

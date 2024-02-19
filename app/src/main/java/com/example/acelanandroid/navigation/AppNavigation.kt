@@ -74,7 +74,7 @@ fun AppNavigation(context:Context) {
 
 
             composable(route = BottomBarScreen.Materials.route) {
-                MaterialsScreen(navController = navController)
+                MaterialsScreen(navController = navController, context = context)
             }
             composable(route = "$OPEN_MATERIAL_SCREEN/{id}", arguments = listOf(
                 navArgument(name = "id") {

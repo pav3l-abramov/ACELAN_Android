@@ -211,6 +211,94 @@ fun TaskDetailCard(
 }
 
 @Composable
+fun MaterialDetailCard(
+    contentFirst: String,
+    contentSecond: String,
+    timeBoolean: Boolean,
+    modifier: Modifier
+) {
+    val color = getColorStatus(contentSecond, isSystemInDarkTheme())
+    Card(
+        modifier = modifier
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(2.dp, Color.Gray, shape = RoundedCornerShape(10.dp))
+                    .padding(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .width(90.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.Start
+                ) {
+
+                    Text(
+                        text = contentFirst,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Column(
+                    modifier = Modifier,
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (contentSecond != "null") {
+                        if (timeBoolean) {
+                            val list = contentSecond.split("T", "Z")
+                            Text(
+                                text = "${list[1]} ${list[0]}",
+                                color = color
+                            )
+                        }
+
+                        else if (contentSecond.split("::")[0]=="Materials"){
+                            val list = contentSecond.split("Material","::")
+                            Text(
+                                text = list[2],
+                                color = color
+                            )
+                        }
+                        else if (contentFirst=="Core: "){
+                            if (contentSecond=="false"){
+                                Text (
+                                text = "No",
+                                color = color
+                            )
+                            }
+                            else {
+                                Text(
+                                    text = "Yes",
+                                    color = color
+                                )
+                            }
+                        }
+                        else {
+                            Text(
+                                text = contentSecond,
+                                color = color
+                            )
+                        }
+
+                    } else {
+                        Text(
+                            text = "no data",
+                            color = color
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun TextCard(content: String,
              modifier: Modifier) {
     val color = getColorStatus(content, isSystemInDarkTheme())

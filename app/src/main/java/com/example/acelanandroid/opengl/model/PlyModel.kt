@@ -137,7 +137,7 @@ class PlyModel(inputStream: InputStream) : IndexedModel() {
 
         if (faceCount > 0) {
             indexCount = indices.size
-            vbb = ByteBuffer.allocateDirect(indexCount * BYTES_PER_INT)
+            vbb = ByteBuffer.allocateDirect(indexCount * 4)
             vbb.order(ByteOrder.nativeOrder())
             indexBuffer = vbb.asIntBuffer()
             for (i in 0 until indexCount) {

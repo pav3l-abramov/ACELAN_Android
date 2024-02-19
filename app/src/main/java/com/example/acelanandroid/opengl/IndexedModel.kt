@@ -13,8 +13,4 @@ open class IndexedModel : ArrayModel() {
         }
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, indexCount, GLES20.GL_UNSIGNED_INT, indexBuffer)
     }
-
-    companion object {
-        const val BYTES_PER_INT = 4
-    }
 }

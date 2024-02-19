@@ -9,7 +9,7 @@ import kotlin.math.sqrt
 
 @SuppressLint("ViewConstructor")
 class OpenGLSurfaceView(context: Context, model: Model?) : GLSurfaceView(context) {
-    private val renderer: ModelRenderer
+    private val renderer: OpenGLRenderer
     private var startX = 0f
     private var startY = 0f
     private var firstTouchRotate = true
@@ -18,7 +18,7 @@ class OpenGLSurfaceView(context: Context, model: Model?) : GLSurfaceView(context
 
     init {
         setEGLContextClientVersion(2)
-        renderer = ModelRenderer(model)
+        renderer = OpenGLRenderer(model)
         setRenderer(renderer)
         renderMode = RENDERMODE_WHEN_DIRTY
     }
@@ -38,7 +38,7 @@ class OpenGLSurfaceView(context: Context, model: Model?) : GLSurfaceView(context
                     val dy = event.y - startY
                     startX = event.x
                     startY = event.y
-                    renderer.rotate(dy, dx)
+                    renderer.rotateModel(dy, dx)
                 } else if (event.pointerCount == 2) {
                     if (firstTouchZoom) {
                         startDistance =
@@ -57,7 +57,7 @@ class OpenGLSurfaceView(context: Context, model: Model?) : GLSurfaceView(context
                     val scaleZoom = newDistance / startDistance
                     startDistance =
                         vectorLength(event.getX(0), event.getX(1), event.getY(0), event.getY(1))
-                    renderer.translate(dx, dy, scaleZoom)
+                    renderer.translateModel(dx, dy, scaleZoom)
 
                 }
                 requestRender()
@@ -76,4 +76,5 @@ class OpenGLSurfaceView(context: Context, model: Model?) : GLSurfaceView(context
     private fun vectorLength(x1: Float, x2: Float, y1: Float, y2: Float): Float {
         return sqrt(((x2 - x1).toDouble().pow(2.0) + (y2 - y1).toDouble().pow(2.0))).toFloat()
     }
+
 }

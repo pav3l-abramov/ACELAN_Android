@@ -12,8 +12,6 @@ abstract class Model {
     var floorOffset = 0f
         protected set
 
-    var title = ""
-
     protected var glProgram = -1
 
     var modelMatrix = FloatArray(16)

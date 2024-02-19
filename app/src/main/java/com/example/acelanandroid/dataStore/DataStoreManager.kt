@@ -31,7 +31,7 @@ class DataStoreManager @Inject constructor( @ApplicationContext val contex: Cont
     }
 
     fun getDataUser() = contex.dataStore.data.map { pref ->
-        return@map UserData(
+         UserData(
             pref[stringPreferencesKey(EMAIL_USER)] ?: "",
             pref[stringPreferencesKey(PASSWORD_USER)] ?: "",
             pref[stringPreferencesKey(TOKEN_USER)] ?: "",

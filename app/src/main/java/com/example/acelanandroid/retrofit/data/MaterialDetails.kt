@@ -1,22 +1,22 @@
 package com.example.acelanandroid.retrofit.data
 
 data class MaterialDetails(
-    val id: Int,
-    val name: String,
-    val type: String,
-    val source: String,
-    val created_at: String,
-    val updated_at: String,
-    val core: Boolean,
-    val properties: List<Properties>
+    val id: Int? = null,
+    val name: String? = null,
+    val type: String? = null,
+    val source: String? = null,
+    val created_at: String? = null,
+    val updated_at: String? = null,
+    val core: Boolean? = null,
+    //val properties: List<Properties>? = null
 
 )
 
 //нужно доделать
 data class Properties(
-    val stiffness: List<Stiffness>,
+    val stiffness: List<Stiffness>? = null,
 
 )
 data class Stiffness(
-    val c:Float
+    val c11:Float? = null
 )

@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -22,6 +23,7 @@ import com.example.acelanandroid.common.composable.TaskCard
 import com.example.acelanandroid.common.ext.fieldModifier
 import com.example.acelanandroid.retrofit.data.Task
 import com.example.acelanandroid.screens.profile.LoginViewModel
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -33,10 +35,10 @@ fun TasksScreen(
     tasksViewModel: TasksViewModel = hiltViewModel()
 ) {
     val uiStateUser by loginViewModel.uiStateUser
-    val coroutineScope = rememberCoroutineScope()
-    coroutineScope.launch {
-        Log.d("tasks", "startMain1")
-        loginViewModel.checkUser()
+    LaunchedEffect(Unit) {
+        GlobalScope.launch {
+            loginViewModel.checkUser()
+        }
     }
     val dataList: List<Task> by tasksViewModel.dataList.collectAsState()
 
@@ -50,12 +52,13 @@ fun TasksScreen(
         }
 
     } else {
-        coroutineScope.launch {
-            tasksViewModel.getToken()
-        }
-        coroutineScope.launch {
-            if (uiStateUser.isActive ) {
-                tasksViewModel.getListTasks()
+
+
+        LaunchedEffect(Unit) {
+            GlobalScope.launch {
+                if (uiStateUser.isActive) {
+                    tasksViewModel.getListTasks(uiStateUser.token)
+                }
             }
         }
         LazyColumn {
