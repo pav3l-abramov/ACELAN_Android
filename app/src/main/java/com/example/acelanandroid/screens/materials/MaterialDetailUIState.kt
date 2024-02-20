@@ -1,6 +1,9 @@
-package com.example.acelanandroid.retrofit.data
+package com.example.acelanandroid.screens.materials
 
-data class MaterialDetails(
+import com.example.acelanandroid.retrofit.data.Stiffness
+
+
+data class MaterialDetailUIState(
     val id: Int? = null,
     val name: String? = null,
     val type: String? = null,
@@ -8,16 +11,7 @@ data class MaterialDetails(
     val created_at: String? = null,
     val updated_at: String? = null,
     val core: Boolean? = null,
-    val properties: Properties? = null
-)
-
-//нужно доделать
-data class Properties(
     val young:String?=null,
     val poison:String?=null,
-    //val stiffness: List<Stiffness>? = null,
-
-)
-data class Stiffness(
-    val c11:Float? = null
+    val stiffness: Stiffness?=null
 )

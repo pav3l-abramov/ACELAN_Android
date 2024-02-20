@@ -1,15 +1,10 @@
 package com.example.acelanandroid.screens.materials
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.acelanandroid.dataStore.DataStoreManager
 import com.example.acelanandroid.retrofit.AppRetrofit
 import com.example.acelanandroid.retrofit.GetDataApi
-import com.example.acelanandroid.retrofit.data.Artifact
-import com.example.acelanandroid.retrofit.data.MaterialDetails
-import com.example.acelanandroid.retrofit.data.Properties
-import com.example.acelanandroid.retrofit.data.TaskDetails
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -25,10 +20,10 @@ class OpenMaterialViewModel @Inject constructor(
     var idMaterial: Int? = null
 
 
-    var uiState = mutableStateOf(Properties())
-        private set
+//    var uiState = mutableStateOf(Properties())
+//        private set
 
-    var uiStateMain = mutableStateOf(MaterialDetails())
+    var uiStateMain = mutableStateOf(MaterialDetailUIState())
         private set
 
 
@@ -52,6 +47,8 @@ class OpenMaterialViewModel @Inject constructor(
                 uiStateMain.value = uiStateMain.value.copy(created_at = material.created_at)
                 uiStateMain.value = uiStateMain.value.copy(updated_at = material.updated_at)
                 uiStateMain.value = uiStateMain.value.copy(core = material.core)
+                uiStateMain.value = uiStateMain.value.copy(young = material.properties?.young)
+                uiStateMain.value = uiStateMain.value.copy(poison = material.properties?.poison)
 
 //                if (!material.properties.isNullOrEmpty()) {
 //                    uiState.value = uiState.value.copy(stiffness = material.properties[0].stiffness)

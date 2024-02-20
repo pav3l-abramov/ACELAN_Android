@@ -19,6 +19,7 @@ import com.example.acelanandroid.common.composable.BasicButton
 import com.example.acelanandroid.common.composable.MaterialDetailCard
 import com.example.acelanandroid.common.composable.TaskDetailCard
 import com.example.acelanandroid.common.composable.TextCard
+import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.common.ext.basicButton
 import com.example.acelanandroid.common.ext.fieldModifier
 import com.example.acelanandroid.screens.tasks.DrawImage
@@ -32,7 +33,7 @@ fun OpenMaterialScreen(
     modifier: Modifier = Modifier,
     openMaterialViewModel: OpenMaterialViewModel = hiltViewModel()
 ) {
-    val uiState by openMaterialViewModel.uiState
+    //val uiState by openMaterialViewModel.uiState
     val uiStateMain by openMaterialViewModel.uiStateMain
     val coroutineScope = rememberCoroutineScope()
     coroutineScope.launch {
@@ -55,6 +56,9 @@ fun OpenMaterialScreen(
         MaterialDetailCard("Update: ", uiStateMain.updated_at.toString(), true, Modifier.fieldModifier())
         MaterialDetailCard("Core: ", uiStateMain.core.toString(), false, Modifier.fieldModifier())
         MaterialDetailCard("Source: ", uiStateMain.source.toString(), false, Modifier.fieldModifier())
+        TextCardStandart("Properties",Modifier.fieldModifier())
+        MaterialDetailCard("Young Modulus: ", uiStateMain.young.toString(), false, Modifier.fieldModifier())
+        MaterialDetailCard("Poison Coefficient: ", uiStateMain.poison.toString(), false, Modifier.fieldModifier())
     }
 
 }

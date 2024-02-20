@@ -102,7 +102,7 @@ fun MaterialsScreen(
 
                 },
                 placeholder = {
-                    Text(text = "Type to search")
+                    Text(text = "Search...")
                 },
                 active = false,
                 onActiveChange = {

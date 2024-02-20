@@ -230,11 +230,11 @@ fun MaterialDetailCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .border(2.dp, Color.Gray, shape = RoundedCornerShape(10.dp))
-                    .padding(16.dp)
+                    .padding(8.dp)
             ) {
                 Column(
                     modifier = Modifier
-                        .width(90.dp),
+                        .width(100.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.Start
                 ) {
@@ -316,6 +316,41 @@ fun TextCard(content: String,
                     .fillMaxWidth()
                     .background( MaterialTheme.colorScheme.background, shape = RoundedCornerShape(10.dp))
                     .border(2.dp, Color.Gray, shape = RoundedCornerShape(10.dp))
+                    .padding(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier,
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    Text(
+                        text = content,
+                        color = color
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TextCardStandart(content: String,
+             modifier: Modifier) {
+    val color = getColorStatus(content, isSystemInDarkTheme())
+    Card(
+        modifier = modifier
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background( MaterialTheme.colorScheme.background, shape = RoundedCornerShape(10.dp))
                     .padding(16.dp)
             ) {
                 Column(
