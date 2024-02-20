@@ -1,29 +1,14 @@
 package com.example.acelanandroid.screens.tasks
 
-import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import com.example.acelanandroid.dataStore.DataStoreManager
 import com.example.acelanandroid.retrofit.AppRetrofit
 import com.example.acelanandroid.retrofit.GetDataApi
-import com.example.acelanandroid.retrofit.data.Artifact
-import com.example.acelanandroid.retrofit.data.Task
-import com.example.acelanandroid.retrofit.data.TaskDetails
-import com.example.acelanandroid.screens.profile.LoginUiState
+import com.example.acelanandroid.data.singleData.Artifact
+import com.example.acelanandroid.data.singleData.TaskDetails
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import java.io.File
-import java.io.FileWriter
-import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel

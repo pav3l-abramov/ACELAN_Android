@@ -14,6 +14,11 @@ const val OPEN_MATERIAL_SCREEN = "OpenMaterialScreen"
 
 //DataStore
 const val EMAIL_USER = "UserEmail"
-const val PASSWORD_USER = "UserPassword"
 const val TOKEN_USER = "UserToken"
 const val ACTIVE_USER = "UserActive"
+
+//room
+const val MATERIAL_DETAILS = "MaterialDetails"
+const val TASK_DETAILS = "TaskDetails"
+const val MATERIAL = "Material"
+const val TASK = "Task"

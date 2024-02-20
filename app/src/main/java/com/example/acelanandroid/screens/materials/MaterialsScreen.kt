@@ -1,6 +1,5 @@
 package com.example.acelanandroid.screens.materials
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +17,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -27,9 +25,8 @@ import com.example.acelanandroid.OPEN_MATERIAL_SCREEN
 import com.example.acelanandroid.common.composable.MaterialCard
 import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.common.ext.fieldModifier
-import com.example.acelanandroid.retrofit.data.Material
+import com.example.acelanandroid.data.singleData.Material
 import com.example.acelanandroid.screens.profile.LoginViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch

@@ -59,6 +59,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
     implementation("androidx.compose.ui:ui")
@@ -96,14 +97,16 @@ dependencies {
     //coil (download image)
     implementation("io.coil-kt:coil-compose:2.4.0")
 
-    //for read obj files (maybe delete)
-    implementation ("de.javagl:obj:0.3.0")
-
     //rxjava3
     implementation ("io.reactivex.rxjava3:rxjava:3.1.8")
     implementation ("io.reactivex.rxjava3:rxandroid:3.0.2")
 
-    implementation ("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.22")
+    //room
+    implementation("androidx.room:room-ktx:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+
+
+    //implementation ("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.22")
     // for draw obj
 //    implementation ("org.lwjgl:lwjgl:3.2.3")
 //    implementation ("org.lwjgl:lwjgl-opengl:3.2.3")

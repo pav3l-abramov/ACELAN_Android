@@ -1,5 +1,8 @@
-package com.example.acelanandroid.retrofit.data
+package com.example.acelanandroid.data.singleData
 
+data class Tasks(
+    val tasks:List<Task>
+)
 data class Task(
     val id: Int,
     val name: String,

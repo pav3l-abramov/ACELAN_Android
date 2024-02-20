@@ -1,4 +1,8 @@
-package com.example.acelanandroid.retrofit.data
+package com.example.acelanandroid.data.singleData
+
+data class Materials(
+    val materials: List<Material>
+)
 
 data class Material(
     val id: Int,
@@ -8,5 +12,4 @@ data class Material(
     val created_at: String,
     val updated_at: String,
     val core: Boolean
-
 )

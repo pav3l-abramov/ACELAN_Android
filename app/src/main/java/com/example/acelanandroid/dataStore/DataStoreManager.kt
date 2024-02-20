@@ -9,11 +9,9 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.acelanandroid.ACTIVE_USER
 import com.example.acelanandroid.EMAIL_USER
-import com.example.acelanandroid.PASSWORD_USER
 import com.example.acelanandroid.TOKEN_USER
+import com.example.acelanandroid.data.UserData
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.android.scopes.ActivityRetainedScoped
-import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -24,16 +22,14 @@ class DataStoreManager @Inject constructor( @ApplicationContext val contex: Cont
     suspend fun saveDataUser(userData: UserData) {
         contex.dataStore.edit { pref ->
             pref[stringPreferencesKey(EMAIL_USER)] = userData.email
-            pref[stringPreferencesKey(PASSWORD_USER)] = userData.password
             pref[stringPreferencesKey(TOKEN_USER)] = userData.token
             pref[booleanPreferencesKey(ACTIVE_USER)] = userData.isActive
         }
     }
 
     fun getDataUser() = contex.dataStore.data.map { pref ->
-         UserData(
+         return@map UserData(
             pref[stringPreferencesKey(EMAIL_USER)] ?: "",
-            pref[stringPreferencesKey(PASSWORD_USER)] ?: "",
             pref[stringPreferencesKey(TOKEN_USER)] ?: "",
             pref[booleanPreferencesKey(ACTIVE_USER)] ?: false
         )
@@ -42,7 +38,6 @@ class DataStoreManager @Inject constructor( @ApplicationContext val contex: Cont
     suspend fun deleteDataUser() {
         contex.dataStore.edit { pref ->
             pref[stringPreferencesKey(EMAIL_USER)] = ""
-            pref[stringPreferencesKey(PASSWORD_USER)] = ""
             pref[stringPreferencesKey(TOKEN_USER)] = ""
             pref[booleanPreferencesKey(ACTIVE_USER)] = false
         }

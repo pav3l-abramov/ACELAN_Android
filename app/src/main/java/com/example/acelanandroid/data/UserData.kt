@@ -1,8 +1,7 @@
-package com.example.acelanandroid.dataStore
+package com.example.acelanandroid.data
 
 data class UserData(
     val email:String="",
-    val password: String="",
     val token: String="",
     val isActive: Boolean=false
 )

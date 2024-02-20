@@ -3,14 +3,12 @@ package com.example.acelanandroid.screens.profile
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.example.acelanandroid.data.singleData.Login
 import com.example.acelanandroid.dataStore.DataStoreManager
-import com.example.acelanandroid.dataStore.UserData
+import com.example.acelanandroid.data.UserData
 import com.example.acelanandroid.retrofit.PostDataApi
 import com.example.acelanandroid.retrofit.AppRetrofit
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,7 +20,7 @@ class LoginViewModel @Inject constructor(
 
     val mainApi = appRetrofit.retrofit.create(PostDataApi::class.java)
 
-    var uiState = mutableStateOf(LoginUiState())
+    var uiState = mutableStateOf(Login())
         private set
     private val email
         get() = uiState.value.email
@@ -55,9 +53,9 @@ class LoginViewModel @Inject constructor(
     }
     suspend fun onSignInClick() {
         val token = mainApi.auth(
-            LoginUiState(email, password)
+            Login(email, password)
         )
-        dataStoreManager.saveDataUser(UserData(email,password,token.token,true))
+        dataStoreManager.saveDataUser(UserData(email,token.token,true))
         //uiStateUser.value=uiStateUser.value.copy(isActive = true)
 //        uiStateToken.value= uiStateToken.value.copy(token = user.token)
 //        if (!email.isValidEmail()) {

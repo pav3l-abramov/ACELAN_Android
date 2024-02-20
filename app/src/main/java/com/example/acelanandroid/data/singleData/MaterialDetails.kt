@@ -1,4 +1,4 @@
-package com.example.acelanandroid.retrofit.data
+package com.example.acelanandroid.data.singleData
 
 data class MaterialDetails(
     val id: Int? = null,
@@ -11,13 +11,11 @@ data class MaterialDetails(
     val properties: Properties? = null
 )
 
-//нужно доделать
+
 data class Properties(
     val young:String?=null,
     val poison:String?=null,
-    //val stiffness: List<Stiffness>? = null,
-
-)
-data class Stiffness(
-    val c11:Float? = null
+    val stiffness: List<Float>? = null,//1x36
+    val piezo: List<Float>? = null,//1x18
+    val dielectric: List<Float>? = null//1x9
 )

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.example.acelanandroid.dataStore.DataStoreManager
 import com.example.acelanandroid.retrofit.AppRetrofit
 import com.example.acelanandroid.retrofit.GetDataApi
+import com.example.acelanandroid.data.MaterialMain
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -23,7 +24,7 @@ class OpenMaterialViewModel @Inject constructor(
 //    var uiState = mutableStateOf(Properties())
 //        private set
 
-    var uiStateMain = mutableStateOf(MaterialDetailUIState())
+    var uiStateMain = mutableStateOf(MaterialMain())
         private set
 
 

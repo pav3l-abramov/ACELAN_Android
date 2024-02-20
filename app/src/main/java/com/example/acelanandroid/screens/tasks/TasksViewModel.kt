@@ -1,17 +1,11 @@
 package com.example.acelanandroid.screens.tasks
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.acelanandroid.dataStore.DataStoreManager
-import com.example.acelanandroid.dataStore.UserData
 import com.example.acelanandroid.retrofit.AppRetrofit
 import com.example.acelanandroid.retrofit.GetDataApi
-import com.example.acelanandroid.retrofit.PostDataApi
-import com.example.acelanandroid.retrofit.data.Task
-import com.example.acelanandroid.retrofit.data.TaskDetails
-import com.example.acelanandroid.retrofit.data.Tasks
-import com.example.acelanandroid.screens.profile.LoginUiState
+import com.example.acelanandroid.data.singleData.Task
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +14,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TasksViewModel @Inject constructor(
-    private val dataStoreManager: DataStoreManager,
     private val appRetrofit: AppRetrofit
 ) : ViewModel() {
     val mainApi = appRetrofit.retrofit.create(GetDataApi::class.java)

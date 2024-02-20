@@ -1,12 +1,12 @@
 package com.example.acelanandroid.retrofit
 
-import com.example.acelanandroid.retrofit.data.Token
-import com.example.acelanandroid.screens.profile.LoginUiState
+import com.example.acelanandroid.data.singleData.Token
+import com.example.acelanandroid.data.singleData.Login
 import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface PostDataApi {
     @POST("/api/token")
-    suspend fun auth(@Body loginUiState: LoginUiState): Token
+    suspend fun auth(@Body login: Login): Token
 
 }

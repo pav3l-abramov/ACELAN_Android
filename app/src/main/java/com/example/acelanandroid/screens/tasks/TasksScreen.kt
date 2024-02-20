@@ -1,19 +1,16 @@
 package com.example.acelanandroid.screens.tasks
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -22,19 +19,26 @@ import com.example.acelanandroid.OPEN_TASK_SCREEN
 import com.example.acelanandroid.common.composable.TaskCard
 import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.common.ext.fieldModifier
-import com.example.acelanandroid.retrofit.data.Task
+import com.example.acelanandroid.data.singleData.Task
+import com.example.acelanandroid.screens.MainViewModel
 import com.example.acelanandroid.screens.profile.LoginViewModel
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+@OptIn(DelicateCoroutinesApi::class)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun TasksScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
     loginViewModel: LoginViewModel = hiltViewModel(),
-    tasksViewModel: TasksViewModel = hiltViewModel()
+    tasksViewModel: TasksViewModel = hiltViewModel(),
+    mainViewModel: MainViewModel = hiltViewModel()
 ) {
+    
+    var tasksList = mainViewModel.itemsList.collectAsState(initial = emptyList())
+    
     val uiStateUser by loginViewModel.uiStateUser
     LaunchedEffect(Unit) {
         GlobalScope.launch {
@@ -61,6 +65,7 @@ fun TasksScreen(
             GlobalScope.launch {
                 if (uiStateUser.isActive) {
                     tasksViewModel.getListTasks(uiStateUser.token)
+                    //tasksList=dataList
                 }
             }
         }
@@ -70,6 +75,11 @@ fun TasksScreen(
                     item.name, Modifier.fieldModifier(), item.status
                 ) { navController.navigate(route = OPEN_TASK_SCREEN + "/${item.id}") }
             }
+//            items(tasksList.value) { item ->
+//                TaskCard(
+//                    item.name, Modifier.fieldModifier(), item.status
+//                ) { navController.navigate(route = OPEN_TASK_SCREEN + "/${item.id}") }
+//            }
         }
     }
 }
