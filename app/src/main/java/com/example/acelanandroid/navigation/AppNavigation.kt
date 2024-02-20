@@ -2,6 +2,14 @@ package com.example.acelanandroid.navigation
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -10,6 +18,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -69,12 +78,14 @@ fun AppNavigation(context:Context) {
         ) {
 
             composable(route = BottomBarScreen.Home.route) {
-                HomeScreen()
+                 HomeScreen()
+
             }
 
 
             composable(route = BottomBarScreen.Materials.route) {
-                MaterialsScreen(navController = navController, context = context)
+                EnterAnimation{MaterialsScreen(navController = navController, context = context)}
+
             }
             composable(route = "$OPEN_MATERIAL_SCREEN/{id}", arguments = listOf(
                 navArgument(name = "id") {
@@ -86,7 +97,7 @@ fun AppNavigation(context:Context) {
 
 
             composable(route = BottomBarScreen.Tasks.route) {
-                TasksScreen(navController = navController)
+                EnterAnimation{TasksScreen(navController = navController)}
             }
             composable(route = "$OPEN_TASK_SCREEN/{id}", arguments = listOf(
                 navArgument(name = "id") {
@@ -103,5 +114,23 @@ fun AppNavigation(context:Context) {
             }
         }
 
+    }
+
+}
+@Composable
+fun EnterAnimation(content: @Composable () -> Unit) {
+    AnimatedVisibility(
+        visibleState = MutableTransitionState(
+            initialState = false
+        ).apply { targetState = true },
+        modifier = Modifier,
+        enter = slideInVertically(
+            initialOffsetY = { -1 }
+        ) + expandVertically(
+            expandFrom = Alignment.Top
+        ) + fadeIn(initialAlpha = 0.4f),
+        exit = slideOutVertically() + shrinkVertically() + fadeOut(),
+    ) {
+        content()
     }
 }

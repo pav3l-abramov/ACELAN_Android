@@ -21,6 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.acelanandroid.common.composable.TextCardStandart
+import com.example.acelanandroid.common.ext.fieldModifier
 import com.example.acelanandroid.screens.profile.LoginViewModel
 import kotlinx.coroutines.launch
 
@@ -51,7 +53,7 @@ fun HomeScreen(
                 .align(Alignment.CenterHorizontally)
         )
     if (!uiStateUser.isActive ) {
-            Text(text = "Go to profile and login")
+        TextCardStandart("Go to profile and login",Modifier.fieldModifier())
         }
     else{
             Text(text = "Hello dear user!\n" +

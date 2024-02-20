@@ -20,6 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.acelanandroid.OPEN_TASK_SCREEN
 import com.example.acelanandroid.common.composable.TaskCard
+import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.common.ext.fieldModifier
 import com.example.acelanandroid.retrofit.data.Task
 import com.example.acelanandroid.screens.profile.LoginViewModel
@@ -29,7 +30,7 @@ import kotlinx.coroutines.launch
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun TasksScreen(
-    navController:NavController,
+    navController: NavController,
     modifier: Modifier = Modifier,
     loginViewModel: LoginViewModel = hiltViewModel(),
     tasksViewModel: TasksViewModel = hiltViewModel()
@@ -42,13 +43,15 @@ fun TasksScreen(
     }
     val dataList: List<Task> by tasksViewModel.dataList.collectAsState()
 
-    if (!uiStateUser.isActive ) {
-        Column(modifier = modifier
-            .fillMaxWidth()
-            .fillMaxHeight(),
+    if (!uiStateUser.isActive) {
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally){
-            Text(text = "Go to profile and login")
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            TextCardStandart("Go to profile and login", Modifier.fieldModifier())
         }
 
     } else {
@@ -63,8 +66,9 @@ fun TasksScreen(
         }
         LazyColumn {
             itemsIndexed(items = dataList) { index, item ->
-                TaskCard(item.name, Modifier.fieldModifier(),item.status
-                ) { navController.navigate(route = OPEN_TASK_SCREEN+"/${item.id}") }
+                TaskCard(
+                    item.name, Modifier.fieldModifier(), item.status
+                ) { navController.navigate(route = OPEN_TASK_SCREEN + "/${item.id}") }
             }
         }
     }

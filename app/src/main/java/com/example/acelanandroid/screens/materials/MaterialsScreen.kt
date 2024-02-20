@@ -25,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.acelanandroid.OPEN_MATERIAL_SCREEN
 import com.example.acelanandroid.common.composable.MaterialCard
+import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.common.ext.fieldModifier
 import com.example.acelanandroid.retrofit.data.Material
 import com.example.acelanandroid.screens.profile.LoginViewModel
@@ -59,7 +60,7 @@ fun MaterialsScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Go to profile and login")
+            TextCardStandart("Go to profile and login",Modifier.fieldModifier())
         }
 
     } else {
