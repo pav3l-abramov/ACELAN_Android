@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -22,6 +23,7 @@ import com.example.acelanandroid.OPEN_TASK_SCREEN
 import com.example.acelanandroid.common.composable.TaskCard
 import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.common.ext.fieldModifier
+import com.example.acelanandroid.data.TaskMain
 import com.example.acelanandroid.data.singleData.Task
 import com.example.acelanandroid.screens.MainViewModel
 import com.example.acelanandroid.screens.profile.LoginViewModel
@@ -40,7 +42,7 @@ fun TasksScreen(
     mainViewModel: MainViewModel = hiltViewModel()
 ) {
     
-    var tasksList = mainViewModel.itemsList.collectAsState(initial = emptyList())
+    var tasksList = mainViewModel.taskListDB.collectAsState(initial = emptyList())
     
     val uiStateUser by loginViewModel.uiStateUser
     LaunchedEffect(Unit) {
@@ -48,7 +50,7 @@ fun TasksScreen(
             loginViewModel.checkUser()
         }
     }
-    val dataList: List<Task> by tasksViewModel.dataList.collectAsState()
+    val dataList: List<TaskMain> by tasksViewModel.dataList.collectAsState()
 
     if (!uiStateUser.isActive) {
         Column(
@@ -65,21 +67,36 @@ fun TasksScreen(
             GlobalScope.launch {
                 if (uiStateUser.isActive) {
                     tasksViewModel.getListTasks(uiStateUser.token)
+                    for (task in dataList){
+                        mainViewModel.insertTaskToDB(task)
+                    }
+
                     //tasksList=dataList
                 }
             }
         }
         LazyColumn {
-            itemsIndexed(items = dataList) { index, item ->
-                TaskCard(
-                    item.name, Modifier.fieldModifier(), item.status
-                ) { navController.navigate(route = OPEN_TASK_SCREEN + "/${item.id}") }
-            }
-//            items(tasksList.value) { item ->
+//            itemsIndexed(items = dataList) { index, item ->
 //                TaskCard(
 //                    item.name, Modifier.fieldModifier(), item.status
 //                ) { navController.navigate(route = OPEN_TASK_SCREEN + "/${item.id}") }
 //            }
+
+//            itemsIndexed(items = tasksList.value) {  item ->
+//                TaskCard(
+//                    item.name, Modifier.fieldModifier(), item.status
+//                ) { navController.navigate(route = OPEN_TASK_SCREEN + "/${item.id}") }
+//            }
+
+            items(tasksList.value) { item ->
+                item.name?.let {
+                    item.status?.let { it1 ->
+                        TaskCard(
+                            it, Modifier.fieldModifier(), it1
+                        ) { navController.navigate(route = OPEN_TASK_SCREEN + "/${item.id}") }
+                    }
+                }
+            }
         }
     }
 }
