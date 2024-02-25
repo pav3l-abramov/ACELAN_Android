@@ -97,7 +97,7 @@ fun AppNavigation(context:Context) {
 
 
             composable(route = BottomBarScreen.Tasks.route) {
-                EnterAnimation{TasksScreen(navController = navController)}
+                EnterAnimation{TasksScreen(navController = navController, context = context)}
             }
             composable(route = "$OPEN_TASK_SCREEN/{id}", arguments = listOf(
                 navArgument(name = "id") {

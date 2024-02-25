@@ -6,6 +6,7 @@ import androidx.room.TypeConverters
 import com.example.acelanandroid.MATERIAL
 import com.example.acelanandroid.TASK
 import com.example.acelanandroid.USER
+import com.example.acelanandroid.room.FloatListConverter
 
 @Entity(tableName = MATERIAL)
 data class MaterialMain(
@@ -46,6 +47,6 @@ data class TaskMain(
 data class UserData(
     @PrimaryKey(autoGenerate = false)
     val id :Int?=null,
-    val email:String? = null,
+    val email:String?="",
     val token: String? = null
 )

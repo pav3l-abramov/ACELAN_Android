@@ -1,4 +1,4 @@
-package com.example.acelanandroid.data
+package com.example.acelanandroid.room
 
 import androidx.room.TypeConverter
 

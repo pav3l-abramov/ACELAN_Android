@@ -1,5 +1,6 @@
 package com.example.acelanandroid.screens
 
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.acelanandroid.data.MaterialMain
@@ -9,6 +10,7 @@ import com.example.acelanandroid.data.singleData.Login
 import com.example.acelanandroid.room.MainDB
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -26,6 +28,7 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
 
     suspend fun insertUserToDB(userData: UserData) {
         database.dao.insertUser(userData)
+
     }
 
     suspend fun userIsExist() {
