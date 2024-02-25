@@ -14,6 +14,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 
 import androidx.compose.runtime.mutableStateOf
@@ -26,21 +28,26 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.common.ext.fieldModifier
+import com.example.acelanandroid.screens.MainViewModel
 import com.example.acelanandroid.screens.profile.LoginViewModel
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 
+@OptIn(DelicateCoroutinesApi::class)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    loginViewModel: LoginViewModel = hiltViewModel(),
+    mainViewModel: MainViewModel = hiltViewModel(),
 ) {
-    val uiStateUser by loginViewModel.uiStateUser
-    val coroutineScope = rememberCoroutineScope()
-    coroutineScope.launch {
-        Log.d("tasks", "startMain1")
-        loginViewModel.checkUser()
+    val checkUser by mainViewModel.checkUser
+    LaunchedEffect(Unit) {
+        GlobalScope.async {
+            mainViewModel.userIsExist()
+        }
     }
     Column(
         modifier = modifier
@@ -55,7 +62,7 @@ fun HomeScreen(
                 .size(200.dp)
                 .align(Alignment.CenterHorizontally)
         )
-    if (!uiStateUser.isActive ) {
+    if (!checkUser) {
         TextCardStandart("Go to profile and login",Modifier.fieldModifier())
         }
     else{

@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -22,26 +24,36 @@ import com.example.acelanandroid.common.composable.TextCard
 import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.common.ext.basicButton
 import com.example.acelanandroid.common.ext.fieldModifier
+import com.example.acelanandroid.data.UserData
+import com.example.acelanandroid.screens.MainViewModel
 import com.example.acelanandroid.screens.tasks.DrawImage
 import com.example.acelanandroid.screens.tasks.OpenTaskViewModel
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
+@OptIn(DelicateCoroutinesApi::class)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun OpenMaterialScreen(
     idMaterial: Int,
     modifier: Modifier = Modifier,
-    openMaterialViewModel: OpenMaterialViewModel = hiltViewModel()
+    openMaterialViewModel: OpenMaterialViewModel = hiltViewModel(),
+    mainViewModel: MainViewModel = hiltViewModel(),
 ) {
     //val uiState by openMaterialViewModel.uiState
     val uiStateMain by openMaterialViewModel.uiStateMain
-    val coroutineScope = rememberCoroutineScope()
-    coroutineScope.launch {
-        openMaterialViewModel.getToken()
+    val userDB = mainViewModel.getUserDB.collectAsState(initial = UserData())
+    val checkUser by mainViewModel.checkUser
+    LaunchedEffect(Unit) {
+        GlobalScope.async {
+            mainViewModel.userIsExist()
+        }
     }
     openMaterialViewModel.getIdMaterial(idMaterial)
-    coroutineScope.launch {
-        openMaterialViewModel.getMaterialById()
+    GlobalScope.launch {
+        userDB.value.token?.let { openMaterialViewModel.getMaterialById(it,idMaterial) }
     }
 
     Column(

@@ -2,7 +2,6 @@ package com.example.acelanandroid.screens.materials
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.acelanandroid.dataStore.DataStoreManager
 import com.example.acelanandroid.retrofit.AppRetrofit
 import com.example.acelanandroid.retrofit.GetDataApi
 import com.example.acelanandroid.data.singleData.Material

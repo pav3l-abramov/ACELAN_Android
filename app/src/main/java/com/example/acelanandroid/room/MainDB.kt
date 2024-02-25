@@ -8,6 +8,7 @@ import androidx.room.TypeConverters
 import com.example.acelanandroid.data.FloatListConverter
 import com.example.acelanandroid.data.MaterialMain
 import com.example.acelanandroid.data.TaskMain
+import com.example.acelanandroid.data.UserData
 import com.example.acelanandroid.data.singleData.Material
 import com.example.acelanandroid.data.singleData.MaterialDetails
 import com.example.acelanandroid.data.singleData.Task
@@ -20,6 +21,7 @@ import javax.inject.Singleton
     entities = [
         MaterialMain::class,
         TaskMain::class,
+        UserData::class,
     ],
     version = 1,
     exportSchema = false

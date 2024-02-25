@@ -1,5 +1,6 @@
 package com.example.acelanandroid.screens.materials
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -28,31 +29,37 @@ import com.example.acelanandroid.OPEN_MATERIAL_SCREEN
 import com.example.acelanandroid.common.composable.MaterialCard
 import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.common.ext.fieldModifier
+import com.example.acelanandroid.data.TaskMain
+import com.example.acelanandroid.data.UserData
 import com.example.acelanandroid.data.singleData.Material
+import com.example.acelanandroid.screens.MainViewModel
 import com.example.acelanandroid.screens.profile.LoginViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class, DelicateCoroutinesApi::class)
 @Composable
 fun MaterialsScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
-    loginViewModel: LoginViewModel = hiltViewModel(),
+    mainViewModel: MainViewModel = hiltViewModel(),
     matrialViewModel: MatrialViewModel = hiltViewModel(),
     context: Context
 ) {
-    val uiStateUser by loginViewModel.uiStateUser
-    LaunchedEffect(Unit) {
-        GlobalScope.launch {
-            loginViewModel.checkUser()
-        }
-    }
+
 
     val dataList: List<Material> by matrialViewModel.dataListMaterial.collectAsState()
-
-    if (!uiStateUser.isActive) {
+    val userDB = mainViewModel.getUserDB.collectAsState(initial = UserData())
+    val checkUser by mainViewModel.checkUser
+    LaunchedEffect(Unit) {
+        GlobalScope.async {
+            mainViewModel.userIsExist()
+        }
+    }
+    if (!checkUser) {
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -65,8 +72,8 @@ fun MaterialsScreen(
     } else {
         LaunchedEffect(Unit) {
             GlobalScope.launch {
-                if (uiStateUser.isActive) {
-                    matrialViewModel.getListMaterials("",uiStateUser.token)
+                if (checkUser) {
+                    userDB.value.token?.let { matrialViewModel.getListMaterials("", it) }
                 }
             }
         }
@@ -86,8 +93,12 @@ fun MaterialsScreen(
                     searchText.value = text
                     if (searchText.value==""){
                         GlobalScope.launch {
-                            if (uiStateUser.isActive) {
-                                matrialViewModel.getListMaterials(searchText.value,uiStateUser.token)
+                            if (checkUser) {
+                                userDB.value.token?.let {
+                                    matrialViewModel.getListMaterials(searchText.value,
+                                        it
+                                    )
+                                }
                             }
                         }
                     }
@@ -95,8 +106,12 @@ fun MaterialsScreen(
                 onSearch = { text ->
                     Log.d("searchText.value",searchText.value)
                         GlobalScope.launch {
-                            if (uiStateUser.isActive) {
-                                matrialViewModel.getListMaterials(searchText.value,uiStateUser.token)
+                            if (checkUser) {
+                                userDB.value.token?.let {
+                                    matrialViewModel.getListMaterials(searchText.value,
+                                        it
+                                    )
+                                }
                             }
                         }
 

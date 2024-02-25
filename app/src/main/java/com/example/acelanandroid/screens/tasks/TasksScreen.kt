@@ -1,6 +1,7 @@
 package com.example.acelanandroid.screens.tasks
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -24,11 +25,13 @@ import com.example.acelanandroid.common.composable.TaskCard
 import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.common.ext.fieldModifier
 import com.example.acelanandroid.data.TaskMain
+import com.example.acelanandroid.data.UserData
 import com.example.acelanandroid.data.singleData.Task
 import com.example.acelanandroid.screens.MainViewModel
 import com.example.acelanandroid.screens.profile.LoginViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 @OptIn(DelicateCoroutinesApi::class)
@@ -37,22 +40,21 @@ import kotlinx.coroutines.launch
 fun TasksScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
-    loginViewModel: LoginViewModel = hiltViewModel(),
     tasksViewModel: TasksViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel()
 ) {
-    
-    var tasksList = mainViewModel.taskListDB.collectAsState(initial = emptyList())
-    
-    val uiStateUser by loginViewModel.uiStateUser
-    LaunchedEffect(Unit) {
-        GlobalScope.launch {
-            loginViewModel.checkUser()
-        }
-    }
-    val dataList: List<TaskMain> by tasksViewModel.dataList.collectAsState()
 
-    if (!uiStateUser.isActive) {
+    val tasksList = mainViewModel.taskListDB.collectAsState(initial = emptyList())
+    val userDB = mainViewModel.getUserDB.collectAsState(initial = UserData())
+    val checkUser by mainViewModel.checkUser
+    LaunchedEffect(Unit) {
+    GlobalScope.async {
+        mainViewModel.userIsExist()
+    }
+}
+    val dataList: List<TaskMain> by tasksViewModel.dataList.collectAsState()
+    Log.d("checkUsercheckUsercheckUser",checkUser.toString())
+    if (!checkUser) {
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -64,30 +66,23 @@ fun TasksScreen(
 
     } else {
         LaunchedEffect(Unit) {
-            GlobalScope.launch {
-                if (uiStateUser.isActive) {
-                    tasksViewModel.getListTasks(uiStateUser.token)
+            GlobalScope.async {
+                if (checkUser) {
+                    userDB.value.token?.let { tasksViewModel.getListTasks(it) }
                     for (task in dataList){
                         mainViewModel.insertTaskToDB(task)
+                        task.id?.let {
+                            mainViewModel.updateTaskMain(task.name,task.status,task.started_at,task.finished_at,
+                                it
+                            )
+                        }
                     }
-
                     //tasksList=dataList
                 }
             }
         }
+
         LazyColumn {
-//            itemsIndexed(items = dataList) { index, item ->
-//                TaskCard(
-//                    item.name, Modifier.fieldModifier(), item.status
-//                ) { navController.navigate(route = OPEN_TASK_SCREEN + "/${item.id}") }
-//            }
-
-//            itemsIndexed(items = tasksList.value) {  item ->
-//                TaskCard(
-//                    item.name, Modifier.fieldModifier(), item.status
-//                ) { navController.navigate(route = OPEN_TASK_SCREEN + "/${item.id}") }
-//            }
-
             items(tasksList.value) { item ->
                 item.name?.let {
                     item.status?.let { it1 ->

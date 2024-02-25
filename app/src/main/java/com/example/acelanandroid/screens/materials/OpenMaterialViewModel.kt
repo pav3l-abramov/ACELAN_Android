@@ -2,7 +2,6 @@ package com.example.acelanandroid.screens.materials
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.acelanandroid.dataStore.DataStoreManager
 import com.example.acelanandroid.retrofit.AppRetrofit
 import com.example.acelanandroid.retrofit.GetDataApi
 import com.example.acelanandroid.data.MaterialMain
@@ -11,13 +10,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OpenMaterialViewModel @Inject constructor(
-    private val dataStoreManager: DataStoreManager,
     private val appRetrofit: AppRetrofit
 ) : ViewModel() {
     val mainApi = appRetrofit.retrofit.create(GetDataApi::class.java)
-
-    val userData = dataStoreManager.getDataUser()
-    var tokenUser: String? = null
     var idMaterial: Int? = null
 
 
@@ -32,31 +27,22 @@ class OpenMaterialViewModel @Inject constructor(
         idMaterial = newValue
     }
 
-    suspend fun getToken() {
-        userData.collect() { data ->
-            tokenUser = data.token
-        }
-    }
 
-    suspend fun getMaterialById() {
-        if (tokenUser != null) {
-            val material = idMaterial?.let { mainApi.getMaterialDetails("Bearer $tokenUser", it) }
-            if (material != null) {
-                uiStateMain.value = uiStateMain.value.copy(name = material.name)
-                uiStateMain.value = uiStateMain.value.copy(type = material.type)
-                uiStateMain.value = uiStateMain.value.copy(source = material.source)
-                uiStateMain.value = uiStateMain.value.copy(created_at = material.created_at)
-                uiStateMain.value = uiStateMain.value.copy(updated_at = material.updated_at)
-                uiStateMain.value = uiStateMain.value.copy(core = material.core)
-                uiStateMain.value = uiStateMain.value.copy(young = material.properties?.young)
-                uiStateMain.value = uiStateMain.value.copy(poison = material.properties?.poison)
+    suspend fun getMaterialById(token:String, idMaterial:Int) {
+        val material = idMaterial.let { mainApi.getMaterialDetails("Bearer $token", it) }
+        uiStateMain.value = uiStateMain.value.copy(name = material.name)
+        uiStateMain.value = uiStateMain.value.copy(type = material.type)
+        uiStateMain.value = uiStateMain.value.copy(source = material.source)
+        uiStateMain.value = uiStateMain.value.copy(created_at = material.created_at)
+        uiStateMain.value = uiStateMain.value.copy(updated_at = material.updated_at)
+        uiStateMain.value = uiStateMain.value.copy(core = material.core)
+        uiStateMain.value = uiStateMain.value.copy(young = material.properties?.young)
+        uiStateMain.value = uiStateMain.value.copy(poison = material.properties?.poison)
 
 //                if (!material.properties.isNullOrEmpty()) {
 //                    uiState.value = uiState.value.copy(stiffness = material.properties[0].stiffness)
 //                }
 
-            }
-        }
     }
 
 }
