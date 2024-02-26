@@ -41,7 +41,7 @@ class TasksViewModel @Inject constructor(
         }
     }
 
-    suspend fun getListTasks(tokenUser: String) {
+    private suspend fun getListTasks(tokenUser: String) {
             _tasksState.value = GetStateTasks.Loading
             uiCheckStatus.value = StatusUI("Loading")
             try {

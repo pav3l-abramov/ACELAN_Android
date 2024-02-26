@@ -34,14 +34,20 @@ class LoginViewModel @Inject constructor(
     fun onPasswordChange(newValue: String) {
         uiState.value = uiState.value.copy(password = newValue)
     }
-    fun setEmailUI(emailDB:String){
-        uiState.value = uiState.value.copy(email = emailDB)
+
+    fun loginWithRetry(email: String, password: String) {
+        try {
+            login(email,password)
+        } catch (e: Exception) {
+            // Handle the error and retry the request if necessary
+            login(email,password)
+        }
     }
 
-    fun login(email: String, password: String) {
+    private fun login(email: String, password: String) {
         viewModelScope.launch {
             _loginState.value = PostState.Loading
-            uiCheckStatus.value= StatusUI("Loading")
+            uiCheckStatus.value = StatusUI("Loading")
             try {
                 val response = mainApi.auth(Login(email, password))
                 if (response.isSuccessful) {
@@ -49,11 +55,11 @@ class LoginViewModel @Inject constructor(
                     _loginState.value = token?.let { PostState.Success(it) }
                 } else {
                     _loginState.value = PostState.Error("Login failed")
-                    uiCheckStatus.value= StatusUI("Error")
+                    uiCheckStatus.value = StatusUI("Error")
                 }
             } catch (e: Exception) {
                 _loginState.value = PostState.Error(e.message ?: "Error occurred")
-                uiCheckStatus.value= StatusUI("Error")
+                uiCheckStatus.value = StatusUI("Error")
             }
         }
     }

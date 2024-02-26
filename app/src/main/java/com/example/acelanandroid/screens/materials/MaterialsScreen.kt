@@ -55,9 +55,9 @@ fun MaterialsScreen(
     val userDB = mainViewModel.getUserDB.collectAsState(initial = UserData())
     val checkUser by mainViewModel.checkUser
     LaunchedEffect(Unit) {
-        GlobalScope.async {
+
             mainViewModel.userIsExist()
-        }
+
     }
     if (!checkUser) {
         Column(

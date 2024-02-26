@@ -108,7 +108,8 @@ fun ProfileScreen(
             }
 
             BasicButton("Sign In", Modifier.basicButton()) {
-                loginViewModel.login(uiState.email, uiState.password)
+
+                loginViewModel.loginWithRetry(uiState.email, uiState.password)
                 loginViewModel.loginState.observe(lifecycleOwner, Observer { state ->
                     Log.d("start", state.toString())
                     when (state) {
@@ -121,7 +122,7 @@ fun ProfileScreen(
                         is PostState.Success -> {
                             Log.d("Success", state.toString())
                             val token = state.token.token
-                            GlobalScope.async {
+                            GlobalScope.launch {
                                 mainViewModel.insertUserToDB(
                                     UserData(
                                         1,

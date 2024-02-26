@@ -14,11 +14,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.LifecycleOwner
 import com.example.acelanandroid.common.composable.BasicButton
 import com.example.acelanandroid.common.composable.TaskDetailCard
 import com.example.acelanandroid.common.composable.TextCard
@@ -28,9 +29,13 @@ import com.example.acelanandroid.OpenGLES20Activity
 import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.data.TaskMain
 import com.example.acelanandroid.data.UserData
+import com.example.acelanandroid.retrofit.GetStateTaskDetail
+import com.example.acelanandroid.retrofit.GetStateTasks
 import com.example.acelanandroid.screens.MainViewModel
 import com.example.acelanandroid.screens.profile.LoginViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -49,16 +54,14 @@ fun OpenTaskScreen(
     val taskDB = mainViewModel.getTaskByID(idTask).collectAsState(initial = TaskMain())
     val userDB = mainViewModel.getUserDB.collectAsState(initial = UserData())
     val checkUser by mainViewModel.checkUser
+    val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(Unit) {
-        GlobalScope.async {
-            mainViewModel.userIsExist()
-        }
+        mainViewModel.userIsExist()
+
     }
 
 //    val uiState by openTaskViewModel.uiState
 //    val uiStateMain by openTaskViewModel.uiStateMain
-    val dataList: TaskMain by openTaskViewModel.dataList.collectAsState()
-
     if (!checkUser) {
         Column(
             modifier = modifier
@@ -71,13 +74,38 @@ fun OpenTaskScreen(
         }
 
     } else {
+        LaunchedEffect(Unit) {
+            openTaskViewModel.getListTaskDetailWithRetry(userDB.value.token.toString(), idTask)
+        }
+        openTaskViewModel.taskDetailState.observe(lifecycleOwner) { state ->
+            Log.d("start", state.toString())
+            when (state) {
+                GetStateTaskDetail.Loading -> {
+                    Log.d("Loading", state.toString())
+                }
 
-            GlobalScope.async  {
-                if (checkUser) {
-                    userDB.value.token?.let { openTaskViewModel.getTaskById(it, idTask) }
+                is GetStateTaskDetail.Success -> {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        Log.d("Success2", state.toString())
+                        val taskDetail = state.taskDetails
+
+                        mainViewModel.updateTaskDetail(
+                            taskDetail.artifacts?.takeIf { it.isNotEmpty() }?.get(0)?.file_type,
+                            taskDetail.artifacts?.takeIf { it.isNotEmpty() }?.get(0)?.url,
+                            taskDetail.figures?.takeIf { it.isNotEmpty() }?.get(0)?.data?.x,
+                            taskDetail.figures?.takeIf { it.isNotEmpty() }?.get(0)?.data?.y,
+                            taskDetail.id!!
+                        )
+                    }
 
                 }
+
+                is GetStateTaskDetail.Error -> {
+                    Log.d("Error", state.toString())
+                    val error = state.error
+                }
             }
+        }
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -85,17 +113,7 @@ fun OpenTaskScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            GlobalScope.async  {
-            if (!checkUser && dataList.id != null) {
-                Log.d("qqqqqqqqqqqqqqqqqqq", dataList.toString())
-                mainViewModel.updateTaskDetail(
-                    dataList.file_type, dataList.url, dataList.x, dataList.y,
-                    dataList.id!!
-                )
-            }
-        }
-
-           // Text(text = dataList.toString())
+            // Text(text = dataList.toString())
             TaskDetailCard("Name: ", taskDB.value.name.toString(), false, Modifier.fieldModifier())
             TaskDetailCard(
                 "Status: ",
