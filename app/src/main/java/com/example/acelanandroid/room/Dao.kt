@@ -26,7 +26,7 @@ interface Dao {
     suspend fun deleteUser()
 
     @Query("SELECT * FROM $USER")
-    fun getUser(): Flow<UserData>
+    suspend fun getUser(): UserData
 
 
     //material and task
@@ -81,4 +81,6 @@ interface Dao {
         x: List<Float>? = null,
         y: List<Float>? = null, id: Int
     )
+    @Query("SELECT COUNT(*) FROM $TASK")
+    fun countTasks(): Int
 }

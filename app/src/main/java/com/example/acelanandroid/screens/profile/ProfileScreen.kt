@@ -57,13 +57,13 @@ fun ProfileScreen(
     val uiState by loginViewModel.uiState
     val uiCheckStatus by loginViewModel.uiCheckStatus
     val checkUser by mainViewModel.checkUser
-    val userDB = mainViewModel.getUserDB.collectAsState(initial = UserData())
+    val userDB by mainViewModel.userDB
 
     val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
-    val coroutineScope = rememberCoroutineScope()
+    //val coroutineScope = rememberCoroutineScope()
 
 
-    coroutineScope.launch {
+    LaunchedEffect(Unit) {
         mainViewModel.userIsExist()
     }
 
@@ -84,29 +84,19 @@ fun ProfileScreen(
             )
             when (uiCheckStatus.status) {
                 null -> {}
-                "Success" -> {
-                    Toast.makeText(
-                        context,
-                        uiCheckStatus.status.toString(),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
                 "Loading" -> {
                     CustomLinearProgressBar(Modifier.fieldModifier())
-
                 }
-
                 else -> {
                     Toast.makeText(
                         context,
-                        uiCheckStatus.status.toString(),
+                        uiCheckStatus.body.toString(),
                         Toast.LENGTH_SHORT
                     ).show()
                     loginViewModel.nullStatus()
                 }
 
             }
-
             BasicButton("Sign In", Modifier.basicButton()) {
 
                 loginViewModel.loginWithRetry(uiState.email, uiState.password)
@@ -118,7 +108,6 @@ fun ProfileScreen(
                             // Show loading state
 
                         }
-
                         is PostState.Success -> {
                             Log.d("Success", state.toString())
                             val token = state.token.token
@@ -133,7 +122,6 @@ fun ProfileScreen(
 
                                 mainViewModel.userIsExist()
                             }
-
                             loginViewModel.nullStatus()
                         }
 
@@ -154,7 +142,10 @@ fun ProfileScreen(
                 context.startActivity(intent)
             }
         } else {
-                 Text(text = "Hello ${userDB.value.email}")
+            LaunchedEffect(Unit) {
+                mainViewModel.getUserDB()
+            }
+                 Text(text = "Hello ${userDB.email}")
 
                 BasicButton("Log Out", Modifier.basicButton()) {
                     GlobalScope.launch {

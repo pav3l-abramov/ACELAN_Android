@@ -18,9 +18,16 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
 
     val checkUser = mutableStateOf(false)
+    val userDB = mutableStateOf(UserData())
 
     //user
-    val getUserDB = database.dao.getUser()
+    suspend fun getUserDB() {
+        return withContext(Dispatchers.IO) {
+            userDB.value=database.dao.getUser()
+
+        }
+    }
+
     suspend fun deleteUserDB() {
         database.dao.deleteUser()
         checkUser.value = false

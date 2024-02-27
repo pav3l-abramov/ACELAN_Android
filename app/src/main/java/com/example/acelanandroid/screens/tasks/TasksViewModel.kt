@@ -43,32 +43,32 @@ class TasksViewModel @Inject constructor(
 
     private suspend fun getListTasks(tokenUser: String) {
             _tasksState.value = GetStateTasks.Loading
-            uiCheckStatus.value = StatusUI("Loading")
+            uiCheckStatus.value = StatusUI("Loading","Loading")
             try {
                 Log.d("getListTasks", "3")
                 val response = mainApi.getTasks("Bearer $tokenUser")
                 if (response.isSuccessful) {
                     Log.d("getListTasks", "4")
+                    uiCheckStatus.value = StatusUI("Success","Success")
                     val tasks = response.body()
                     _tasksState.value = tasks?.let { GetStateTasks.Success(it) }
 //                    job.cancel()
                 } else {
                     _tasksState.value = GetStateTasks.Error("Login failed")
-                    uiCheckStatus.value = StatusUI("Error")
+                    uiCheckStatus.value = StatusUI("Error","Login failed")
                 }
                 //TimeUnit.MILLISECONDS.sleep(200)
             } catch (e: Exception) {
                 _tasksState.value = GetStateTasks.Error(e.message ?: "Error occurred")
-                uiCheckStatus.value = StatusUI("Error")
             }
 
     }
 
     fun typeError(code: String) {
-        uiCheckStatus.value = StatusUI(code)
+        uiCheckStatus.value = StatusUI("Error",code)
     }
 
     fun nullStatus() {
-        uiCheckStatus.value = StatusUI(null)
+        uiCheckStatus.value = StatusUI()
     }
 }

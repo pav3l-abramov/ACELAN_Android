@@ -47,24 +47,24 @@ class LoginViewModel @Inject constructor(
     private fun login(email: String, password: String) {
         viewModelScope.launch {
             _loginState.value = PostState.Loading
-            uiCheckStatus.value = StatusUI("Loading")
+            uiCheckStatus.value = StatusUI("Loading","Loading")
             try {
                 val response = mainApi.auth(Login(email, password))
                 if (response.isSuccessful) {
                     val token = response.body()
+                    uiCheckStatus.value = StatusUI("Success","Success")
                     _loginState.value = token?.let { PostState.Success(it) }
                 } else {
                     _loginState.value = PostState.Error("Login failed")
-                    uiCheckStatus.value = StatusUI("Error")
+                    uiCheckStatus.value = StatusUI("Error","Login failed")
                 }
             } catch (e: Exception) {
                 _loginState.value = PostState.Error(e.message ?: "Error occurred")
-                uiCheckStatus.value = StatusUI("Error")
             }
         }
     }
     fun typeError(code:String){
-        uiCheckStatus.value= StatusUI(code)
+        uiCheckStatus.value= StatusUI("Error",code)
     }
     fun nullStatus(){uiCheckStatus.value= StatusUI(null)}
 }

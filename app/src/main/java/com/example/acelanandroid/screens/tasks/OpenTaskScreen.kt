@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -52,16 +53,14 @@ fun OpenTaskScreen(
     mainViewModel: MainViewModel = hiltViewModel(),
 ) {
     val taskDB = mainViewModel.getTaskByID(idTask).collectAsState(initial = TaskMain())
-    val userDB = mainViewModel.getUserDB.collectAsState(initial = UserData())
+    val userDB by mainViewModel.userDB
     val checkUser by mainViewModel.checkUser
     val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
+    val uiCheckStatus by openTaskViewModel.uiCheckStatus
     LaunchedEffect(Unit) {
         mainViewModel.userIsExist()
 
     }
-
-//    val uiState by openTaskViewModel.uiState
-//    val uiStateMain by openTaskViewModel.uiStateMain
     if (!checkUser) {
         Column(
             modifier = modifier
@@ -75,7 +74,19 @@ fun OpenTaskScreen(
 
     } else {
         LaunchedEffect(Unit) {
-            openTaskViewModel.getListTaskDetailWithRetry(userDB.value.token.toString(), idTask)
+            mainViewModel.getUserDB()
+            openTaskViewModel.getListTaskDetailWithRetry(userDB.token.toString(), idTask)
+        }
+        when (uiCheckStatus.status) {
+            null -> {}
+            else -> {
+                Toast.makeText(
+                    context,
+                    uiCheckStatus.body.toString(),
+                    Toast.LENGTH_SHORT
+                ).show()
+                openTaskViewModel.nullStatus()
+            }
         }
         openTaskViewModel.taskDetailState.observe(lifecycleOwner) { state ->
             Log.d("start", state.toString())
@@ -103,6 +114,7 @@ fun OpenTaskScreen(
                 is GetStateTaskDetail.Error -> {
                     Log.d("Error", state.toString())
                     val error = state.error
+                    openTaskViewModel.typeError(error)
                 }
             }
         }

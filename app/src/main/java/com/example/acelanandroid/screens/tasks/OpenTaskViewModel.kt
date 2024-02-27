@@ -36,24 +36,31 @@ var uiCheckStatus = mutableStateOf(StatusUI())
 
     private suspend fun getListTaskDetail(tokenUser: String,idTask:Int) {
         _taskDetailState.value = GetStateTaskDetail.Loading
-        uiCheckStatus.value = StatusUI("Loading")
+        uiCheckStatus.value = StatusUI("Loading","Loading")
         try {
             Log.d("getListTasks", "3")
             val response = mainApi.getTaskDetails("Bearer $tokenUser",idTask)
             if (response.isSuccessful) {
+                uiCheckStatus.value = StatusUI("Success","Success")
                 Log.d("getListTasks", "4")
                 val tasks = response.body()
                 _taskDetailState.value = tasks?.let { GetStateTaskDetail.Success(it) }
 //                    job.cancel()
             } else {
                 _taskDetailState.value = GetStateTaskDetail.Error("Login failed")
-                uiCheckStatus.value = StatusUI("Error")
+                uiCheckStatus.value = StatusUI("Error","Login failed")
             }
             //TimeUnit.MILLISECONDS.sleep(200)
         } catch (e: Exception) {
             _taskDetailState.value = GetStateTaskDetail.Error(e.message ?: "Error occurred")
-            uiCheckStatus.value = StatusUI("Error")
         }
 
+    }
+    fun typeError(code: String) {
+        uiCheckStatus.value = StatusUI("Error",code)
+    }
+
+    fun nullStatus() {
+        uiCheckStatus.value = StatusUI()
     }
 }

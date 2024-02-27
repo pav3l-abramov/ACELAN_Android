@@ -58,7 +58,7 @@ fun TasksScreen(
 ) {
 
     val tasksList = mainViewModel.taskListDB.collectAsState(initial = emptyList())
-    val userDB = mainViewModel.getUserDB.collectAsState(initial = UserData())
+    val userDB by mainViewModel.userDB
     val checkUser by mainViewModel.checkUser
     val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
     val uiCheckStatus by tasksViewModel.uiCheckStatus
@@ -84,7 +84,19 @@ fun TasksScreen(
     } else {
 
         LaunchedEffect(Unit) {
-            tasksViewModel.getListTasksWithRetry(userDB.value.token.toString())
+            mainViewModel.getUserDB()
+            tasksViewModel.getListTasksWithRetry(userDB.token.toString())
+        }
+        when (uiCheckStatus.status) {
+            null -> {}
+            else -> {
+                Toast.makeText(
+                    context,
+                    uiCheckStatus.body.toString(),
+                    Toast.LENGTH_SHORT
+                ).show()
+                tasksViewModel.nullStatus()
+            }
         }
         tasksViewModel.tasksState.observe(lifecycleOwner) { state ->
             Log.d("start", state.toString())
@@ -111,11 +123,10 @@ fun TasksScreen(
                 is GetStateTasks.Error -> {
                     Log.d("Error", state.toString())
                     val error = state.error
+                    tasksViewModel.typeError(error)
                 }
             }
         }
-
-
         LazyColumn {
             items(tasksList.value) { item ->
                 item.name?.let {
