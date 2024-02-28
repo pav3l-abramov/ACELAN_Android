@@ -27,6 +27,7 @@ import com.example.acelanandroid.common.composable.TextCard
 import com.example.acelanandroid.common.ext.basicButton
 import com.example.acelanandroid.common.ext.fieldModifier
 import com.example.acelanandroid.OpenGLES20Activity
+import com.example.acelanandroid.common.composable.CustomLinearProgressBar
 import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.data.TaskMain
 import com.example.acelanandroid.data.UserData
@@ -34,10 +35,13 @@ import com.example.acelanandroid.retrofit.GetStateTaskDetail
 import com.example.acelanandroid.retrofit.GetStateTasks
 import com.example.acelanandroid.screens.MainViewModel
 import com.example.acelanandroid.screens.profile.LoginViewModel
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -52,15 +56,18 @@ fun OpenTaskScreen(
     context: Context,
     mainViewModel: MainViewModel = hiltViewModel(),
 ) {
-    val taskDB = mainViewModel.getTaskByID(idTask).collectAsState(initial = TaskMain())
+    val taskDB by mainViewModel.taskDetailDB.collectAsState()
     val userDB by mainViewModel.userDB
     val checkUser by mainViewModel.checkUser
     val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
     val uiCheckStatus by openTaskViewModel.uiCheckStatus
+    val isLoading by openTaskViewModel.isLoading.collectAsState()
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
     LaunchedEffect(Unit) {
         mainViewModel.userIsExist()
-
+        mainViewModel.getUserDB()
     }
+    CoroutineScope(Job()).launch { mainViewModel.getTaskByID(idTask) }
     if (!checkUser) {
         Column(
             modifier = modifier
@@ -73,104 +80,119 @@ fun OpenTaskScreen(
         }
 
     } else {
-        LaunchedEffect(Unit) {
-            mainViewModel.getUserDB()
-            openTaskViewModel.getListTaskDetailWithRetry(userDB.token.toString(), idTask)
-        }
-        when (uiCheckStatus.status) {
-            null -> {}
-            else -> {
-                Toast.makeText(
-                    context,
-                    uiCheckStatus.body.toString(),
-                    Toast.LENGTH_SHORT
-                ).show()
-                openTaskViewModel.nullStatus()
+
+        LaunchedEffect(taskDB) {
+            if ((taskDB.url == null && taskDB.x.isNullOrEmpty() && taskDB.id != null)) {
+                openTaskViewModel.getListTaskDetailWithRetry(
+                    userDB.token.toString(),
+                    idTask,
+                    context
+                )
+                mainViewModel.getTaskByID(idTask)
             }
         }
-        openTaskViewModel.taskDetailState.observe(lifecycleOwner) { state ->
-            Log.d("start", state.toString())
-            when (state) {
-                GetStateTaskDetail.Loading -> {
-                    Log.d("Loading", state.toString())
+
+        SwipeRefresh(state = swipeRefreshState,
+            onRefresh = {
+                openTaskViewModel.getListTaskDetailWithRetry(
+                    userDB.token.toString(),
+                    idTask,
+                    context
+                )
+            }) {
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                // Text(text = dataList.toString())
+                TaskDetailCard("Name: ", taskDB.name.toString(), false, Modifier.fieldModifier())
+                TaskDetailCard(
+                    "Status: ",
+                    taskDB.status.toString(),
+                    false,
+                    Modifier.fieldModifier()
+                )
+                TaskDetailCard(
+                    "Start:  ",
+                    taskDB.started_at.toString(),
+                    true,
+                    Modifier.fieldModifier()
+                )
+                TaskDetailCard(
+                    "Finish: ",
+                    taskDB.finished_at.toString(),
+                    true,
+                    Modifier.fieldModifier()
+                )
+                TaskDetailCard(
+                    "File type: ",
+                    taskDB.file_type.toString(),
+                    false,
+                    Modifier.fieldModifier()
+                )
+                TaskDetailCard(
+                    "File url: ",
+                    taskDB.url.toString(),
+                    false,
+                    Modifier.fieldModifier()
+                )
+                if (isLoading) {
+                    CustomLinearProgressBar(Modifier.fieldModifier())
                 }
+                if (taskDB.url != null) {
+                    when (taskDB.file_type) {
+                        "jpg", "png" -> DrawImage(taskDB.url!!, Modifier.fieldModifier())
+                        "ply", "obj", "stl" -> BasicButton("View model", Modifier.basicButton()) {
+                            val intent = Intent(context, OpenGLES20Activity::class.java)
+                            intent.putExtra("url", taskDB.url)
+                            intent.putExtra("type", taskDB.file_type)
+                            context.startActivity(intent)
+                        }
 
-                is GetStateTaskDetail.Success -> {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        Log.d("Success2", state.toString())
-                        val taskDetail = state.taskDetails
-
-                        mainViewModel.updateTaskDetail(
-                            taskDetail.artifacts?.takeIf { it.isNotEmpty() }?.get(0)?.file_type,
-                            taskDetail.artifacts?.takeIf { it.isNotEmpty() }?.get(0)?.url,
-                            taskDetail.figures?.takeIf { it.isNotEmpty() }?.get(0)?.data?.x,
-                            taskDetail.figures?.takeIf { it.isNotEmpty() }?.get(0)?.data?.y,
-                            taskDetail.id!!
+                        else -> TextCard(
+                            "I don't know how to draw this file",
+                            Modifier.fieldModifier()
                         )
                     }
-
-                }
-
-                is GetStateTaskDetail.Error -> {
-                    Log.d("Error", state.toString())
-                    val error = state.error
-                    openTaskViewModel.typeError(error)
+                } else {
+                    TextCard("There is nothing to draw in this task", Modifier.fieldModifier())
                 }
             }
-        }
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
-            // Text(text = dataList.toString())
-            TaskDetailCard("Name: ", taskDB.value.name.toString(), false, Modifier.fieldModifier())
-            TaskDetailCard(
-                "Status: ",
-                taskDB.value.status.toString(),
-                false,
-                Modifier.fieldModifier()
-            )
-            TaskDetailCard(
-                "Start:  ",
-                taskDB.value.started_at.toString(),
-                true,
-                Modifier.fieldModifier()
-            )
-            TaskDetailCard(
-                "Finish: ",
-                taskDB.value.finished_at.toString(),
-                true,
-                Modifier.fieldModifier()
-            )
-            TaskDetailCard(
-                "File type: ",
-                taskDB.value.file_type.toString(),
-                false,
-                Modifier.fieldModifier()
-            )
-            TaskDetailCard(
-                "File url: ",
-                taskDB.value.url.toString(),
-                false,
-                Modifier.fieldModifier()
-            )
-            if (taskDB.value.url != null) {
-                when (taskDB.value.file_type) {
-                    "jpg", "png" -> DrawImage(taskDB.value.url!!, Modifier.fieldModifier())
-                    "ply", "obj", "stl" -> BasicButton("View model", Modifier.basicButton()) {
-                        val intent = Intent(context, OpenGLES20Activity::class.java)
-                        intent.putExtra("url", taskDB.value.url)
-                        intent.putExtra("type", taskDB.value.file_type)
-                        context.startActivity(intent)
+            //        when (uiCheckStatus.status) {
+//            null -> {}
+//            else -> {
+//                Toast.makeText(
+//                    context,
+//                    uiCheckStatus.body.toString(),
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//                openTaskViewModel.nullStatus()
+//            }
+//        }
+            openTaskViewModel.taskDetailState.observe(lifecycleOwner) { state ->
+                Log.d("start", state.toString())
+                when (state) {
+                    GetStateTaskDetail.Loading -> {
+                        Log.d("Loading", state.toString())
                     }
 
-                    else -> TextCard("I don't know how to draw this file", Modifier.fieldModifier())
+                    is GetStateTaskDetail.Success -> {
+                        CoroutineScope(Job()).launch {
+                            mainViewModel.handleSuccessStateOpenTaskScreen(state)
+                        }
+
+                    }
+
+                    is GetStateTaskDetail.Error -> {
+                        mainViewModel.handleErrorStateOpenTaskScreen(state)
+                        Log.d("Error", state.toString())
+                        val error = state.error
+                        openTaskViewModel.typeError(error)
+                    }
                 }
-            } else {
-                TextCard("There is nothing to draw in this task", Modifier.fieldModifier())
             }
         }
     }

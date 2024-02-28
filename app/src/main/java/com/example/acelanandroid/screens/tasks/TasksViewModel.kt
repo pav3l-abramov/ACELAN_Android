@@ -8,21 +8,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.acelanandroid.data.TaskMain
-import com.example.acelanandroid.data.singleData.Login
-import com.example.acelanandroid.data.singleData.Task
 import com.example.acelanandroid.retrofit.AppRetrofit
 import com.example.acelanandroid.retrofit.GetDataApi
 import com.example.acelanandroid.retrofit.GetStateTasks
-import com.example.acelanandroid.retrofit.PostState
 import com.example.acelanandroid.screens.StatusUI
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -43,15 +36,14 @@ class TasksViewModel @Inject constructor(
             getListTasks(tokenUser,context)
         } catch (e: Exception) {
             // Handle the error and retry the request if necessary
-            getListTasks(tokenUser,context)
+            //getListTasks(tokenUser,context)
         }
     }
 
-    fun checkAndUpdateTasksListState() {}
 
     private fun getListTasks(tokenUser: String, context: Context) {
         viewModelScope.launch {
-            _isLoading.value = false
+            _isLoading.value = true
             _tasksState.value = GetStateTasks.Loading
             uiCheckStatus.value = StatusUI("Loading", "Loading")
             try {
@@ -72,6 +64,11 @@ class TasksViewModel @Inject constructor(
 //                    job.cancel()
                 } else {
                     _isLoading.value = false
+                    Toast.makeText(
+                        context,
+                        "Login failed",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     _tasksState.value = GetStateTasks.Error("Login failed")
                     uiCheckStatus.value = StatusUI("Error", "Login failed")
 
@@ -79,6 +76,11 @@ class TasksViewModel @Inject constructor(
                 //TimeUnit.MILLISECONDS.sleep(200)
             } catch (e: Exception) {
                 _tasksState.value = GetStateTasks.Error(e.message ?: "Error occurred")
+                Toast.makeText(
+                    context,
+                    e.message ?: "Error occurred",
+                    Toast.LENGTH_SHORT
+                ).show()
                 _isLoading.value = false
             }
         }

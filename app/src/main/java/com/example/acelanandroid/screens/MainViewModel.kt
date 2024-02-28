@@ -1,23 +1,18 @@
 package com.example.acelanandroid.screens
 
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.acelanandroid.data.MaterialMain
 import com.example.acelanandroid.data.TaskMain
 import com.example.acelanandroid.data.UserData
-import com.example.acelanandroid.data.singleData.Login
-import com.example.acelanandroid.data.singleData.Task
+import com.example.acelanandroid.retrofit.GetStateTaskDetail
 import com.example.acelanandroid.retrofit.GetStateTasks
 import com.example.acelanandroid.room.MainDB
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -74,11 +69,21 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
         database.dao.insertMaterial(materialFromServer)
     }
 
-    fun getTaskByID(id: Int) =
-        database.dao.getTaskMainByID(id)
+//    fun getTaskByID(id: Int) =
+//        database.dao.getTaskMainByID(id)
 
-    fun getMaterialByID(id: Int) =
-        database.dao.getTaskMainByID(id)
+    private val _taskDetailDB = MutableStateFlow(TaskMain())
+    val taskDetailDB: StateFlow<TaskMain> = _taskDetailDB
+
+    suspend fun getTaskByID(id: Int) {
+        viewModelScope.launch {
+            _taskDetailDB.value = database.dao.getTaskMainByID(id)
+        }
+    }
+
+
+//    fun getMaterialByID(id: Int) =
+//        database.dao.getTaskMainByID(id)
 
     private fun updateTaskMain(
         name: String? = null,
@@ -88,7 +93,7 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
         id: Int
     ) = database.dao.updateTaskMain(name, status, started_at, finish_at, id)
 
-    fun updateTaskDetail(
+    private fun updateTaskDetail(
         file_type: String? = null,
         url: String? = null,
         x: List<Float>? = null,
@@ -96,7 +101,7 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
         id: Int
     ) = database.dao.updateTaskDetail(file_type, url, x, y, id)
 
-    suspend fun handleSuccessState(state: GetStateTasks.Success) {
+    suspend fun handleSuccessStateTasksScreen(state: GetStateTasks.Success) {
         val tasks = state.tasks.tasks
         tasks.forEach() {
             insertTaskToDB(TaskMain(it.id))
@@ -106,9 +111,25 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
             )
         }
     }
-    fun handleErrorState(state: GetStateTasks.Error) {
+    fun handleErrorStateTasksScreen(state: GetStateTasks.Error) {
         val error = state.error
     }
+
+    fun handleSuccessStateOpenTaskScreen(state: GetStateTaskDetail.Success) {
+        val taskDetail = state.taskDetails
+
+        updateTaskDetail(
+            taskDetail.artifacts?.takeIf { it.isNotEmpty() }?.get(0)?.file_type,
+            taskDetail.artifacts?.takeIf { it.isNotEmpty() }?.get(0)?.url,
+            taskDetail.figures?.takeIf { it.isNotEmpty() }?.get(0)?.data?.x,
+            taskDetail.figures?.takeIf { it.isNotEmpty() }?.get(0)?.data?.y,
+            taskDetail.id!!
+        )
+    }
+    fun handleErrorStateOpenTaskScreen(state: GetStateTaskDetail.Error) {
+        val error = state.error
+    }
+
 
     suspend fun deleteTaskDB(mainTask: TaskMain){database.dao.deleteTask(mainTask)}
 }

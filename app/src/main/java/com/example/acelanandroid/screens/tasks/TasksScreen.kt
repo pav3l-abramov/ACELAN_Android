@@ -3,57 +3,35 @@ package com.example.acelanandroid.screens.tasks
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import com.example.acelanandroid.OPEN_TASK_SCREEN
-import com.example.acelanandroid.common.composable.BasicButton
 import com.example.acelanandroid.common.composable.CustomLinearProgressBar
 import com.example.acelanandroid.common.composable.TaskCard
 import com.example.acelanandroid.common.composable.TextCardStandart
-import com.example.acelanandroid.common.ext.basicButton
 import com.example.acelanandroid.common.ext.fieldModifier
-import com.example.acelanandroid.data.TaskMain
-import com.example.acelanandroid.data.UserData
-import com.example.acelanandroid.data.singleData.Task
 import com.example.acelanandroid.retrofit.GetStateTasks
-import com.example.acelanandroid.retrofit.PostState
 import com.example.acelanandroid.screens.MainViewModel
-import com.example.acelanandroid.screens.profile.LoginViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Semaphore
 
 @SuppressLint("CoroutineCreationDuringComposition", "UnrememberedMutableState")
 @Composable
@@ -157,13 +135,13 @@ fun TasksScreen(
 //                            TaskMain(id = tasksList.value.size-i)
 //                        )
 //                    }
-                    mainViewModel.handleSuccessState(state)
+                    mainViewModel.handleSuccessStateTasksScreen(state)
 
                 }
             }
 
             is GetStateTasks.Error -> {
-                mainViewModel.handleErrorState(state)
+                mainViewModel.handleErrorStateTasksScreen(state)
                     val error = state.error
                     tasksViewModel.typeError(error)
             }

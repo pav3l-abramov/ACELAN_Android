@@ -49,7 +49,7 @@ interface Dao {
     suspend fun getTaskMain(): List<TaskMain>
 
     @Query("SELECT * FROM $TASK WHERE id=:id")
-    fun getTaskMainByID(id: Int): Flow<TaskMain>
+    suspend fun getTaskMainByID(id: Int): TaskMain
 
     @Query("SELECT * FROM $MATERIAL WHERE id=:id")
     fun getMaterialMainByID(id: Int): Flow<MaterialMain>
