@@ -30,8 +30,10 @@ import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.common.ext.fieldModifier
 import com.example.acelanandroid.screens.MainViewModel
 import com.example.acelanandroid.screens.profile.LoginViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -45,7 +47,7 @@ fun HomeScreen(
 ) {
     val checkUser by mainViewModel.checkUser
     LaunchedEffect(Unit) {
-        GlobalScope.async {
+        CoroutineScope(Job()).launch {
             mainViewModel.userIsExist()
         }
     }

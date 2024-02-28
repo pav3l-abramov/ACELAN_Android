@@ -50,92 +50,92 @@ fun MaterialsScreen(
     context: Context
 ) {
 
-
-    val dataList: List<Material> by matrialViewModel.dataListMaterial.collectAsState()
-    val userDB = mainViewModel.getUserDB.collectAsState(initial = UserData())
-    val checkUser by mainViewModel.checkUser
-    LaunchedEffect(Unit) {
-
-            mainViewModel.userIsExist()
-
-    }
-    if (!checkUser) {
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally) {
-            TextCardStandart("Go to profile and login",Modifier.fieldModifier())
-        }
-
-    } else {
-        LaunchedEffect(Unit) {
-            GlobalScope.launch {
-                if (checkUser) {
-                    userDB.value.token?.let { matrialViewModel.getListMaterials("", it) }
-                }
-            }
-        }
-
-        Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            val searchText = remember { mutableStateOf("") }
-            SearchBar(
-                modifier = Modifier.fieldModifier(),
-                query = searchText.value,
-                onQueryChange = { text ->
-                    searchText.value = text
-                    if (searchText.value==""){
-                        GlobalScope.launch {
-                            if (checkUser) {
-                                userDB.value.token?.let {
-                                    matrialViewModel.getListMaterials(searchText.value,
-                                        it
-                                    )
-                                }
-                            }
-                        }
-                    }
-                },
-                onSearch = { text ->
-                    Log.d("searchText.value",searchText.value)
-                        GlobalScope.launch {
-                            if (checkUser) {
-                                userDB.value.token?.let {
-                                    matrialViewModel.getListMaterials(searchText.value,
-                                        it
-                                    )
-                                }
-                            }
-                        }
-
-                },
-                placeholder = {
-                    Text(text = "Search...")
-                },
-                active = false,
-                onActiveChange = {
-
-                }) {
-            }
-
-            LazyColumn {
-                itemsIndexed(items = dataList) { index, item ->
-                    MaterialCard(
-                        content = item.name, modifier = Modifier.fieldModifier()
-                    ) { navController.navigate(route = OPEN_MATERIAL_SCREEN + "/${item.id}") }
-                }
-            }
-            if (dataList.isEmpty()){
-                Text(text = "No matches")
-            }
-        }
-
-    }
+//
+//    val dataList: List<Material> by matrialViewModel.dataListMaterial.collectAsState()
+//    val userDB = mainViewModel.getUserDB.collectAsState(initial = UserData())
+//    val checkUser by mainViewModel.checkUser
+//    LaunchedEffect(Unit) {
+//
+//            mainViewModel.userIsExist()
+//
+//    }
+//    if (!checkUser) {
+//        Column(
+//            modifier = modifier
+//                .fillMaxSize()
+//                .verticalScroll(rememberScrollState()),
+//            verticalArrangement = Arrangement.Center,
+//            horizontalAlignment = Alignment.CenterHorizontally) {
+//            TextCardStandart("Go to profile and login",Modifier.fieldModifier())
+//        }
+//
+//    } else {
+//        LaunchedEffect(Unit) {
+//            GlobalScope.launch {
+//                if (checkUser) {
+//                    userDB.value.token?.let { matrialViewModel.getListMaterials("", it) }
+//                }
+//            }
+//        }
+//
+//        Column(
+//            modifier = modifier
+//                .fillMaxWidth()
+//                .fillMaxHeight(),
+//            verticalArrangement = Arrangement.Top,
+//            horizontalAlignment = Alignment.CenterHorizontally
+//        ) {
+//            val searchText = remember { mutableStateOf("") }
+//            SearchBar(
+//                modifier = Modifier.fieldModifier(),
+//                query = searchText.value,
+//                onQueryChange = { text ->
+//                    searchText.value = text
+//                    if (searchText.value==""){
+//                        GlobalScope.launch {
+//                            if (checkUser) {
+//                                userDB.value.token?.let {
+//                                    matrialViewModel.getListMaterials(searchText.value,
+//                                        it
+//                                    )
+//                                }
+//                            }
+//                        }
+//                    }
+//                },
+//                onSearch = { text ->
+//                    Log.d("searchText.value",searchText.value)
+//                        GlobalScope.launch {
+//                            if (checkUser) {
+//                                userDB.value.token?.let {
+//                                    matrialViewModel.getListMaterials(searchText.value,
+//                                        it
+//                                    )
+//                                }
+//                            }
+//                        }
+//
+//                },
+//                placeholder = {
+//                    Text(text = "Search...")
+//                },
+//                active = false,
+//                onActiveChange = {
+//
+//                }) {
+//            }
+//
+//            LazyColumn {
+//                itemsIndexed(items = dataList) { index, item ->
+//                    MaterialCard(
+//                        content = item.name, modifier = Modifier.fieldModifier()
+//                    ) { navController.navigate(route = OPEN_MATERIAL_SCREEN + "/${item.id}") }
+//                }
+//            }
+//            if (dataList.isEmpty()){
+//                Text(text = "No matches")
+//            }
+//        }
+//
+//    }
 }

@@ -102,6 +102,9 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
 
+    //refresh data swipe
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.27.0")
+
 
     //implementation ("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.22")
     // for draw obj

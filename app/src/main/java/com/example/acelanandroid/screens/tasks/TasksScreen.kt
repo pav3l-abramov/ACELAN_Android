@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,10 +15,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,9 +31,11 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import com.example.acelanandroid.OPEN_TASK_SCREEN
+import com.example.acelanandroid.common.composable.BasicButton
 import com.example.acelanandroid.common.composable.CustomLinearProgressBar
 import com.example.acelanandroid.common.composable.TaskCard
 import com.example.acelanandroid.common.composable.TextCardStandart
+import com.example.acelanandroid.common.ext.basicButton
 import com.example.acelanandroid.common.ext.fieldModifier
 import com.example.acelanandroid.data.TaskMain
 import com.example.acelanandroid.data.UserData
@@ -38,16 +44,18 @@ import com.example.acelanandroid.retrofit.GetStateTasks
 import com.example.acelanandroid.retrofit.PostState
 import com.example.acelanandroid.screens.MainViewModel
 import com.example.acelanandroid.screens.profile.LoginViewModel
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 
-@OptIn(DelicateCoroutinesApi::class)
-@SuppressLint("CoroutineCreationDuringComposition")
+@SuppressLint("CoroutineCreationDuringComposition", "UnrememberedMutableState")
 @Composable
 fun TasksScreen(
     navController: NavController,
@@ -57,18 +65,20 @@ fun TasksScreen(
     context: Context
 ) {
 
-    val tasksList = mainViewModel.taskListDB.collectAsState(initial = emptyList())
+    val tasksList by mainViewModel.taskListDB.collectAsState()
     val userDB by mainViewModel.userDB
     val checkUser by mainViewModel.checkUser
     val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
     val uiCheckStatus by tasksViewModel.uiCheckStatus
-
+    val isLoading by tasksViewModel.isLoading.collectAsState()
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
 
     LaunchedEffect(Unit) {
-            mainViewModel.userIsExist()
-        }
+        mainViewModel.userIsExist()
+        mainViewModel.getUserDB()
 
-
+    }
+    CoroutineScope(Job()).launch { mainViewModel.updateTaskList()}
     Log.d("checkUsercheckUsercheckUser", checkUser.toString())
     if (!checkUser) {
         Column(
@@ -82,63 +92,94 @@ fun TasksScreen(
         }
 
     } else {
+        LaunchedEffect(tasksList) {
 
-        LaunchedEffect(Unit) {
-            mainViewModel.getUserDB()
-            tasksViewModel.getListTasksWithRetry(userDB.token.toString())
+            if (tasksList.isEmpty()) {
+                Log.d("tasksListtasksListtasksListtasksListtasksList", tasksList.toString())
+                tasksViewModel.getListTasksWithRetry(userDB.token.toString(),context)
+                mainViewModel.updateTaskList()
+            }
+
         }
-        when (uiCheckStatus.status) {
-            null -> {}
-            else -> {
-                Toast.makeText(
-                    context,
-                    uiCheckStatus.body.toString(),
-                    Toast.LENGTH_SHORT
-                ).show()
-                tasksViewModel.nullStatus()
+
+
+        if (tasksList.isEmpty()) {
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                TextCardStandart("Download data...", Modifier.fieldModifier())
+                CustomLinearProgressBar(Modifier.fieldModifier())
             }
         }
-        tasksViewModel.tasksState.observe(lifecycleOwner) { state ->
-            Log.d("start", state.toString())
-            when (state) {
-                GetStateTasks.Loading -> {
-                    Log.d("Loading", state.toString())
-                }
-
-                is GetStateTasks.Success -> {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        Log.d("Success2", state.toString())
-                        val tasks =state.tasks.tasks
-                        tasks.forEach() {
-                            mainViewModel.insertTaskToDB(TaskMain(it.id))
-                                mainViewModel.updateTaskMain(
-                                    it.name, it.status, it.started_at, it.finished_at,
-                                    it.id
-                                )
+        else {
+            SwipeRefresh(state = swipeRefreshState,
+                onRefresh = {
+                    tasksViewModel.getListTasksWithRetry(
+                        userDB.token.toString(),
+                        context
+                    )
+                }) {
+                LazyColumn {
+                    items(tasksList) { item ->
+                        item.name?.let {
+                            item.status?.let { it1 ->
+                                TaskCard(
+                                    it, Modifier.fieldModifier(), it1
+                                ) {
+                                    navController.navigate(route = OPEN_TASK_SCREEN + "/${item.id}")
+                                }
+                            }
                         }
                     }
-
                 }
 
-                is GetStateTasks.Error -> {
-                    Log.d("Error", state.toString())
-                    val error = state.error
-                    tasksViewModel.typeError(error)
-                }
-            }
-        }
-        LazyColumn {
-            items(tasksList.value) { item ->
-                item.name?.let {
-                    item.status?.let { it1 ->
-                        TaskCard(
-                            it, Modifier.fieldModifier(), it1
-                        ) { navController.navigate(route = OPEN_TASK_SCREEN + "/${item.id}") }
-                    }
-                }
             }
         }
     }
+    tasksViewModel.tasksState.observe(lifecycleOwner) { state ->
+        Log.d("start", state.toString())
+        when (state) {
+            GetStateTasks.Loading -> {
+                Log.d("Loading", state.toString())
+            }
+
+            is GetStateTasks.Success -> {
+
+                CoroutineScope(Job()).launch {
+//                    if (tasksList.value.size != state.tasks.tasks.size &&
+//                        tasksList.value.size > state.tasks.tasks.size
+//                    ) {
+//                        for (i in 1..tasksList.value.size - state.tasks.tasks.size) mainViewModel.deleteTaskDB(
+//                            TaskMain(id = tasksList.value.size-i)
+//                        )
+//                    }
+                    mainViewModel.handleSuccessState(state)
+
+                }
+            }
+
+            is GetStateTasks.Error -> {
+                mainViewModel.handleErrorState(state)
+                    val error = state.error
+                    tasksViewModel.typeError(error)
+            }
+        }
+    }
+//            when (uiCheckStatus.status) {
+//            null -> {}
+//            else -> {
+//                Toast.makeText(
+//                    context,
+//                    uiCheckStatus.body.toString(),
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//                tasksViewModel.nullStatus()
+//            }
+//        }
 
 }
 

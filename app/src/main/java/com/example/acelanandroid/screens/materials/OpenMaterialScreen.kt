@@ -42,35 +42,35 @@ fun OpenMaterialScreen(
     openMaterialViewModel: OpenMaterialViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel(),
 ) {
-    //val uiState by openMaterialViewModel.uiState
-    val uiStateMain by openMaterialViewModel.uiStateMain
-    val userDB = mainViewModel.getUserDB.collectAsState(initial = UserData())
-    val checkUser by mainViewModel.checkUser
-    LaunchedEffect(Unit) {
-        GlobalScope.async {
-            mainViewModel.userIsExist()
-        }
-    }
-    openMaterialViewModel.getIdMaterial(idMaterial)
-    GlobalScope.launch {
-        userDB.value.token?.let { openMaterialViewModel.getMaterialById(it,idMaterial) }
-    }
-
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        MaterialDetailCard("Name: ", uiStateMain.name.toString(), false, Modifier.fieldModifier())
-        MaterialDetailCard("Type: ", uiStateMain.type.toString(), false, Modifier.fieldModifier())
-        MaterialDetailCard("Create: ", uiStateMain.created_at.toString(), true, Modifier.fieldModifier())
-        MaterialDetailCard("Update: ", uiStateMain.updated_at.toString(), true, Modifier.fieldModifier())
-        MaterialDetailCard("Core: ", uiStateMain.core.toString(), false, Modifier.fieldModifier())
-        MaterialDetailCard("Source: ", uiStateMain.source.toString(), false, Modifier.fieldModifier())
-        TextCardStandart("Properties",Modifier.fieldModifier())
-        MaterialDetailCard("Young Modulus: ", uiStateMain.young.toString(), false, Modifier.fieldModifier())
-        MaterialDetailCard("Poison Coefficient: ", uiStateMain.poison.toString(), false, Modifier.fieldModifier())
-    }
+//    //val uiState by openMaterialViewModel.uiState
+//    val uiStateMain by openMaterialViewModel.uiStateMain
+//    val userDB = mainViewModel.getUserDB.collectAsState(initial = UserData())
+//    val checkUser by mainViewModel.checkUser
+//    LaunchedEffect(Unit) {
+//        GlobalScope.async {
+//            mainViewModel.userIsExist()
+//        }
+//    }
+//    openMaterialViewModel.getIdMaterial(idMaterial)
+//    GlobalScope.launch {
+//        userDB.value.token?.let { openMaterialViewModel.getMaterialById(it,idMaterial) }
+//    }
+//
+//    Column(
+//        modifier = modifier
+//            .fillMaxSize()
+//            .verticalScroll(rememberScrollState()),
+//        horizontalAlignment = Alignment.CenterHorizontally
+//    ) {
+//        MaterialDetailCard("Name: ", uiStateMain.name.toString(), false, Modifier.fieldModifier())
+//        MaterialDetailCard("Type: ", uiStateMain.type.toString(), false, Modifier.fieldModifier())
+//        MaterialDetailCard("Create: ", uiStateMain.created_at.toString(), true, Modifier.fieldModifier())
+//        MaterialDetailCard("Update: ", uiStateMain.updated_at.toString(), true, Modifier.fieldModifier())
+//        MaterialDetailCard("Core: ", uiStateMain.core.toString(), false, Modifier.fieldModifier())
+//        MaterialDetailCard("Source: ", uiStateMain.source.toString(), false, Modifier.fieldModifier())
+//        TextCardStandart("Properties",Modifier.fieldModifier())
+//        MaterialDetailCard("Young Modulus: ", uiStateMain.young.toString(), false, Modifier.fieldModifier())
+//        MaterialDetailCard("Poison Coefficient: ", uiStateMain.poison.toString(), false, Modifier.fieldModifier())
+//    }
 
 }

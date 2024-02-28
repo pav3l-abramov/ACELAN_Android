@@ -38,9 +38,11 @@ import com.example.acelanandroid.common.ext.fieldModifier
 import com.example.acelanandroid.data.UserData
 import com.example.acelanandroid.retrofit.PostState
 import com.example.acelanandroid.screens.MainViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -111,7 +113,7 @@ fun ProfileScreen(
                         is PostState.Success -> {
                             Log.d("Success", state.toString())
                             val token = state.token.token
-                            GlobalScope.launch {
+                            CoroutineScope(Job()).launch {
                                 mainViewModel.insertUserToDB(
                                     UserData(
                                         1,
@@ -148,7 +150,7 @@ fun ProfileScreen(
                  Text(text = "Hello ${userDB.email}")
 
                 BasicButton("Log Out", Modifier.basicButton()) {
-                    GlobalScope.launch {
+                    CoroutineScope(Job()).launch {
                         mainViewModel.deleteUserDB()
                     }
                 }
