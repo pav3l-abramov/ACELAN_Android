@@ -171,9 +171,6 @@ fun MaterialsScreen(
                             }
                         }
                     }
-
-
-
                 }
             }
         }

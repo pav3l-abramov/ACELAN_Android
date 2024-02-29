@@ -92,7 +92,7 @@ fun AppNavigation(context:Context) {
                     type = NavType.IntType
                 }
             )) { idMaterial ->
-                idMaterial.arguments?.getInt("id")?.let { OpenMaterialScreen(idMaterial = it) }
+                idMaterial.arguments?.getInt("id")?.let { OpenMaterialScreen(idMaterial = it, context = context) }
             }
 
 

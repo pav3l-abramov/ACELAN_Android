@@ -26,19 +26,6 @@ class MatrialViewModel  @Inject constructor(
     private val appRetrofit: AppRetrofit
 ) : ViewModel() {
     val mainApi = appRetrofit.retrofit.create(GetDataApi::class.java)
-
-//    private val _dataListMaterial = MutableStateFlow<List<Material>>(emptyList())
-//    val dataListMaterial: StateFlow<List<Material>> = _dataListMaterial.asStateFlow()
-
-//    suspend fun getListMaterials(searchText:String, tokenUser:String) {
-//        Log.d("tasks", "start3")
-//        if (tokenUser != null) {
-//            val materials = mainApi.getMaterials("Bearer $tokenUser",searchText)
-//            _dataListMaterial.value = materials.materials
-//        }
-//
-//    }
-
     var uiCheckStatus = mutableStateOf(StatusUI())
     private val _materialsState = MutableLiveData<GetStateMaterial>()
     val materialsState: LiveData<GetStateMaterial> = _materialsState
@@ -77,8 +64,6 @@ class MatrialViewModel  @Inject constructor(
                     uiCheckStatus.value = StatusUI("Success", "Success")
                     val materials = response.body()
                     _materialsState.value = materials?.let { GetStateMaterial.Success(it,onSearch) }
-
-//                    job.cancel()
                 } else {
                     _isLoading.value = false
                     Toast.makeText(
@@ -90,7 +75,6 @@ class MatrialViewModel  @Inject constructor(
                     uiCheckStatus.value = StatusUI("Error", "Login failed")
 
                 }
-                //TimeUnit.MILLISECONDS.sleep(200)
             } catch (e: Exception) {
                 _materialsState.value = GetStateMaterial.Error(e.message ?: "Error occurred")
                 Toast.makeText(
