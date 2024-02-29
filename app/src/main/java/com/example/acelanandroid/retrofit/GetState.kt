@@ -7,12 +7,12 @@ import com.example.acelanandroid.data.singleData.Tasks
 
 sealed class GetStateMaterial {
     object Loading : GetStateMaterial()
-    data class Success(val materials: Materials) : GetStateMaterial()
+    data class Success(val materials: Materials,val onSearch:Boolean) : GetStateMaterial()
     data class Error(val error: String) : GetStateMaterial()
 }
 sealed class GetStateMaterialDetail {
     object Loading : GetStateMaterialDetail()
-    data class Success(val materialDetails: MaterialDetails) : GetStateMaterialDetail()
+    data class Success(val materialDetails: MaterialDetails ) : GetStateMaterialDetail()
     data class Error(val error: String) : GetStateMaterialDetail()
 }
 

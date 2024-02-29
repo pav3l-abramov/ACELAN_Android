@@ -28,21 +28,21 @@ class OpenMaterialViewModel @Inject constructor(
     }
 
 
-    suspend fun getMaterialById(token:String, idMaterial:Int) {
-        val material = idMaterial.let { mainApi.getMaterialDetails("Bearer $token", it) }
-        uiStateMain.value = uiStateMain.value.copy(name = material.name)
-        uiStateMain.value = uiStateMain.value.copy(type = material.type)
-        uiStateMain.value = uiStateMain.value.copy(source = material.source)
-        uiStateMain.value = uiStateMain.value.copy(created_at = material.created_at)
-        uiStateMain.value = uiStateMain.value.copy(updated_at = material.updated_at)
-        uiStateMain.value = uiStateMain.value.copy(core = material.core)
-        uiStateMain.value = uiStateMain.value.copy(young = material.properties?.young)
-        uiStateMain.value = uiStateMain.value.copy(poison = material.properties?.poison)
-
-//                if (!material.properties.isNullOrEmpty()) {
-//                    uiState.value = uiState.value.copy(stiffness = material.properties[0].stiffness)
-//                }
-
-    }
+//    suspend fun getMaterialById(token:String, idMaterial:Int) {
+//        val material = idMaterial.let { mainApi.getMaterialDetails("Bearer $token", it) }
+//        uiStateMain.value = uiStateMain.value.copy(name = material.name)
+//        uiStateMain.value = uiStateMain.value.copy(type = material.type)
+//        uiStateMain.value = uiStateMain.value.copy(source = material.source)
+//        uiStateMain.value = uiStateMain.value.copy(created_at = material.created_at)
+//        uiStateMain.value = uiStateMain.value.copy(updated_at = material.updated_at)
+//        uiStateMain.value = uiStateMain.value.copy(core = material.core)
+//        uiStateMain.value = uiStateMain.value.copy(young = material.properties?.young)
+//        uiStateMain.value = uiStateMain.value.copy(poison = material.properties?.poison)
+//
+////                if (!material.properties.isNullOrEmpty()) {
+////                    uiState.value = uiState.value.copy(stiffness = material.properties[0].stiffness)
+////                }
+//
+//    }
 
 }

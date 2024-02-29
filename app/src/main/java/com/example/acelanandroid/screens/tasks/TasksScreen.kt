@@ -71,13 +71,11 @@ fun TasksScreen(
 
     } else {
         LaunchedEffect(tasksList) {
-
             if (tasksList.isEmpty()) {
                 Log.d("tasksListtasksListtasksListtasksListtasksList", tasksList.toString())
                 tasksViewModel.getListTasksWithRetry(userDB.token.toString(),context)
                 mainViewModel.updateTaskList()
             }
-
         }
 
 

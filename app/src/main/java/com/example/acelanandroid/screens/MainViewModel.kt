@@ -4,8 +4,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.acelanandroid.data.MaterialMain
+import com.example.acelanandroid.data.MaterialToDraw
 import com.example.acelanandroid.data.TaskMain
 import com.example.acelanandroid.data.UserData
+import com.example.acelanandroid.data.singleData.Material
 import com.example.acelanandroid.retrofit.GetStateMaterial
 import com.example.acelanandroid.retrofit.GetStateMaterialDetail
 import com.example.acelanandroid.retrofit.GetStateTaskDetail
@@ -15,6 +17,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -28,7 +31,7 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
     //user
     suspend fun getUserDB() {
         return withContext(Dispatchers.IO) {
-            userDB.value=database.dao.getUser()
+            userDB.value = database.dao.getUser()
 
         }
     }
@@ -51,8 +54,6 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
     }
 
 
-
-
     //Task
     private val _taskListDB = MutableStateFlow<List<TaskMain>>(emptyList())
     val taskListDB: StateFlow<List<TaskMain>> = _taskListDB
@@ -62,6 +63,7 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
             _taskListDB.value = database.dao.getTaskMain()
         }
     }
+
     private suspend fun insertTaskToDB(taskFromServer: TaskMain) {
         database.dao.insertTask(taskFromServer)
     }
@@ -74,6 +76,7 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
             _taskDetailDB.value = database.dao.getTaskMainByID(id)
         }
     }
+
     private fun updateTaskMain(
         name: String? = null,
         status: String? = null,
@@ -89,7 +92,7 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
         x: List<Float>? = null,
         y: List<Float>? = null,
         id: Int
-    ) = database.dao.updateTaskDetail(file_type, url,graph_type, x, y, id)
+    ) = database.dao.updateTaskDetail(file_type, url, graph_type, x, y, id)
 
     suspend fun handleSuccessStateTasksScreen(state: GetStateTasks.Success) {
         val tasks = state.tasks.tasks
@@ -101,6 +104,7 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
             )
         }
     }
+
     fun handleErrorStateTasksScreen(state: GetStateTasks.Error) {
         val error = state.error
     }
@@ -117,18 +121,25 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
             taskDetail.id!!
         )
     }
+
     fun handleErrorStateOpenTaskScreen(state: GetStateTaskDetail.Error) {
         val error = state.error
     }
-    suspend fun deleteTaskDB(mainTask: TaskMain){database.dao.deleteTask(mainTask)}
 
-
-
+    suspend fun deleteTaskDB(mainTask: TaskMain) {
+        database.dao.deleteTask(mainTask)
+    }
 
 
     //material
     private val _materialListDB = MutableStateFlow<List<MaterialMain>>(emptyList())
-    val MaterialListDB: StateFlow<List<MaterialMain>> = _materialListDB
+    val materialListDB: StateFlow<List<MaterialMain>> = _materialListDB
+
+    private val _materialToSearch = MutableStateFlow<List<Material>>(emptyList())
+    val materialToSearch: StateFlow<List<Material>> = _materialToSearch.asStateFlow()
+
+    private val _materialDetailDB = MutableStateFlow(MaterialMain())
+    val materialDetailDB: StateFlow<MaterialMain> = _materialDetailDB
 
     suspend fun updateMaterialList() {
         viewModelScope.launch {
@@ -136,27 +147,26 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
         }
     }
 
-    suspend fun insertMaterialToDB(materialFromServer: MaterialMain) {
+    private suspend fun insertMaterialToDB(materialFromServer: MaterialMain) {
         database.dao.insertMaterial(materialFromServer)
     }
 
-    private val _materialDetailDB = MutableStateFlow(MaterialMain())
-    val materialDetailDB: StateFlow<MaterialMain> = _materialDetailDB
 
     suspend fun getMaterialByID(id: Int) {
         viewModelScope.launch {
             _materialDetailDB.value = database.dao.getMaterialMainByID(id)
         }
     }
+
     private fun updateMaterialMain(
         name: String? = null,
         type: String? = null,
-        source:String?=null,
+        source: String? = null,
         created_at: String? = null,
         updated_at: String? = null,
-        core:Boolean?=null,
+        core: Boolean? = null,
         id: Int
-    ) = database.dao.updateMaterialMain(name, type,source, created_at, updated_at,core, id)
+    ) = database.dao.updateMaterialMain(name, type, source, created_at, updated_at, core, id)
 
     private fun updateMaterialDetail(
         young: String? = null,
@@ -165,21 +175,34 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
         piezo: List<Float>? = null,
         dielectric: List<Float>? = null,
         id: Int
-    ) = database.dao.updateMaterialDetailMain(young, poison,stiffness, piezo, dielectric, id)
+    ) = database.dao.updateMaterialDetailMain(young, poison, stiffness, piezo, dielectric, id)
 
 
-    fun updateMaterialDetailDrawMain(takeToDraw:Boolean,id:Int)= database.dao.updateMaterialDetailDrawMain(takeToDraw, id)
+    suspend fun insertMaterialToDraw(materialToDraw: MaterialToDraw) {
+        database.dao.insertMaterialToDraw(materialToDraw)
+    }
+
+    suspend fun deleteMaterialToDraw(id: Int) {
+        database.dao.deleteMaterialToDrawById(id)
+    }
 
     suspend fun handleSuccessStateMaterialScreen(state: GetStateMaterial.Success) {
+
         val materials = state.materials.materials
-        materials.forEach() {
-            insertMaterialToDB(MaterialMain(it.id))
-            updateMaterialMain(
-                it.name, it.type, it.source, it.created_at, it.updated_at,it.core,
-                it.id
-            )
+        if (state.onSearch) {
+            _materialToSearch.value = materials
+        } else {
+            materials.forEach() {
+                insertMaterialToDB(MaterialMain(it.id))
+                updateMaterialMain(
+                    it.name, it.type, it.source, it.created_at, it.updated_at, it.core,
+                    it.id
+                )
+            }
         }
+
     }
+
     fun handleErrorStateMaterialsScreen(state: GetStateMaterial.Error) {
         val error = state.error
     }
@@ -195,9 +218,13 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
             materialDetail.id!!
         )
     }
+
     fun handleErrorStateOpenMaterialScreen(state: GetStateMaterialDetail.Error) {
         val error = state.error
     }
-    suspend fun deleteMaterialDB(materialMain: MaterialMain){database.dao.deleteMaterial(materialMain)}
+
+    suspend fun deleteMaterialDB(materialMain: MaterialMain) {
+        database.dao.deleteMaterial(materialMain)
+    }
 
 }

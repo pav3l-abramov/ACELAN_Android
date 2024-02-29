@@ -3,6 +3,7 @@ package com.example.acelanandroid.data
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
+import com.example.acelanandroid.DRAW
 import com.example.acelanandroid.MATERIAL
 import com.example.acelanandroid.TASK
 import com.example.acelanandroid.USER
@@ -25,8 +26,7 @@ data class MaterialMain(
     @TypeConverters(FloatListConverter::class)
     val piezo: List<Float>? = null,
     @TypeConverters(FloatListConverter::class)
-    val dielectric: List<Float>? = null,
-    val takeToDraw: Boolean?=null
+    val dielectric: List<Float>? = null
 )
 @Entity(tableName = TASK)
 data class TaskMain(
@@ -51,4 +51,9 @@ data class UserData(
     val id :Int?=null,
     val email:String?="",
     val token: String? = null
+)
+@Entity(tableName = DRAW)
+data class MaterialToDraw(
+    @PrimaryKey(autoGenerate = false)
+    val id :Int?=null,
 )

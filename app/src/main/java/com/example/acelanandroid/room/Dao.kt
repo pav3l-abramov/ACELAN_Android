@@ -5,10 +5,12 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.acelanandroid.DRAW
 import com.example.acelanandroid.MATERIAL
 import com.example.acelanandroid.TASK
 import com.example.acelanandroid.USER
 import com.example.acelanandroid.data.MaterialMain
+import com.example.acelanandroid.data.MaterialToDraw
 import com.example.acelanandroid.data.TaskMain
 import com.example.acelanandroid.data.UserData
 import kotlinx.coroutines.flow.Flow
@@ -73,11 +75,11 @@ interface Dao {
         dielectric: List<Float>?=null,
         id: Int
     )
-    @Query("UPDATE $MATERIAL SET takeToDraw=:takeToDraw  WHERE id=:id")
-    fun updateMaterialDetailDrawMain(
-        takeToDraw:Boolean?=null,
-        id: Int
-    )
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertMaterialToDraw(materialToDraw: MaterialToDraw)
+
+    @Query("DELETE FROM $DRAW WHERE id = :id")
+    suspend fun deleteMaterialToDrawById(id: Int)
 
     @Query("UPDATE $TASK SET name=:name,status=:status,started_at=:started_at,finished_at=:finished_at  WHERE id=:id")
     fun updateTaskMain(
