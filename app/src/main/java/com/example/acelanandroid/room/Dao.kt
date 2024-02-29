@@ -74,10 +74,11 @@ interface Dao {
         id: Int
     )
 
-    @Query("UPDATE $TASK SET file_type=:file_type,url=:url,x=:x,y=:y  WHERE id=:id")
+    @Query("UPDATE $TASK SET file_type=:file_type,url=:url,graph_type=:graph_type, x=:x,y=:y  WHERE id=:id")
     fun updateTaskDetail(
         file_type: String? = null,
         url: String? = null,
+        graph_type:String?=null,
         x: List<Float>? = null,
         y: List<Float>? = null, id: Int
     )

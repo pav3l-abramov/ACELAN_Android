@@ -96,10 +96,11 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
     private fun updateTaskDetail(
         file_type: String? = null,
         url: String? = null,
+        graph_type: String? = null,
         x: List<Float>? = null,
         y: List<Float>? = null,
         id: Int
-    ) = database.dao.updateTaskDetail(file_type, url, x, y, id)
+    ) = database.dao.updateTaskDetail(file_type, url,graph_type, x, y, id)
 
     suspend fun handleSuccessStateTasksScreen(state: GetStateTasks.Success) {
         val tasks = state.tasks.tasks
@@ -121,6 +122,7 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
         updateTaskDetail(
             taskDetail.artifacts?.takeIf { it.isNotEmpty() }?.get(0)?.file_type,
             taskDetail.artifacts?.takeIf { it.isNotEmpty() }?.get(0)?.url,
+            taskDetail.figures?.takeIf { it.isNotEmpty() }?.get(0)?.type,
             taskDetail.figures?.takeIf { it.isNotEmpty() }?.get(0)?.data?.x,
             taskDetail.figures?.takeIf { it.isNotEmpty() }?.get(0)?.data?.y,
             taskDetail.id!!

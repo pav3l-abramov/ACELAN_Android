@@ -17,7 +17,7 @@ data class Artifact(
 )
 data class Figure(
     val id: Int? =null,
-    val file_type: String? =null,
+    val type: String? =null,
     val data: Data? =null
 )
 data class Data(

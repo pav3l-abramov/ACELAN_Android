@@ -36,6 +36,7 @@ data class TaskMain(
     val started_at:String? = null,
     val finished_at:String? = null,
     val file_type: String? =null,
+    val graph_type: String? =null,
     val url: String? =null,
     @TypeConverters(FloatListConverter::class)
     val x :List<Float>? =null,
