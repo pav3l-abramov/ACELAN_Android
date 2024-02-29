@@ -43,7 +43,7 @@ interface Dao {
     suspend fun deleteTask(taskMain: TaskMain)
 
     @Query("SELECT * FROM $MATERIAL")
-    fun getMaterialMain(): Flow<List<MaterialMain>>
+    suspend fun getMaterialMain(): List<MaterialMain>
 
     @Query("SELECT * FROM $TASK")
     suspend fun getTaskMain(): List<TaskMain>
@@ -52,16 +52,30 @@ interface Dao {
     suspend fun getTaskMainByID(id: Int): TaskMain
 
     @Query("SELECT * FROM $MATERIAL WHERE id=:id")
-    fun getMaterialMainByID(id: Int): Flow<MaterialMain>
+    suspend fun getMaterialMainByID(id: Int): MaterialMain
 
     @Query("UPDATE $MATERIAL SET name=:name,type=:type,source=:source,created_at=:created_at,updated_at=:updated_at,core=:core  WHERE id=:id")
     fun updateMaterialMain(
-        name: String,
-        type: String,
-        source: String,
-        created_at: String,
-        updated_at: String,
-        core: Boolean,
+        name: String?=null,
+        type: String?=null,
+        source: String?=null,
+        created_at: String?=null,
+        updated_at: String?=null,
+        core: Boolean?=null,
+        id: Int
+    )
+    @Query("UPDATE $MATERIAL SET young=:young,poison=:poison,stiffness=:stiffness,piezo=:piezo,dielectric=:dielectric  WHERE id=:id")
+    fun updateMaterialDetailMain(
+        young: String?=null,
+        poison: String?=null,
+        stiffness: List<Float>?=null,
+        piezo: List<Float>?=null,
+        dielectric: List<Float>?=null,
+        id: Int
+    )
+    @Query("UPDATE $MATERIAL SET takeToDraw=:takeToDraw  WHERE id=:id")
+    fun updateMaterialDetailDrawMain(
+        takeToDraw:Boolean?=null,
         id: Int
     )
 

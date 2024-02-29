@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.acelanandroid.data.MaterialMain
 import com.example.acelanandroid.data.TaskMain
 import com.example.acelanandroid.data.UserData
+import com.example.acelanandroid.retrofit.GetStateMaterial
+import com.example.acelanandroid.retrofit.GetStateMaterialDetail
 import com.example.acelanandroid.retrofit.GetStateTaskDetail
 import com.example.acelanandroid.retrofit.GetStateTasks
 import com.example.acelanandroid.room.MainDB
@@ -49,10 +51,9 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
     }
 
 
-    //
 
-    val materialListDB = database.dao.getMaterialMain()
 
+    //Task
     private val _taskListDB = MutableStateFlow<List<TaskMain>>(emptyList())
     val taskListDB: StateFlow<List<TaskMain>> = _taskListDB
 
@@ -65,13 +66,6 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
         database.dao.insertTask(taskFromServer)
     }
 
-    suspend fun insertMaterialToDB(materialFromServer: MaterialMain) {
-        database.dao.insertMaterial(materialFromServer)
-    }
-
-//    fun getTaskByID(id: Int) =
-//        database.dao.getTaskMainByID(id)
-
     private val _taskDetailDB = MutableStateFlow(TaskMain())
     val taskDetailDB: StateFlow<TaskMain> = _taskDetailDB
 
@@ -80,11 +74,6 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
             _taskDetailDB.value = database.dao.getTaskMainByID(id)
         }
     }
-
-
-//    fun getMaterialByID(id: Int) =
-//        database.dao.getTaskMainByID(id)
-
     private fun updateTaskMain(
         name: String? = null,
         status: String? = null,
@@ -131,7 +120,84 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
     fun handleErrorStateOpenTaskScreen(state: GetStateTaskDetail.Error) {
         val error = state.error
     }
-
-
     suspend fun deleteTaskDB(mainTask: TaskMain){database.dao.deleteTask(mainTask)}
+
+
+
+
+
+    //material
+    private val _materialListDB = MutableStateFlow<List<MaterialMain>>(emptyList())
+    val MaterialListDB: StateFlow<List<MaterialMain>> = _materialListDB
+
+    suspend fun updateMaterialList() {
+        viewModelScope.launch {
+            _materialListDB.value = database.dao.getMaterialMain()
+        }
+    }
+
+    suspend fun insertMaterialToDB(materialFromServer: MaterialMain) {
+        database.dao.insertMaterial(materialFromServer)
+    }
+
+    private val _materialDetailDB = MutableStateFlow(MaterialMain())
+    val materialDetailDB: StateFlow<MaterialMain> = _materialDetailDB
+
+    suspend fun getMaterialByID(id: Int) {
+        viewModelScope.launch {
+            _materialDetailDB.value = database.dao.getMaterialMainByID(id)
+        }
+    }
+    private fun updateMaterialMain(
+        name: String? = null,
+        type: String? = null,
+        source:String?=null,
+        created_at: String? = null,
+        updated_at: String? = null,
+        core:Boolean?=null,
+        id: Int
+    ) = database.dao.updateMaterialMain(name, type,source, created_at, updated_at,core, id)
+
+    private fun updateMaterialDetail(
+        young: String? = null,
+        poison: String? = null,
+        stiffness: List<Float>? = null,
+        piezo: List<Float>? = null,
+        dielectric: List<Float>? = null,
+        id: Int
+    ) = database.dao.updateMaterialDetailMain(young, poison,stiffness, piezo, dielectric, id)
+
+
+    fun updateMaterialDetailDrawMain(takeToDraw:Boolean,id:Int)= database.dao.updateMaterialDetailDrawMain(takeToDraw, id)
+
+    suspend fun handleSuccessStateMaterialScreen(state: GetStateMaterial.Success) {
+        val materials = state.materials.materials
+        materials.forEach() {
+            insertMaterialToDB(MaterialMain(it.id))
+            updateMaterialMain(
+                it.name, it.type, it.source, it.created_at, it.updated_at,it.core,
+                it.id
+            )
+        }
+    }
+    fun handleErrorStateMaterialsScreen(state: GetStateMaterial.Error) {
+        val error = state.error
+    }
+
+    fun handleSuccessStateOpenMaterialScreen(state: GetStateMaterialDetail.Success) {
+        val materialDetail = state.materialDetails
+        updateMaterialDetail(
+            materialDetail.properties?.young,
+            materialDetail.properties?.poison,
+            materialDetail.properties?.stiffness,
+            materialDetail.properties?.piezo,
+            materialDetail.properties?.dielectric,
+            materialDetail.id!!
+        )
+    }
+    fun handleErrorStateOpenMaterialScreen(state: GetStateMaterialDetail.Error) {
+        val error = state.error
+    }
+    suspend fun deleteMaterialDB(materialMain: MaterialMain){database.dao.deleteMaterial(materialMain)}
+
 }

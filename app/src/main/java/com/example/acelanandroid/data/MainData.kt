@@ -25,7 +25,8 @@ data class MaterialMain(
     @TypeConverters(FloatListConverter::class)
     val piezo: List<Float>? = null,
     @TypeConverters(FloatListConverter::class)
-    val dielectric: List<Float>? = null
+    val dielectric: List<Float>? = null,
+    val takeToDraw: Boolean?=null
 )
 @Entity(tableName = TASK)
 data class TaskMain(
