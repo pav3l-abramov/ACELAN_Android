@@ -6,21 +6,33 @@ import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import com.example.acelanandroid.OPEN_TASK_SCREEN
+import com.example.acelanandroid.R
 import com.example.acelanandroid.common.composable.CustomLinearProgressBar
 import com.example.acelanandroid.common.composable.TaskCard
 import com.example.acelanandroid.common.composable.TextCardStandart
@@ -49,6 +61,7 @@ fun TasksScreen(
     val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
     val uiCheckStatus by tasksViewModel.uiCheckStatus
     val isLoading by tasksViewModel.isLoading.collectAsState()
+    var showDialog by remember { mutableStateOf(false) }
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
 
     LaunchedEffect(Unit) {
@@ -59,6 +72,7 @@ fun TasksScreen(
     CoroutineScope(Job()).launch { mainViewModel.updateTaskList()}
     Log.d("checkUsercheckUsercheckUser", checkUser.toString())
     if (!checkUser) {
+
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -77,7 +91,6 @@ fun TasksScreen(
                 mainViewModel.updateTaskList()
             }
         }
-
 
         if (tasksList.isEmpty()) {
             Column(
@@ -99,21 +112,21 @@ fun TasksScreen(
                         context
                     )
                 }) {
-                LazyColumn {
-                    items(tasksList) { item ->
-                        item.name?.let {
-                            item.status?.let { it1 ->
-                                TaskCard(
-                                    it, Modifier.fieldModifier(), it1
-                                ) {
-                                    navController.navigate(route = OPEN_TASK_SCREEN + "/${item.id}")
+                    LazyColumn {
+                        items(tasksList) { item ->
+                            item.name?.let {
+                                item.status?.let { it1 ->
+                                    TaskCard(
+                                        it, Modifier.fieldModifier(), it1
+                                    ) {
+                                        navController.navigate(route = OPEN_TASK_SCREEN + "/${item.id}")
+                                    }
                                 }
                             }
                         }
                     }
-                }
-
             }
+
         }
     }
     tasksViewModel.tasksState.observe(lifecycleOwner) { state ->

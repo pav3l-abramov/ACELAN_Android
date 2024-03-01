@@ -32,6 +32,12 @@ import com.example.acelanandroid.common.composable.MaterialCard
 import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.common.ext.fieldModifier
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButtonDefaults.Icon
+import androidx.compose.ui.res.painterResource
+import com.example.acelanandroid.R
 import com.example.acelanandroid.data.TaskMain
 import com.example.acelanandroid.data.UserData
 import com.example.acelanandroid.data.singleData.Material
@@ -48,7 +54,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-@SuppressLint("CoroutineCreationDuringComposition")
+@SuppressLint("CoroutineCreationDuringComposition", "UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class, DelicateCoroutinesApi::class)
 @Composable
 fun MaterialsScreen(
@@ -103,76 +109,92 @@ fun MaterialsScreen(
             }
         } else {
 
+            Scaffold(
+                floatingActionButton = {
+                    FloatingActionButton(
+                        shape = CircleShape,
+                        onClick = { /*TODO*/ },
+                        content = {
+                            androidx.compose.material3.Icon(
+                                painter = painterResource(R.drawable.baseline_filter_list_24),
+                                contentDescription = null
+                            )
+                        }
+                    )
+                },
+                content = {
+                    SwipeRefresh(state = swipeRefreshState,
+                        onRefresh = {
+                            materialViewModel.getListMaterialsWithRetry(
+                                "",
+                                userDB.token.toString(),
+                                context,
+                                false
+                            )
 
-                SwipeRefresh(state = swipeRefreshState,
-                    onRefresh = {
-                        materialViewModel.getListMaterialsWithRetry(
-                            "",
-                            userDB.token.toString(),
-                            context,
-                            false
-                        )
-
-                    }) {
-                                Column(
-                modifier = modifier
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                    val searchText = remember { mutableStateOf("") }
-                    SearchBar(
-                        modifier = Modifier.fieldModifier(),
-                        query = searchText.value,
-                        onQueryChange = { text ->
-                            searchText.value = text
-                            if (searchText.value == "") {
+                        }) {
+                        Column(
+                            modifier = modifier
+                                .fillMaxSize(),
+                            verticalArrangement = Arrangement.Top,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            val searchText = remember { mutableStateOf("") }
+                            SearchBar(
+                                modifier = Modifier.fieldModifier(),
+                                query = searchText.value,
+                                onQueryChange = { text ->
+                                    searchText.value = text
+                                    if (searchText.value == "") {
+                                        materialViewModel.getListMaterialsWithRetry(
+                                            searchText.value,
+                                            userDB.token.toString(),
+                                            context,
+                                            true
+                                        )
+                                    }
+                                },
+                                onSearch = { text ->
+                                    Log.d("searchText.value", searchText.value)
                                     materialViewModel.getListMaterialsWithRetry(
                                         searchText.value,
                                         userDB.token.toString(),
                                         context,
                                         true
                                     )
+
+                                },
+                                placeholder = {
+                                    Text(text = "Search...")
+                                },
+                                active = isActiveSearch.value,
+                                onActiveChange = {
+                                    isActiveSearch.value=it
+
+                                }) {
+                                LazyColumn {
+                                    items(materialToSearch) {item ->
+                                        MaterialCard(
+                                            content = item.name, modifier = Modifier.fieldModifier()
+                                        ) { navController.navigate(route = OPEN_MATERIAL_SCREEN + "/${item.id}") }
+                                    }
+                                }
                             }
-                        },
-                        onSearch = { text ->
-                            Log.d("searchText.value", searchText.value)
-                            materialViewModel.getListMaterialsWithRetry(
-                                searchText.value,
-                                userDB.token.toString(),
-                                context,
-                                true
-                            )
 
-                        },
-                        placeholder = {
-                            Text(text = "Search...")
-                        },
-                        active = isActiveSearch.value,
-                        onActiveChange = {
-                            isActiveSearch.value=it
-
-                        }) {
-                        LazyColumn {
-                            items(materialToSearch) {item ->
-                                MaterialCard(
-                                    content = item.name, modifier = Modifier.fieldModifier()
-                                ) { navController.navigate(route = OPEN_MATERIAL_SCREEN + "/${item.id}") }
-                            }
-                        }
-                    }
-
-                    LazyColumn {
-                        items(materialsList) {item ->
-                            item.name?.let {
-                                MaterialCard(
-                                    content = it, modifier = Modifier.fieldModifier()
-                                ) { navController.navigate(route = OPEN_MATERIAL_SCREEN + "/${item.id}") }
+                            LazyColumn {
+                                items(materialsList) {item ->
+                                    item.name?.let {
+                                        MaterialCard(
+                                            content = it, modifier = Modifier.fieldModifier()
+                                        ) { navController.navigate(route = OPEN_MATERIAL_SCREEN + "/${item.id}") }
+                                    }
+                                }
                             }
                         }
                     }
                 }
-            }
+            )
+
         }
     }
     materialViewModel.materialsState.observe(lifecycleOwner) { state ->

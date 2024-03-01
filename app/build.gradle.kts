@@ -105,13 +105,10 @@ dependencies {
     //refresh data swipe
     implementation("com.google.accompanist:accompanist-swiperefresh:0.27.0")
 
+    //draw graph
+    //implementation("co.yml:ycharts:2.1.0")
 
-    //implementation ("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.22")
-    // for draw obj
-//    implementation ("org.lwjgl:lwjgl:3.2.3")
-//    implementation ("org.lwjgl:lwjgl-opengl:3.2.3")
-//    implementation ("org.lwjgl:lwjgl-glfw:3.2.3")
-//    implementation ("androidx.opengl:opengl:1.0.0")
+
 
 }
 kapt {

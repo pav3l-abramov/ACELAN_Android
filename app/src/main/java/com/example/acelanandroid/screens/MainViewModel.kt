@@ -227,4 +227,6 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
         database.dao.deleteMaterial(materialMain)
     }
 
+
+
 }

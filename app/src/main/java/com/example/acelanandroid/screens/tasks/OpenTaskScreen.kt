@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -157,7 +158,15 @@ fun OpenTaskScreen(
                             Modifier.fieldModifier()
                         )
                     }
-                } else {
+                }
+                if (taskDB.x.isNullOrEmpty()){
+                    //DrawGraph(x = taskDB.x!!, y = taskDB.y!!, colorBackground = MaterialTheme.colorScheme.background, modifier =Modifier.fieldModifier() )
+                }
+                //DrawGraph(x = listOf(1.0f,2.0f,5.0f), y = listOf(1.0f,2.0f,5.0f), colorBackground = MaterialTheme.colorScheme.background, modifier =Modifier.fieldModifier() )
+                val x = listOf(1f, 2f, 3f, 4f, 5f)
+                val y = listOf(1f, 2f, 3f, 4f, 3f)
+
+                if (taskDB.url == null&& taskDB.graph_type==null) {
                     TextCard("There is nothing to draw in this task", Modifier.fieldModifier())
                 }
             }
