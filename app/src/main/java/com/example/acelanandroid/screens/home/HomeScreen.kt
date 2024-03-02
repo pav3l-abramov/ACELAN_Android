@@ -47,9 +47,7 @@ fun HomeScreen(
 ) {
     val checkUser by mainViewModel.checkUser
     LaunchedEffect(Unit) {
-        CoroutineScope(Job()).launch {
             mainViewModel.userIsExist()
-        }
     }
     Column(
         modifier = modifier

@@ -3,11 +3,13 @@ package com.example.acelanandroid.screens.materials
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.acelanandroid.data.singleData.Login
 import com.example.acelanandroid.retrofit.AppRetrofit
 import com.example.acelanandroid.retrofit.GetDataApi
 import com.example.acelanandroid.data.singleData.Material
@@ -25,6 +27,8 @@ import javax.inject.Inject
 class MatrialViewModel  @Inject constructor(
     private val appRetrofit: AppRetrofit
 ) : ViewModel() {
+
+
     val mainApi = appRetrofit.retrofit.create(GetDataApi::class.java)
     var uiCheckStatus = mutableStateOf(StatusUI())
     private val _materialsState = MutableLiveData<GetStateMaterial>()

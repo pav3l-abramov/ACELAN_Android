@@ -133,6 +133,8 @@ fun ProfileScreen(
                             loginViewModel.typeError(error)
                             // Handle error
                         }
+
+                        else -> {}
                     }
                 })
             }

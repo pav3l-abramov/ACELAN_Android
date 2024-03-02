@@ -33,11 +33,16 @@ import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.common.ext.fieldModifier
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButtonDefaults.Icon
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.painterResource
 import com.example.acelanandroid.R
+import com.example.acelanandroid.common.composable.CustomDialog
 import com.example.acelanandroid.data.TaskMain
 import com.example.acelanandroid.data.UserData
 import com.example.acelanandroid.data.singleData.Material
@@ -62,8 +67,10 @@ fun MaterialsScreen(
     modifier: Modifier = Modifier,
     mainViewModel: MainViewModel = hiltViewModel(),
     materialViewModel: MatrialViewModel = hiltViewModel(),
+    filterViewModel: FilterViewModel = hiltViewModel(),
     context: Context
 ) {
+    val uiStateFilter by filterViewModel.uiStateFilter
     val materialsList by mainViewModel.materialListDB.collectAsState()
     val materialToSearch by mainViewModel.materialToSearch.collectAsState()
     val userDB by mainViewModel.userDB
@@ -71,7 +78,8 @@ fun MaterialsScreen(
     val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
     val isLoading by materialViewModel.isLoading.collectAsState()
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
-    val isActiveSearch= remember {mutableStateOf(false)}
+    val isActiveSearch = remember { mutableStateOf(false) }
+    val isDialogOpen = remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         mainViewModel.userIsExist()
         mainViewModel.getUserDB()
@@ -92,7 +100,12 @@ fun MaterialsScreen(
         LaunchedEffect(materialsList) {
             if (materialsList.isEmpty()) {
                 Log.d("tasksListtasksListtasksListtasksListtasksList", materialsList.toString())
-                materialViewModel.getListMaterialsWithRetry("", userDB.token.toString(), context,false)
+                materialViewModel.getListMaterialsWithRetry(
+                    "",
+                    userDB.token.toString(),
+                    context,
+                    false
+                )
                 mainViewModel.updateMaterialList()
             }
         }
@@ -113,7 +126,7 @@ fun MaterialsScreen(
                 floatingActionButton = {
                     FloatingActionButton(
                         shape = CircleShape,
-                        onClick = { /*TODO*/ },
+                        onClick = { isDialogOpen.value = true },
                         content = {
                             androidx.compose.material3.Icon(
                                 painter = painterResource(R.drawable.baseline_filter_list_24),
@@ -169,11 +182,11 @@ fun MaterialsScreen(
                                 },
                                 active = isActiveSearch.value,
                                 onActiveChange = {
-                                    isActiveSearch.value=it
+                                    isActiveSearch.value = it
 
                                 }) {
                                 LazyColumn {
-                                    items(materialToSearch) {item ->
+                                    items(materialToSearch) { item ->
                                         MaterialCard(
                                             content = item.name, modifier = Modifier.fieldModifier()
                                         ) { navController.navigate(route = OPEN_MATERIAL_SCREEN + "/${item.id}") }
@@ -182,7 +195,7 @@ fun MaterialsScreen(
                             }
 
                             LazyColumn {
-                                items(materialsList) {item ->
+                                items(materialsList) { item ->
                                     item.name?.let {
                                         MaterialCard(
                                             content = it, modifier = Modifier.fieldModifier()
@@ -190,6 +203,29 @@ fun MaterialsScreen(
                                     }
                                 }
                             }
+                            if (isDialogOpen.value) {
+                                CustomDialog(
+                                    message = "Filter",
+                                    youngMin = uiStateFilter.filterYoungMin,
+                                    youngMax = uiStateFilter.filterYoungMax,
+                                    youngOn = uiStateFilter.filterYoungOn,
+                                    core = uiStateFilter.filterCore,
+                                    type = uiStateFilter.filterType,
+                                    onNewValueMainYoungFilter = {
+                                        filterViewModel.onNewValueMainYoungFilter(
+                                            !uiStateFilter.filterYoungOn
+                                        )
+                                    },
+                                    onNewValueCoreFilter = filterViewModel::onCoreFilterChange,
+                                    onNewValueTypeFilter = filterViewModel::onTypeFilterChange,
+                                    onNewValueYoungMinFilter = filterViewModel::onYoungMinFilterChange,
+                                    onNewValueYoungMaxFilter = filterViewModel::onYoungMaxFilterChange,
+                                    onCancel = { isDialogOpen.value = false },
+                                    modifier = Modifier.fieldModifier(),
+                                    color = MaterialTheme.colorScheme.background
+                                )
+                            }
+
                         }
                     }
                 }
