@@ -61,16 +61,16 @@ import com.example.acelanandroid.screens.materials.FilterViewModel
 @Composable
 fun CustomDialog(
     message: String,
-    youngMin: String,
-    youngMax: String,
-    youngOn: Boolean,
+//    youngMin: String,
+//    youngMax: String,
+//    youngOn: Boolean,
     core: String,
     type: String,
-    onNewValueMainYoungFilter: () -> Unit,
+//    onNewValueMainYoungFilter: () -> Unit,
     onNewValueTypeFilter: (String) -> Unit,
     onNewValueCoreFilter: (String) -> Unit,
-    onNewValueYoungMinFilter: (String) -> Unit,
-    onNewValueYoungMaxFilter: (String) -> Unit,
+//    onNewValueYoungMinFilter: (String) -> Unit,
+//    onNewValueYoungMaxFilter: (String) -> Unit,
     onCancel: () -> Unit,
     modifier: Modifier = Modifier,
     color: Color
@@ -194,95 +194,95 @@ fun CustomDialog(
                     }
                 }
             }
-            Card(
-                modifier = modifier
-            ) {
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp, 16.dp)
-                    .clickable { onNewValueMainYoungFilter() })
-                {
-                    Text(
-                        text = "Young",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    )
-                    Spacer(Modifier.weight(1f))
-                    Image(
-                        painter = if (youngOn) painterResource(R.drawable.baseline_arrow_drop_up_24) else painterResource(
-                            R.drawable.baseline_arrow_drop_down_24
-                        ),
-                        contentDescription = "arrow",
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(16.dp))
-                            .padding(20.dp, 0.dp)
-                    )
-
-                }
-                if (youngOn) {
-                    Column(
-                        modifier = Modifier
-                            .padding(start = 5.dp, end = 5.dp, top = 2.dp, bottom = 16.dp)
-                            .border(2.dp, color, shape = RoundedCornerShape(10.dp))
-                            .fillMaxWidth(),
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                        ) {
-                            Text(
-                                text = "young min: ",
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .padding(start = 5.dp)
-                                    .width(100.dp)
-                                    .align(Alignment.CenterVertically)
-                            )
-                            Card(
-                                modifier = Modifier
-                                    .padding(top = 10.dp, end = 10.dp, bottom = 10.dp)
-                                    .border(1.dp, color, shape = RoundedCornerShape(10.dp))
-                            )
-                            {
-                                TextField(
-                                    singleLine = true,
-                                    modifier = Modifier.defaultMinSize(minHeight = 40.dp),
-                                    value = youngMin,
-                                    onValueChange = { onNewValueYoungMinFilter(it) },
-                                    placeholder = { Text("Young min") }
-                                )
-                            }
-                        }
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            ) {
-                            Text(
-                                text = "young max: ",
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .padding(start = 5.dp)
-                                    .width(100.dp)
-                                    .align(Alignment.CenterVertically)
-                            )
-                            Card(
-                                modifier = Modifier
-                                    .padding(top = 10.dp, end = 10.dp, bottom = 10.dp)
-                                    .border(1.dp, color, shape = RoundedCornerShape(10.dp))
-                            )
-                            {
-                                TextField(
-                                    singleLine = true,
-                                    modifier = Modifier.defaultMinSize(minHeight = 40.dp),
-                                    value = youngMax,
-                                    onValueChange = { onNewValueYoungMaxFilter(it) },
-                                    placeholder = { Text("Young max") }
-                                )
-                            }
-                        }
-                    }
-                }
-            }
+//            Card(
+//                modifier = modifier
+//            ) {
+//                Row(modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(16.dp, 16.dp)
+//                    .clickable { onNewValueMainYoungFilter() })
+//                {
+//                    Text(
+//                        text = "Young",
+//                        fontWeight = FontWeight.Bold,
+//                        modifier = Modifier.align(Alignment.CenterVertically)
+//                    )
+//                    Spacer(Modifier.weight(1f))
+//                    Image(
+//                        painter = if (youngOn) painterResource(R.drawable.baseline_arrow_drop_up_24) else painterResource(
+//                            R.drawable.baseline_arrow_drop_down_24
+//                        ),
+//                        contentDescription = "arrow",
+//                        modifier = Modifier
+//                            .clip(RoundedCornerShape(16.dp))
+//                            .padding(20.dp, 0.dp)
+//                    )
+//
+//                }
+//                if (youngOn) {
+//                    Column(
+//                        modifier = Modifier
+//                            .padding(start = 5.dp, end = 5.dp, top = 2.dp, bottom = 16.dp)
+//                            .border(2.dp, color, shape = RoundedCornerShape(10.dp))
+//                            .fillMaxWidth(),
+//                    ) {
+//                        Row(
+//                            modifier = Modifier
+//                                .fillMaxWidth(),
+//                        ) {
+//                            Text(
+//                                text = "young min: ",
+//                                textAlign = TextAlign.Center,
+//                                modifier = Modifier
+//                                    .padding(start = 5.dp)
+//                                    .width(100.dp)
+//                                    .align(Alignment.CenterVertically)
+//                            )
+//                            Card(
+//                                modifier = Modifier
+//                                    .padding(top = 10.dp, end = 10.dp, bottom = 10.dp)
+//                                    .border(1.dp, color, shape = RoundedCornerShape(10.dp))
+//                            )
+//                            {
+//                                TextField(
+//                                    singleLine = true,
+//                                    modifier = Modifier.defaultMinSize(minHeight = 40.dp),
+//                                    value = youngMin,
+//                                    onValueChange = { onNewValueYoungMinFilter(it) },
+//                                    placeholder = { Text("Young min") }
+//                                )
+//                            }
+//                        }
+//                        Row(
+//                            modifier = Modifier
+//                                .fillMaxWidth(),
+//                            ) {
+//                            Text(
+//                                text = "young max: ",
+//                                textAlign = TextAlign.Center,
+//                                modifier = Modifier
+//                                    .padding(start = 5.dp)
+//                                    .width(100.dp)
+//                                    .align(Alignment.CenterVertically)
+//                            )
+//                            Card(
+//                                modifier = Modifier
+//                                    .padding(top = 10.dp, end = 10.dp, bottom = 10.dp)
+//                                    .border(1.dp, color, shape = RoundedCornerShape(10.dp))
+//                            )
+//                            {
+//                                TextField(
+//                                    singleLine = true,
+//                                    modifier = Modifier.defaultMinSize(minHeight = 40.dp),
+//                                    value = youngMax,
+//                                    onValueChange = { onNewValueYoungMaxFilter(it) },
+//                                    placeholder = { Text("Young max") }
+//                                )
+//                            }
+//                        }
+//                    }
+//                }
+//            }
             Button(
                 onClick = { onCancel() },
                 modifier = Modifier

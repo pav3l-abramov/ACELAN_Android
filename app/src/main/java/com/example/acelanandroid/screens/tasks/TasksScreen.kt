@@ -42,8 +42,10 @@ import com.example.acelanandroid.screens.MainViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @SuppressLint("CoroutineCreationDuringComposition", "UnrememberedMutableState")
 @Composable
@@ -65,8 +67,10 @@ fun TasksScreen(
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
 
     LaunchedEffect(Unit) {
-        mainViewModel.userIsExist()
-        mainViewModel.getUserDB()
+        withContext(Dispatchers.IO) {
+            mainViewModel.userIsExist()
+            mainViewModel.getUserDB()
+        }
 
     }
     CoroutineScope(Job()).launch { mainViewModel.updateTaskList()}
@@ -85,10 +89,12 @@ fun TasksScreen(
 
     } else {
         LaunchedEffect(tasksList) {
-            if (tasksList.isEmpty()) {
-                Log.d("tasksListtasksListtasksListtasksListtasksList", tasksList.toString())
-                tasksViewModel.getListTasksWithRetry(userDB.token.toString(),context)
-                mainViewModel.updateTaskList()
+            withContext(Dispatchers.IO) {
+                if (tasksList.isEmpty()) {
+                    Log.d("tasksListtasksListtasksListtasksListtasksList", tasksList.toString())
+                    tasksViewModel.getListTasksWithRetry(userDB.token.toString(), context)
+                    mainViewModel.updateTaskList()
+                }
             }
         }
 

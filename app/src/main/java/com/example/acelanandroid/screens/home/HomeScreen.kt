@@ -32,10 +32,12 @@ import com.example.acelanandroid.screens.MainViewModel
 import com.example.acelanandroid.screens.profile.LoginViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @OptIn(DelicateCoroutinesApi::class)
@@ -47,7 +49,9 @@ fun HomeScreen(
 ) {
     val checkUser by mainViewModel.checkUser
     LaunchedEffect(Unit) {
+        withContext(Dispatchers.IO) {
             mainViewModel.userIsExist()
+        }
     }
     Column(
         modifier = modifier

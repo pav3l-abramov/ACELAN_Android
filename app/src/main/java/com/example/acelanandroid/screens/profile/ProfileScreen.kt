@@ -66,7 +66,9 @@ fun ProfileScreen(
 
 
     LaunchedEffect(Unit) {
-        mainViewModel.userIsExist()
+        withContext(Dispatchers.IO) {
+            mainViewModel.userIsExist()
+        }
     }
 
     Column(
@@ -114,15 +116,17 @@ fun ProfileScreen(
                             Log.d("Success", state.toString())
                             val token = state.token.token
                             CoroutineScope(Job()).launch {
-                                mainViewModel.insertUserToDB(
-                                    UserData(
-                                        1,
-                                        uiState.email,
-                                        token
+                                withContext(Dispatchers.IO) {
+                                    mainViewModel.insertUserToDB(
+                                        UserData(
+                                            1,
+                                            uiState.email,
+                                            token
+                                        )
                                     )
-                                )
 
-                                mainViewModel.userIsExist()
+                                    mainViewModel.userIsExist()
+                                }
                             }
                             loginViewModel.nullStatus()
                         }
@@ -147,7 +151,9 @@ fun ProfileScreen(
             }
         } else {
             LaunchedEffect(Unit) {
-                mainViewModel.getUserDB()
+                withContext(Dispatchers.IO) {
+                    mainViewModel.getUserDB()
+                }
             }
                  Text(text = "Hello ${userDB.email}")
 
