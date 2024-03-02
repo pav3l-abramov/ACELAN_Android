@@ -6,38 +6,38 @@ import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import com.example.acelanandroid.OPEN_TASK_SCREEN
 import com.example.acelanandroid.R
+import com.example.acelanandroid.common.composable.FilterDialogMaterial
 import com.example.acelanandroid.common.composable.CustomLinearProgressBar
+import com.example.acelanandroid.common.composable.FilterDialogTask
 import com.example.acelanandroid.common.composable.TaskCard
 import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.common.ext.fieldModifier
 import com.example.acelanandroid.retrofit.GetStateTasks
+import com.example.acelanandroid.screens.FilterViewModel
 import com.example.acelanandroid.screens.MainViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -47,14 +47,17 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-@SuppressLint("CoroutineCreationDuringComposition", "UnrememberedMutableState")
+@SuppressLint("CoroutineCreationDuringComposition", "UnrememberedMutableState",
+    "UnusedMaterial3ScaffoldPaddingParameter"
+)
 @Composable
 fun TasksScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
     tasksViewModel: TasksViewModel = hiltViewModel(),
     mainViewModel: MainViewModel = hiltViewModel(),
-    context: Context
+    context: Context,
+    filterViewModel: FilterViewModel = hiltViewModel()
 ) {
 
     val tasksList by mainViewModel.taskListDB.collectAsState()
@@ -63,9 +66,9 @@ fun TasksScreen(
     val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
     val uiCheckStatus by tasksViewModel.uiCheckStatus
     val isLoading by tasksViewModel.isLoading.collectAsState()
-    var showDialog by remember { mutableStateOf(false) }
+    val isDialogOpen = remember { mutableStateOf(false) }
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
-
+    val uiStateFilter by filterViewModel.uiStateFilter
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
             mainViewModel.userIsExist()
@@ -111,27 +114,56 @@ fun TasksScreen(
             }
         }
         else {
-            SwipeRefresh(state = swipeRefreshState,
-                onRefresh = {
-                    tasksViewModel.getListTasksWithRetry(
-                        userDB.token.toString(),
-                        context
+            Scaffold(
+                floatingActionButton = {
+                    FloatingActionButton(
+                        shape = CircleShape,
+                        onClick = { isDialogOpen.value = true },
+                        content = {
+                            Icon(
+                                painter = painterResource(R.drawable.baseline_filter_list_24),
+                                contentDescription = null
+                            )
+                        }
                     )
-                }) {
-                    LazyColumn {
-                        items(tasksList) { item ->
-                            item.name?.let {
-                                item.status?.let { it1 ->
-                                    TaskCard(
-                                        it, Modifier.fieldModifier(), it1
-                                    ) {
-                                        navController.navigate(route = OPEN_TASK_SCREEN + "/${item.id}")
+                },
+                content = {
+                    SwipeRefresh(state = swipeRefreshState,
+                        onRefresh = {
+                            tasksViewModel.getListTasksWithRetry(
+                                userDB.token.toString(),
+                                context
+                            )
+                        }) {
+                        LazyColumn {
+                            items(tasksList) { item ->
+                                if(item.status==uiStateFilter.filterStatusTask||uiStateFilter.filterStatusTask=="All") {
+                                    item.name?.let {
+                                        item.status?.let { it1 ->
+                                            TaskCard(
+                                                it, Modifier.fieldModifier(), it1
+                                            ) {
+                                                navController.navigate(route = OPEN_TASK_SCREEN + "/${item.id}")
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+
+                })
+            if (isDialogOpen.value) {
+                FilterDialogTask(
+                    message = "Filter",
+                    status = uiStateFilter.filterStatusTask,
+                    onNewValueStatusFilter=filterViewModel::onNewValueStatusFilter,
+                    modifier = Modifier.fieldModifier(),
+                    onCancel = { isDialogOpen.value = false },
+                    color = MaterialTheme.colorScheme.background
+                )
             }
+
 
         }
     }

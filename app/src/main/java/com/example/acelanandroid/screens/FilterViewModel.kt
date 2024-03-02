@@ -1,10 +1,8 @@
-package com.example.acelanandroid.screens.materials
+package com.example.acelanandroid.screens
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.acelanandroid.data.MaterialMain
-import com.example.acelanandroid.data.singleData.Material
-import com.example.acelanandroid.retrofit.AppRetrofit
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -20,6 +18,10 @@ class FilterViewModel @Inject constructor() : ViewModel() {
     fun checkTypeFilter(item: MaterialMain, filterParam:String): Boolean {
         return (item.type?.contains(filterParam, ignoreCase = true) == true) ||
                 filterParam == "All"
+    }
+
+    fun onNewValueStatusFilter(newValue: String) {
+        uiStateFilter.value = uiStateFilter.value.copy(filterStatusTask  = newValue)
     }
 
     fun onNewValueMainYoungFilter(newValue: Boolean) {

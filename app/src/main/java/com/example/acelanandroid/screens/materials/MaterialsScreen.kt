@@ -5,9 +5,7 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -33,32 +31,20 @@ import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.common.ext.fieldModifier
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SegmentedButtonDefaults.Icon
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.painterResource
 import com.example.acelanandroid.R
-import com.example.acelanandroid.common.composable.CustomDialog
-import com.example.acelanandroid.data.TaskMain
-import com.example.acelanandroid.data.UserData
-import com.example.acelanandroid.data.singleData.Material
+import com.example.acelanandroid.common.composable.FilterDialogMaterial
 import com.example.acelanandroid.retrofit.GetStateMaterial
-import com.example.acelanandroid.retrofit.GetStateTasks
+import com.example.acelanandroid.screens.FilterViewModel
 import com.example.acelanandroid.screens.MainViewModel
-import com.example.acelanandroid.screens.profile.LoginViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -226,7 +212,7 @@ fun MaterialsScreen(
                             }
 
                             if (isDialogOpen.value) {
-                                CustomDialog(
+                                FilterDialogMaterial(
                                     message = "Filter",
 //                                    youngMin = uiStateFilter.filterYoungMin,
 //                                    youngMax = uiStateFilter.filterYoungMax,
