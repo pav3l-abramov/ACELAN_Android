@@ -18,20 +18,25 @@ package com.example.acelanandroid.common.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.acelanandroid.R
 import com.example.acelanandroid.ui.theme.DarkBlue
 import com.example.acelanandroid.ui.theme.DarkGreen
 import com.example.acelanandroid.ui.theme.DarkRed
@@ -256,30 +261,25 @@ fun MaterialDetailCard(
                                 text = "${list[1]} ${list[0]}",
                                 color = color
                             )
-                        }
-
-                        else if (contentSecond.split("::")[0]=="Materials"){
-                            val list = contentSecond.split("Material","::")
+                        } else if (contentSecond.split("::")[0] == "Materials") {
+                            val list = contentSecond.split("Material", "::")
                             Text(
                                 text = list[2],
                                 color = color
                             )
-                        }
-                        else if (contentFirst=="Core: "){
-                            if (contentSecond=="false"){
-                                Text (
-                                text = "No",
-                                color = color
-                            )
-                            }
-                            else {
+                        } else if (contentFirst == "Core: ") {
+                            if (contentSecond == "false") {
+                                Text(
+                                    text = "No",
+                                    color = color
+                                )
+                            } else {
                                 Text(
                                     text = "Yes",
                                     color = color
                                 )
                             }
-                        }
-                        else {
+                        } else {
                             Text(
                                 text = contentSecond,
                                 color = color
@@ -299,8 +299,10 @@ fun MaterialDetailCard(
 }
 
 @Composable
-fun TextCard(content: String,
-             modifier: Modifier) {
+fun TextCard(
+    content: String,
+    modifier: Modifier
+) {
     val color = getColorStatus(content, isSystemInDarkTheme())
     Card(
         modifier = modifier
@@ -314,7 +316,10 @@ fun TextCard(content: String,
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background( MaterialTheme.colorScheme.background, shape = RoundedCornerShape(10.dp))
+                    .background(
+                        MaterialTheme.colorScheme.background,
+                        shape = RoundedCornerShape(10.dp)
+                    )
                     .border(2.dp, Color.Gray, shape = RoundedCornerShape(10.dp))
                     .padding(16.dp)
             ) {
@@ -335,8 +340,10 @@ fun TextCard(content: String,
 }
 
 @Composable
-fun TextCardStandart(content: String,
-             modifier: Modifier) {
+fun TextCardStandart(
+    content: String,
+    modifier: Modifier
+) {
     val color = getColorStatus(content, isSystemInDarkTheme())
     Card(
         modifier = modifier
@@ -350,7 +357,10 @@ fun TextCardStandart(content: String,
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background( MaterialTheme.colorScheme.background, shape = RoundedCornerShape(10.dp))
+                    .background(
+                        MaterialTheme.colorScheme.background,
+                        shape = RoundedCornerShape(10.dp)
+                    )
                     .padding(16.dp)
             ) {
                 Column(
@@ -368,6 +378,8 @@ fun TextCardStandart(content: String,
         }
     }
 }
+
+
 
 fun getColorStatus(status: String, systemTheme: Boolean): Color {
     val color = if (systemTheme) {

@@ -32,6 +32,8 @@ import com.example.acelanandroid.OPEN_TASK_SCREEN
 import com.example.acelanandroid.R
 import com.example.acelanandroid.common.composable.FilterDialogMaterial
 import com.example.acelanandroid.common.composable.CustomLinearProgressBar
+import com.example.acelanandroid.common.composable.FABMaterialComposable
+import com.example.acelanandroid.common.composable.FABTaskComposable
 import com.example.acelanandroid.common.composable.FilterDialogTask
 import com.example.acelanandroid.common.composable.TaskCard
 import com.example.acelanandroid.common.composable.TextCardStandart
@@ -116,16 +118,8 @@ fun TasksScreen(
         else {
             Scaffold(
                 floatingActionButton = {
-                    FloatingActionButton(
-                        shape = CircleShape,
-                        onClick = { isDialogOpen.value = true },
-                        content = {
-                            Icon(
-                                painter = painterResource(R.drawable.baseline_filter_list_24),
-                                contentDescription = null
-                            )
-                        }
-                    )
+                    FABTaskComposable(
+                        onCancelFilter = { isDialogOpen.value =true })
                 },
                 content = {
                     SwipeRefresh(state = swipeRefreshState,

@@ -29,9 +29,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.acelanandroid.GRAPH_SCREEN
 import com.example.acelanandroid.OPEN_MATERIAL_SCREEN
 import com.example.acelanandroid.OPEN_TASK_SCREEN
 import com.example.acelanandroid.screens.home.HomeScreen
+import com.example.acelanandroid.screens.materials.GraphScreen
 import com.example.acelanandroid.screens.materials.MaterialsScreen
 import com.example.acelanandroid.screens.materials.OpenMaterialScreen
 import com.example.acelanandroid.screens.profile.ProfileScreen
@@ -42,14 +44,18 @@ import com.example.acelanandroid.screens.tasks.TasksScreen
 @Composable
 fun AppNavigation(context:Context) {
     val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+
     Scaffold(
         bottomBar = {
+            if (currentDestination != null) {
+                if(currentDestination.route?.contains(OPEN_MATERIAL_SCREEN, ignoreCase = true) == false &&
+                    currentDestination.route?.contains(GRAPH_SCREEN, ignoreCase = true) == false &&
+                    currentDestination.route?.contains(OPEN_TASK_SCREEN, ignoreCase = true) == false){
             NavigationBar {
-                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val currentDestination = navBackStackEntry?.destination
-
                 screens.forEach { navItem ->
-                    NavigationBarItem(selected = currentDestination?.hierarchy?.any { it.route == navItem.route } == true,
+                    NavigationBarItem(selected = currentDestination.hierarchy.any { it.route == navItem.route },
                         onClick = {
                             navController.navigate(navItem.route) {
                                 popUpTo(navController.graph.findStartDestination().id) {
@@ -70,6 +76,8 @@ fun AppNavigation(context:Context) {
                 }
             }
         }
+            }
+        }
     ) { paddingValues ->
         NavHost(
             navController = navController,
@@ -81,8 +89,6 @@ fun AppNavigation(context:Context) {
                  HomeScreen()
 
             }
-
-
             composable(route = BottomBarScreen.Materials.route) {
                 EnterAnimation{MaterialsScreen(navController = navController, context = context)}
 
@@ -92,7 +98,7 @@ fun AppNavigation(context:Context) {
                     type = NavType.IntType
                 }
             )) { idMaterial ->
-                idMaterial.arguments?.getInt("id")?.let { OpenMaterialScreen(idMaterial = it, context = context) }
+                idMaterial.arguments?.getInt("id")?.let {  EnterAnimation{OpenMaterialScreen(idMaterial = it, context = context,navController = navController) }}
             }
 
 
@@ -105,12 +111,15 @@ fun AppNavigation(context:Context) {
                 }
             )) { idTask ->
                 idTask.arguments?.getInt("id")
-                    ?.let { OpenTaskScreen(idTask = it, context = context) }
+                    ?.let {  EnterAnimation{OpenTaskScreen(idTask = it, context = context,navController = navController) }}
             }
 
 
             composable(route = BottomBarScreen.Profile.route) {
                 ProfileScreen(context = context)
+            }
+            composable(route = GRAPH_SCREEN) {
+                GraphScreen(context = context)
             }
         }
 
@@ -128,8 +137,8 @@ fun EnterAnimation(content: @Composable () -> Unit) {
             initialOffsetY = { -1 }
         ) + expandVertically(
             expandFrom = Alignment.Top
-        ) + fadeIn(initialAlpha = 0.4f),
-        exit = slideOutVertically() + shrinkVertically() + fadeOut(),
+        ) + fadeIn(initialAlpha = 0.0f),
+        exit = slideOutVertically()  + fadeOut(),
     ) {
         content()
     }

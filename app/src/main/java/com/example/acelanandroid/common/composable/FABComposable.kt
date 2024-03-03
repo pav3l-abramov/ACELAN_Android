@@ -47,7 +47,7 @@ fun FABMaterialComposable(
 
                 },
                 modifier = Modifier
-                    .size(50.dp)
+                    .size(55.dp)
                     .padding(5.dp)
 
 
@@ -69,7 +69,7 @@ fun FABMaterialComposable(
 
                     },
                     modifier = Modifier
-                        .size(50.dp)
+                        .size(55.dp)
                         .padding(5.dp)
 
                 )
@@ -91,9 +91,136 @@ fun FABMaterialComposable(
 
             },
             modifier= Modifier
-                .size(50.dp)
+                .size(55.dp)
 
         )
     }
 
+}
+
+@Composable
+fun FABTaskComposable(
+    onCancelFilter: () -> Unit,
+) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.End
+    ) {
+        FloatingActionButton(
+            shape = CircleShape,
+            onClick = { onCancelFilter() },
+            content = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        painter = painterResource(R.drawable.baseline_filter_list_24),
+                        contentDescription = null
+                    )
+                }
+
+            },
+            modifier = Modifier
+                .size(55.dp)
+
+        )
+    }
+}
+
+@Composable
+fun FABOpenMaterialComposable(
+    mainButtonOn: Boolean,
+    onCancelMain: () -> Unit,
+    onDelete:()->Unit
+) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.End
+    ) {
+if (mainButtonOn) {
+    FloatingActionButton(
+        shape = CircleShape,
+        onClick = { onDelete() },
+        content = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    painter = painterResource(R.drawable.baseline_delete_outline_24),
+                    contentDescription = null
+                )
+            }
+
+        },
+        modifier = Modifier
+            .size(55.dp)
+
+    )
+    Spacer(modifier = Modifier.height(5.dp))
+}
+        FloatingActionButton(
+            shape = CircleShape,
+            onClick = { onCancelMain() },
+            content = {
+                Row(verticalAlignment = Alignment.CenterVertically){
+                    Icon(
+                        painter = painterResource(if (mainButtonOn) R.drawable.baseline_auto_graph_24 else R.drawable.baseline_add_circle_outline_24),
+                        contentDescription = null
+                    )
+                }
+
+            },
+            modifier= Modifier
+                .size(55.dp)
+
+        )
+    }
+}
+
+@Composable
+fun FABTaskDrawComposable(
+    isDraw:Boolean,
+    isGraph:Boolean,
+    drawModel: () -> Unit,
+    drawGraph: () -> Unit,
+) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.End
+    ) {
+        if(isDraw) {
+            FloatingActionButton(
+                shape = CircleShape,
+                onClick = { drawModel() },
+                content = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(R.drawable.baseline_3d_rotation_24),
+                            contentDescription = null
+                        )
+                    }
+
+                },
+                modifier = Modifier
+                    .size(55.dp)
+
+            )
+        }
+
+        if(isGraph) {
+            Spacer(modifier = Modifier.height(5.dp))
+            FloatingActionButton(
+                shape = CircleShape,
+                onClick = { drawGraph() },
+                content = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(R.drawable.baseline_auto_graph_24),
+                            contentDescription = null
+                        )
+                    }
+
+                },
+                modifier = Modifier
+                    .size(55.dp)
+
+            )
+        }
+    }
 }

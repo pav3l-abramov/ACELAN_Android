@@ -226,7 +226,4 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
     suspend fun deleteMaterialDB(materialMain: MaterialMain) {
         database.dao.deleteMaterial(materialMain)
     }
-
-
-
 }

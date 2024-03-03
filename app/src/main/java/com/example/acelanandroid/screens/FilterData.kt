@@ -8,6 +8,6 @@ data class FilterData(
     val filterYoungOn:Boolean=false,
     val filterCore:String="All",
     val filterType:String="All",
-    val filterYoungMin:String="100",
-    val filterYoungMax:String="1000",
+    val filterYoungMin:String="10000000",
+    val filterYoungMax:String="1000000000",
 )

@@ -39,6 +39,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.res.painterResource
+import com.example.acelanandroid.GRAPH_SCREEN
 import com.example.acelanandroid.R
 import com.example.acelanandroid.common.composable.FABMaterialComposable
 import com.example.acelanandroid.common.composable.FilterDialogMaterial
@@ -127,7 +128,7 @@ fun MaterialsScreen(
                             mainButtonOn = isMainFABOpen.value,
                             onCancelMain = { isMainFABOpen.value=!isMainFABOpen.value },
                             onCancelFilter = { isDialogOpen.value =true },
-                            onCancelGraph = {isDialogOpen.value =true})
+                            onCancelGraph = {navController.navigate(route = GRAPH_SCREEN)})
 
                 },
                 content = {

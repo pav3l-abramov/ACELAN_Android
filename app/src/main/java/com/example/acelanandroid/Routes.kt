@@ -11,6 +11,7 @@ const val OPEN_TASK_SCREEN = "OpenTaskScreen"
 
 const val MATERIALS_SCREEN = "MaterialsScreen"
 const val OPEN_MATERIAL_SCREEN = "OpenMaterialScreen"
+const val GRAPH_SCREEN = "GraphScreen"
 
 //DataStore
 const val EMAIL_USER = "UserEmail"
