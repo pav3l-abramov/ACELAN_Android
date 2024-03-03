@@ -5,7 +5,10 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -31,11 +34,13 @@ import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.common.ext.fieldModifier
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.res.painterResource
 import com.example.acelanandroid.R
+import com.example.acelanandroid.common.composable.FABMaterialComposable
 import com.example.acelanandroid.common.composable.FilterDialogMaterial
 import com.example.acelanandroid.retrofit.GetStateMaterial
 import com.example.acelanandroid.screens.FilterViewModel
@@ -69,6 +74,7 @@ fun MaterialsScreen(
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
     val isActiveSearch = remember { mutableStateOf(false) }
     val isDialogOpen = remember { mutableStateOf(false) }
+    val isMainFABOpen = remember { mutableStateOf(false) }
     val isListEmpty = remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
@@ -115,19 +121,14 @@ fun MaterialsScreen(
                 CustomLinearProgressBar(Modifier.fieldModifier())
             }
         } else {
-
             Scaffold(
                 floatingActionButton = {
-                    FloatingActionButton(
-                        shape = CircleShape,
-                        onClick = { isDialogOpen.value = true },
-                        content = {
-                            androidx.compose.material3.Icon(
-                                painter = painterResource(R.drawable.baseline_filter_list_24),
-                                contentDescription = null
-                            )
-                        }
-                    )
+                        FABMaterialComposable(
+                            mainButtonOn = isMainFABOpen.value,
+                            onCancelMain = { isMainFABOpen.value=!isMainFABOpen.value },
+                            onCancelFilter = { isDialogOpen.value =true },
+                            onCancelGraph = {isDialogOpen.value =true})
+
                 },
                 content = {
                     SwipeRefresh(state = swipeRefreshState,
@@ -138,7 +139,6 @@ fun MaterialsScreen(
                                 context,
                                 false
                             )
-
                         }) {
                         Column(
                             modifier = modifier
@@ -283,3 +283,4 @@ fun MaterialsScreen(
         }
     }
 }
+

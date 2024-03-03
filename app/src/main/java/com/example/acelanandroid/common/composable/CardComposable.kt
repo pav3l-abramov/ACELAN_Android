@@ -98,7 +98,6 @@ private fun TaskCardMain(
                         color = color,
                         fontWeight = FontWeight.Bold
                     )
-                    
                 }
             }
         }
