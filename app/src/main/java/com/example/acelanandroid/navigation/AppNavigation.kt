@@ -119,7 +119,7 @@ fun AppNavigation(context:Context) {
                 ProfileScreen(context = context)
             }
             composable(route = GRAPH_SCREEN) {
-                GraphScreen(context = context)
+                GraphScreen(context = context,navController = navController)
             }
         }
 
