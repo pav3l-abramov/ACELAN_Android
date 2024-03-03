@@ -46,11 +46,13 @@ import com.example.acelanandroid.common.composable.CustomLinearProgressBar
 import com.example.acelanandroid.common.composable.FABOpenMaterialComposable
 import com.example.acelanandroid.common.composable.FABTaskDrawComposable
 import com.example.acelanandroid.common.composable.MaterialDetailCard
+import com.example.acelanandroid.common.composable.PointChart
 import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.data.TaskMain
 import com.example.acelanandroid.data.UserData
 import com.example.acelanandroid.retrofit.GetStateTaskDetail
 import com.example.acelanandroid.retrofit.GetStateTasks
+import com.example.acelanandroid.screens.DataDetailCard
 import com.example.acelanandroid.screens.MainViewModel
 import com.example.acelanandroid.screens.profile.LoginViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -84,6 +86,7 @@ fun OpenTaskScreen(
     val isDraw = remember { mutableStateOf(false) }
     val isGraph = remember { mutableStateOf(false) }
     val isShowButton = remember { mutableStateOf(true) }
+    val isShowGraphOnScreen = remember { mutableStateOf(false) }
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
     LaunchedEffect(Unit) {
         mainViewModel.userIsExist()
@@ -128,6 +131,14 @@ fun OpenTaskScreen(
                             overflow = TextOverflow.Ellipsis
                         )
                     },
+                    actions = {
+                        Switch(
+                            checked = isShowButton.value,
+                            onCheckedChange = {
+                                isShowButton.value = it
+                            }
+                        )
+                    },
                     navigationIcon = {
                         IconButton(onClick = { navController.navigateUp() }) {
                             Icon(
@@ -139,15 +150,18 @@ fun OpenTaskScreen(
                     )
             },
             floatingActionButton = {
+                if(isShowButton.value) {
                     FABTaskDrawComposable(
-                        isDraw=isDraw.value,
-                        isGraph=isGraph.value,
+                        isDraw = isDraw.value,
+                        isGraph = isGraph.value,
                         drawModel = {
-                        val intent = Intent(context, OpenGLES20Activity::class.java)
-                        intent.putExtra("url", taskDB.url)
-                        intent.putExtra("type", taskDB.file_type)
-                        context.startActivity(intent) },
-                        drawGraph={})
+                            val intent = Intent(context, OpenGLES20Activity::class.java)
+                            intent.putExtra("url", taskDB.url)
+                            intent.putExtra("type", taskDB.file_type)
+                            context.startActivity(intent)
+                        },
+                        drawGraph = { isShowGraphOnScreen.value = !isShowGraphOnScreen.value })
+                }
 
             },
             content = {
@@ -166,43 +180,22 @@ fun OpenTaskScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
 
-                        // Text(text = dataList.toString())
-                        TaskDetailCard(
-                            "Name: ",
-                            taskDB.name.toString(),
-                            false,
-                            Modifier.fieldModifier()
+                        val listDetail= listOf(
+                            DataDetailCard("Name: ", taskDB.name.toString(),false, Modifier.fieldModifier()),
+                            DataDetailCard("Status: ", taskDB.status.toString(),false, Modifier.fieldModifier()),
+                            DataDetailCard("Start: ", taskDB.started_at.toString(),true, Modifier.fieldModifier()),
+                            DataDetailCard("Finish: ", taskDB.finished_at.toString(),true, Modifier.fieldModifier()),
+                            DataDetailCard("File type: ", taskDB.file_type.toString(),false, Modifier.fieldModifier()),
+                            DataDetailCard("File url: ", taskDB.url.toString(),false, Modifier.fieldModifier()),
                         )
-                        TaskDetailCard(
-                            "Status: ",
-                            taskDB.status.toString(),
-                            false,
-                            Modifier.fieldModifier()
-                        )
-                        TaskDetailCard(
-                            "Start:  ",
-                            taskDB.started_at.toString(),
-                            true,
-                            Modifier.fieldModifier()
-                        )
-                        TaskDetailCard(
-                            "Finish: ",
-                            taskDB.finished_at.toString(),
-                            true,
-                            Modifier.fieldModifier()
-                        )
-                        TaskDetailCard(
-                            "File type: ",
-                            taskDB.file_type.toString(),
-                            false,
-                            Modifier.fieldModifier()
-                        )
-                        TaskDetailCard(
-                            "File url: ",
-                            taskDB.url.toString(),
-                            false,
-                            Modifier.fieldModifier()
-                        )
+                        listDetail.forEach { detail ->
+                            TaskDetailCard(
+                                detail.content,
+                                detail.materialData,
+                                detail.checkTime,
+                                detail.modifier
+                            )
+                        }
                         if (isLoading) {
                             CustomLinearProgressBar(Modifier.fieldModifier())
                         }
@@ -216,14 +209,17 @@ fun OpenTaskScreen(
                                 )
                             }
                         }
-                        if (!taskDB.x.isNullOrEmpty()) {
+//                        if (!taskDB.x.isNullOrEmpty()) {
                             isGraph.value=true
-                            Log.d("taskDB.x",taskDB.x.toString())
-                            //DrawGraph(x = taskDB.x!!, y = taskDB.y!!, colorBackground = MaterialTheme.colorScheme.background, modifier =Modifier.fieldModifier() )
-                        }
+                            if (isShowGraphOnScreen.value){
+                                PointChart(listOf(1.0f,2.0f,5.0f),  listOf(1.0f,2.0f,5.0f), Modifier.fieldModifier())
+                                //fun to draw by x/y
+                                //DrawGraph(x = taskDB.x!!, y = taskDB.y!!, colorBackground = MaterialTheme.colorScheme.background, modifier =Modifier.fieldModifier() )
+                            }
+                     //   }
+
                         //DrawGraph(x = listOf(1.0f,2.0f,5.0f), y = listOf(1.0f,2.0f,5.0f), colorBackground = MaterialTheme.colorScheme.background, modifier =Modifier.fieldModifier() )
-                        val x = listOf(1f, 2f, 3f, 4f, 5f)
-                        val y = listOf(1f, 2f, 3f, 4f, 3f)
+
 
                         if (taskDB.url == null && taskDB.graph_type == null) {
                             TextCard(
@@ -270,7 +266,6 @@ fun OpenTaskScreen(
             }
         }
     }
-
 }
 
 

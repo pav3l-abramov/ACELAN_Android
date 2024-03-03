@@ -38,6 +38,7 @@ interface Dao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertTask(taskMain: TaskMain)
 
+
     @Delete
     suspend fun deleteMaterial(materialMain: MaterialMain)
 
@@ -49,6 +50,9 @@ interface Dao {
 
     @Query("SELECT * FROM $TASK")
     suspend fun getTaskMain(): List<TaskMain>
+
+    @Query("SELECT * FROM $DRAW")
+    suspend fun getDrawMain(): List<MaterialToDraw>
 
     @Query("SELECT * FROM $TASK WHERE id=:id")
     suspend fun getTaskMainByID(id: Int): TaskMain
@@ -75,6 +79,10 @@ interface Dao {
         dielectric: List<Float>?=null,
         id: Int
     )
+
+
+
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertMaterialToDraw(materialToDraw: MaterialToDraw)
 
@@ -100,4 +108,6 @@ interface Dao {
     )
     @Query("SELECT COUNT(*) FROM $TASK")
     fun countTasks(): Int
+
+
 }
