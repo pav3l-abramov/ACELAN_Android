@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
@@ -212,7 +213,7 @@ fun OpenTaskScreen(
 //                        if (!taskDB.x.isNullOrEmpty()) {
                             isGraph.value=true
                             if (isShowGraphOnScreen.value){
-                                PointChart(listOf(1.0f,2.0f,5.0f),  listOf(1.0f,2.0f,5.0f), Modifier.fieldModifier())
+                                PointChart(30.dp,listOf(1.0f,2.0f,5.0f),  listOf(1.0f,2.0f,5.0f), Modifier.fieldModifier())
                                 //fun to draw by x/y
                                 //DrawGraph(x = taskDB.x!!, y = taskDB.y!!, colorBackground = MaterialTheme.colorScheme.background, modifier =Modifier.fieldModifier() )
                             }

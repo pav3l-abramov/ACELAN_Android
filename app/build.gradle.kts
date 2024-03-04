@@ -89,7 +89,7 @@ dependencies {
     //Hilt
     implementation("com.google.dagger:hilt-android:2.48")
     kapt("com.google.dagger:hilt-android-compiler:2.48")
-    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     //coil (download image)
     implementation("io.coil-kt:coil-compose:2.4.0")
@@ -107,8 +107,6 @@ dependencies {
 
     //draw graph
     //implementation("co.yml:ycharts:2.1.0")
-
-
 
 }
 kapt {

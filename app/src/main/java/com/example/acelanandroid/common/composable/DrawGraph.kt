@@ -1,19 +1,38 @@
 package com.example.acelanandroid.common.composable
 
+import android.graphics.Paint
+import android.graphics.PointF
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.asAndroidPath
+import androidx.compose.ui.graphics.asComposePath
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
 //import co.yml.charts.axis.AxisData
 //import co.yml.charts.common.model.Point
 //import co.yml.charts.ui.linechart.LineChart
@@ -89,55 +108,316 @@ import androidx.compose.ui.unit.dp
 //    return list
 //}
 
-@Composable
-fun PointChart(xValues: List<Float>, yValues: List<Float>,modifier: Modifier) {
-    val maxValueX = xValues.maxOrNull() ?: 1f
-    val maxValueY = yValues.maxOrNull() ?: 1f
-    val configuration = LocalConfiguration.current
-    val screenMin = listOf(configuration.screenHeightDp.dp,configuration.screenWidthDp.dp).min()
+data class GraphAppearance(
+    val graphColor: Color,
+    val graphAxisColor: Color,
+    val graphThickness: Float,
+    val iscolorAreaUnderChart: Boolean,
+    val colorAreaUnderChart: Color,
+    val isCircleVisible: Boolean,
+    val circleColor: Color,
+    val backgroundColor: Color
+)
 
-    Column (modifier.background(Color.White)) {
-    Canvas(modifier = modifier.height(screenMin)
-        .width(screenMin),
+const val stepsX = 4
+const val stepsY = 6
+//
+//@Composable
+//fun PointChart2(xValues: List<Float>, yValues: List<Float>, modifier: Modifier) {
+//    val yMin = yValues.min()
+//    val yMax = yValues.max()
+//    val xMin = xValues.min()
+//    val xMax = xValues.max()
+//    val yStep = (yMax - yMin) / steps.toFloat()
+//    val xStep = (xMax - xMin) / steps.toFloat()
+//
+//    Box(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .background(Color.DarkGray)
+//    ) {
+//        Graph(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(500.dp),
+//            xValuesLabel = (0..steps).map { (it) * xStep + xMin },
+//            yValuesLabel = (0..steps).map { (it) * yStep + yMin },
+//            yValues = yValues,
+//            xValues = xValues,
+//            paddingSpace = 16.dp,
+//            verticalStep = yStep,
+//            graphAppearance = GraphAppearance(
+//                Color.Gray,
+//                MaterialTheme.colorScheme.primary,
+//                1f,
+//                false,
+//                Color.Green,
+//                true,
+//                MaterialTheme.colorScheme.secondary,
+//                MaterialTheme.colorScheme.background
+//            )
+//        )
+//    }
+//}
+//
+//@Composable
+//fun Graph(
+//    modifier: Modifier,
+//    xValuesLabel: List<Float>,
+//    yValuesLabel: List<Float>,
+//    yValues: List<Float>,
+//    xValues: List<Float>,
+//    paddingSpace: Dp,
+//    verticalStep: Float,
+//    graphAppearance: GraphAppearance
+//) {
+//    val controlPoints1 = mutableListOf<PointF>()
+//    val controlPoints2 = mutableListOf<PointF>()
+//    val coordinates = mutableListOf<PointF>()
+//    val density = LocalDensity.current
+//    val textPaint = remember(density) {
+//        Paint().apply {
+//            color = graphAppearance.graphAxisColor.toArgb()
+//            textAlign = Paint.Align.CENTER
+//            textSize = density.run { 12.sp.toPx() }
+//        }
+//    }
+//    val configuration = LocalConfiguration.current
+//    val screenMin = listOf(configuration.screenHeightDp.dp, configuration.screenWidthDp.dp).min()
+//
+//
+//    Box(
+//        modifier = modifier
+//            .background(graphAppearance.backgroundColor)
+//            .padding(horizontal = 8.dp, vertical = 12.dp),
+//        contentAlignment = Alignment.Center
+//    ) {
+//        Canvas(
+//            modifier = Modifier
+//                .width(screenMin)
+//                .height(screenMin),
+//        ) {
+//            val xAxisSpace = (size.width - paddingSpace.toPx()) / (xValuesLabel.size + 1)
+//            val yAxisSpace = size.height / yValuesLabel.size
+//            /** placing x axis points */
+//            /** placing x axis points */
+//            for (i in xValuesLabel.indices) {
+//                drawContext.canvas.nativeCanvas.drawText(
+//                    "${xValuesLabel[i]}",
+//                    xAxisSpace * (i + 1),
+//                    size.height - 30,
+//                    textPaint
+//                )
+//            }
+//            /** placing y axis points */
+//            /** placing y axis points */
+//            for (i in yValuesLabel.indices) {
+//                drawContext.canvas.nativeCanvas.drawText(
+//                    "${yValuesLabel[i]}",
+//                    paddingSpace.toPx() / 2f,
+//                    size.height - yAxisSpace * (i + 1),
+//                    textPaint
+//                )
+//            }
+//            /** placing our x axis points */
+//            /** placing our x axis points */
+//            for (i in yValues.indices) {
+//                val x1 = xAxisSpace * xValues[i]
+//                val y1 =
+//                    size.height - (yAxisSpace * (yValues[i]) / verticalStep) - paddingSpace.toPx()
+//                coordinates.add(PointF(x1, y1))
+//                /** drawing circles to indicate all the points */
+//                /** drawing circles to indicate all the points */
+//                if (graphAppearance.isCircleVisible) {
+//                    drawCircle(
+//                        color = graphAppearance.circleColor,
+//                        radius = 10f,
+//                        center = Offset(x1, y1)
+//                    )
+//                }
+//            }
+//            /** calculating the connection points */
+//            /** calculating the connection points */
+//            for (i in 1 until coordinates.size) {
+//                controlPoints1.add(
+//                    PointF(
+//                        (coordinates[i].x + coordinates[i - 1].x) / 2,
+//                        coordinates[i - 1].y
+//                    )
+//                )
+//                controlPoints2.add(
+//                    PointF(
+//                        (coordinates[i].x + coordinates[i - 1].x) / 2,
+//                        coordinates[i].y
+//                    )
+//                )
+//            }
+//            /** drawing the path */
+//            /** drawing the path */
+//            val stroke = Path().apply {
+//                reset()
+//                moveTo(coordinates.first().x, coordinates.first().y)
+//                for (i in 0 until coordinates.size - 1) {
+//                    cubicTo(
+//                        controlPoints1[i].x, controlPoints1[i].y,
+//                        controlPoints2[i].x, controlPoints2[i].y,
+//                        coordinates[i + 1].x, coordinates[i + 1].y
+//                    )
+//                }
+//            }
+//            /** filling the area under the path */
+//            /** filling the area under the path */
+//            val fillPath = android.graphics.Path(stroke.asAndroidPath())
+//                .asComposePath()
+//                .apply {
+//                    lineTo(xAxisSpace * xValuesLabel.last(), size.height - yAxisSpace)
+//                    lineTo(xAxisSpace, size.height - yAxisSpace)
+//                    close()
+//                }
+//            if (graphAppearance.iscolorAreaUnderChart) {
+//                drawPath(
+//                    fillPath,
+//                    brush = Brush.verticalGradient(
+//                        listOf(
+//                            graphAppearance.colorAreaUnderChart,
+//                            Color.Transparent,
+//                        ),
+//                        endY = size.height - yAxisSpace
+//                    ),
+//                )
+//            }
+//            drawPath(
+//                stroke,
+//                color = graphAppearance.graphColor,
+//                style = Stroke(
+//                    width = graphAppearance.graphThickness,
+//                    cap = StrokeCap.Round
+//                )
+//            )
+//        }
+//    }
+//}
 
-        ) {
-        val padding = 32f
-        val width = size.width - padding * 2
-        val height = size.height - padding * 2
-
-        val xRange = xValues.maxOrNull()?.minus(xValues.minOrNull() ?: 0f) ?: 1f
-        val yRange = yValues.maxOrNull()?.minus(yValues.minOrNull() ?: 0f) ?: 1f
-
-        // Draw x-axis
-        drawLine(
-            start = Offset(padding, size.height - padding),
-            end = Offset(size.width - padding, size.height - padding),
-            color = Color.Black
-        )
-
-        // Draw y-axis
-        drawLine(
-            start = Offset(padding, size.height - padding),
-            end = Offset(padding, padding),
-            color = Color.Black
-        )
-
-        // Draw points
-        xValues.zip(yValues).forEach { (x, y) ->
-            val pointX = padding + (width * (x - xValues.minOrNull()!!) / xRange)
-            val pointY = size.height - padding - (height * (y - yValues.minOrNull()!!) / yRange)
-
-            drawCircle(
-                color = Color.Blue,
-                center = Offset(pointX, pointY),
-                radius = 20f
-            )
-        }
-    }
-}
-}
 @Composable
 @Preview
-fun qweqw(){
-    PointChart(listOf(1.0f,2.0f,10.0f),  listOf(1.0f,2.0f,5.0f), Modifier)
+fun qweqw() {
+    PointChart(
+        30.dp,
+        listOf(-1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f),
+        listOf(0.0f, 2.0f, 3.0f, 10.0f, 5.0f, 6.0f),
+        Modifier
+    )
+}
+
+@Composable
+fun PointChart(
+    paddingSpace: Dp,
+    xValues: List<Float>,
+    yValues: List<Float>,
+    modifier: Modifier
+) {
+    val maxValueX = xValues.maxOrNull() ?: 1f
+    val maxValueY = yValues.maxOrNull() ?: 1f
+    val minValueX = xValues.minOrNull() ?: 1f
+    val minValueY = yValues.minOrNull() ?: 1f
+    val yStep = (maxValueY - minValueY) / stepsY.toFloat()
+    val xStep = (maxValueX - minValueX) / stepsX.toFloat()
+    val xValuesLabel = (0..stepsX).map { (it) * xStep + minValueX }
+    val yValuesLabel = (0..stepsY).map { (it) * yStep + minValueY }
+    val configuration = LocalConfiguration.current
+    val screenMin = listOf(configuration.screenHeightDp.dp, configuration.screenWidthDp.dp).min()
+    val density = LocalDensity.current
+
+    val textPaint = remember(density) {
+        Paint().apply {
+            color = Color.Black.toArgb()
+            textAlign = Paint.Align.CENTER
+            textSize = density.run { 12.sp.toPx() }
+        }
+    }
+
+    Column(modifier.background(Color.White)) {
+        Canvas(
+            modifier = modifier
+                .height(screenMin)
+                .width(screenMin),
+
+            ) {
+            val padding = 72f
+            val width = size.width - padding * 2
+            val height = size.height - padding * 2
+
+            val xRange = maxValueX.minus(minValueX)
+            val yRange = maxValueY.minus(minValueY)
+
+            // Draw x-axis
+            drawLine(
+                start = Offset(padding / 2, size.height - padding),
+                end = Offset(size.width - padding / 2, size.height - padding),
+                color = Color.Black
+            )
+
+            // Draw y-axis
+            drawLine(
+                start = Offset(padding, size.height - padding / 2),
+                end = Offset(padding, padding / 2),
+                color = Color.Black
+            )
+
+            for (i in xValuesLabel.indices) {
+                drawContext.canvas.nativeCanvas.drawText(
+                    String.format("%.1f", (xValuesLabel[i])),
+                    i * (size.width - padding * 2 - paddingSpace.toPx()) / stepsX + padding + paddingSpace.toPx() / 2,
+                    size.height - padding / 2,
+                    textPaint
+                )
+
+                drawLine(
+                    start = Offset(
+                        (i * (size.width - padding * 2 - paddingSpace.toPx()) / stepsX + padding + paddingSpace.toPx() / 2),
+                        size.height - padding / 2- paddingSpace.toPx() / 2
+                    ),
+                    end = Offset(
+                        (i * (size.width - padding * 2 - paddingSpace.toPx()) / stepsX + padding + paddingSpace.toPx() / 2),
+                        padding / 2
+                    ),
+                    color = Color.Gray
+                )
+
+            }
+            for (i in yValuesLabel.indices) {
+                drawContext.canvas.nativeCanvas.drawText(
+                    String.format("%.1f", (yValuesLabel[i])),
+                    padding / 2,
+                    (size.height - padding * 2 - paddingSpace.toPx()) * (1 * stepsY - i) / stepsY + padding + paddingSpace.toPx() / 2,
+                    textPaint
+                )
+                drawLine(
+                    start = Offset(
+                        padding / 2+ paddingSpace.toPx() / 2,
+                        (size.height - padding * 2 - paddingSpace.toPx()) * (1 * stepsY - i) / stepsY + padding + paddingSpace.toPx() / 2
+                    ),
+                    end = Offset(
+                        size.width - padding * 2+ paddingSpace.toPx() ,
+                        (size.height - padding * 2 - paddingSpace.toPx()) * (1 * stepsY - i) / stepsY + padding + paddingSpace.toPx() / 2
+                    ),
+                    color = Color.Gray
+                )
+            }
+
+            // Draw points
+            xValues.zip(yValues).forEach { (x, y) ->
+                val pointX =
+                    padding + paddingSpace.toPx() / 2 + ((width - paddingSpace.toPx()) * (x - minValueX) / xRange)
+                val pointY =
+                    size.height - padding - paddingSpace.toPx() / 2 - ((height - paddingSpace.toPx()) * (y - minValueY) / yRange)
+
+                drawCircle(
+                    color = Color.Blue,
+                    center = Offset(pointX, pointY),
+                    radius = 20f
+                )
+            }
+        }
+    }
 }

@@ -36,8 +36,9 @@ fun GraphScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
     mainViewModel: MainViewModel = hiltViewModel(),
-    graphViewModel: GraphViewModel= hiltViewModel(),
-    context: Context){
+    graphViewModel: GraphViewModel = hiltViewModel(),
+    context: Context
+) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -63,7 +64,7 @@ fun GraphScreen(
                 actions = {
                 }
 
-                )
+            )
         },
         floatingActionButton = {
 
