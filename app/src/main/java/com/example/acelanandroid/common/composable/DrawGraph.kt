@@ -2,6 +2,7 @@ package com.example.acelanandroid.common.composable
 
 import android.graphics.Paint
 import android.graphics.PointF
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -24,6 +26,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asAndroidPath
 import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
@@ -302,10 +305,11 @@ const val stepsY = 6
 @Preview
 fun qweqw() {
     PointChart(
-        30.dp,
+        120.dp,
         listOf(-1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f),
-        listOf(0.0f, 2.0f, 3.0f, 10.0f, 5.0f, 6.0f),
-        Modifier
+        listOf(0.0f, 2.0f, 3.0f, 10.0f, 5.0f, 4.0f),
+        "x",
+        "y"
     )
 }
 
@@ -314,7 +318,8 @@ fun PointChart(
     paddingSpace: Dp,
     xValues: List<Float>,
     yValues: List<Float>,
-    modifier: Modifier
+    xLabelName: String,
+    yLabelName: String
 ) {
     val maxValueX = xValues.maxOrNull() ?: 1f
     val maxValueY = yValues.maxOrNull() ?: 1f
@@ -327,58 +332,88 @@ fun PointChart(
     val configuration = LocalConfiguration.current
     val screenMin = listOf(configuration.screenHeightDp.dp, configuration.screenWidthDp.dp).min()
     val density = LocalDensity.current
+    val coordinates = mutableListOf<PointF>()
+    val bezierPath = remember { Path() }
 
     val textPaint = remember(density) {
         Paint().apply {
             color = Color.Black.toArgb()
             textAlign = Paint.Align.CENTER
-            textSize = density.run { 12.sp.toPx() }
+            textSize = density.run { 14.sp.toPx() }
+        }
+    }
+    val textPaintLabel = remember(density) {
+        Paint().apply {
+            color = Color.Black.toArgb()
+            textAlign = Paint.Align.CENTER
+            textSize = density.run { 18.sp.toPx() }
         }
     }
 
-    Column(modifier.background(Color.White)) {
+    Column(Modifier.background(Color.White), horizontalAlignment = Alignment.End) {
         Canvas(
-            modifier = modifier
+            modifier = Modifier
                 .height(screenMin)
                 .width(screenMin),
 
             ) {
             val padding = 72f
-            val width = size.width - padding * 2
-            val height = size.height - padding * 2
-
             val xRange = maxValueX.minus(minValueX)
             val yRange = maxValueY.minus(minValueY)
 
             // Draw x-axis
             drawLine(
-                start = Offset(padding / 2, size.height - padding),
-                end = Offset(size.width - padding / 2, size.height - padding),
+                start = Offset(
+                    padding / 2 + paddingSpace.toPx() / 2,
+                    size.height - padding / 2 - paddingSpace.toPx() / 2
+                ),
+                end = Offset(
+                    size.width - padding / 2,
+                    size.height - padding / 2 - paddingSpace.toPx() / 2
+                ),
                 color = Color.Black
             )
 
             // Draw y-axis
             drawLine(
-                start = Offset(padding, size.height - padding / 2),
-                end = Offset(padding, padding / 2),
+                start = Offset(
+                    padding / 2 + paddingSpace.toPx() / 2,
+                    size.height - padding / 2 - paddingSpace.toPx() / 2
+                ),
+                end = Offset(padding / 2 + paddingSpace.toPx() / 2, padding / 2),
                 color = Color.Black
             )
+            drawContext.canvas.nativeCanvas.drawText(
+                String.format(xLabelName),
+                (size.width - padding * 2 - paddingSpace.toPx() / 2) / 2 + padding + paddingSpace.toPx() / 2,
+                size.height - padding,
+                textPaintLabel
+            )
+            val rect = Rect(Offset.Zero, size)
+            rotate(degrees = -90f, rect.center) {
+                drawContext.canvas.nativeCanvas.drawText(
+                    String.format(yLabelName),
+                    (size.width - padding * 2 - paddingSpace.toPx() / 2) / 2 + padding + paddingSpace.toPx() / 2,
+                    padding,
+                    textPaintLabel
+                )
+            }
 
             for (i in xValuesLabel.indices) {
                 drawContext.canvas.nativeCanvas.drawText(
                     String.format("%.1f", (xValuesLabel[i])),
-                    i * (size.width - padding * 2 - paddingSpace.toPx()) / stepsX + padding + paddingSpace.toPx() / 2,
-                    size.height - padding / 2,
+                    i * (size.width - padding * 2 - paddingSpace.toPx() / 2) / stepsX + padding + paddingSpace.toPx() / 2,
+                    size.height + padding / 2 - paddingSpace.toPx() / 2,
                     textPaint
                 )
 
                 drawLine(
                     start = Offset(
-                        (i * (size.width - padding * 2 - paddingSpace.toPx()) / stepsX + padding + paddingSpace.toPx() / 2),
-                        size.height - padding / 2- paddingSpace.toPx() / 2
+                        i * (size.width - padding * 2 - paddingSpace.toPx() / 2) / stepsX + padding + paddingSpace.toPx() / 2,
+                        size.height - padding / 2 - paddingSpace.toPx() / 2
                     ),
                     end = Offset(
-                        (i * (size.width - padding * 2 - paddingSpace.toPx()) / stepsX + padding + paddingSpace.toPx() / 2),
+                        i * (size.width - padding * 2 - paddingSpace.toPx() / 2) / stepsX + padding + paddingSpace.toPx() / 2,
                         padding / 2
                     ),
                     color = Color.Gray
@@ -388,18 +423,21 @@ fun PointChart(
             for (i in yValuesLabel.indices) {
                 drawContext.canvas.nativeCanvas.drawText(
                     String.format("%.1f", (yValuesLabel[i])),
-                    padding / 2,
-                    (size.height - padding * 2 - paddingSpace.toPx()) * (1 * stepsY - i) / stepsY + padding + paddingSpace.toPx() / 2,
+                    padding / 2 + paddingSpace.toPx() / 2 - 12 * String.format(
+                        "%.1f",
+                        (yValuesLabel[i])
+                    ).length,
+                    (size.height - padding * 2 - paddingSpace.toPx() / 2) * (1 * stepsY - i) / stepsY + padding,
                     textPaint
                 )
                 drawLine(
                     start = Offset(
-                        padding / 2+ paddingSpace.toPx() / 2,
-                        (size.height - padding * 2 - paddingSpace.toPx()) * (1 * stepsY - i) / stepsY + padding + paddingSpace.toPx() / 2
+                        padding / 2 + paddingSpace.toPx() / 2,
+                        (size.height - padding * 2 - paddingSpace.toPx() / 2) * (1 * stepsY - i) / stepsY + padding
                     ),
                     end = Offset(
-                        size.width - padding * 2+ paddingSpace.toPx() ,
-                        (size.height - padding * 2 - paddingSpace.toPx()) * (1 * stepsY - i) / stepsY + padding + paddingSpace.toPx() / 2
+                        size.width - padding / 2,
+                        (size.height - padding * 2 - paddingSpace.toPx() / 2) * (1 * stepsY - i) / stepsY + padding
                     ),
                     color = Color.Gray
                 )
@@ -408,16 +446,43 @@ fun PointChart(
             // Draw points
             xValues.zip(yValues).forEach { (x, y) ->
                 val pointX =
-                    padding + paddingSpace.toPx() / 2 + ((width - paddingSpace.toPx()) * (x - minValueX) / xRange)
+                    padding + paddingSpace.toPx() / 2 + ((size.width - padding * 2 - paddingSpace.toPx() / 2) * (x - minValueX) / xRange)
                 val pointY =
-                    size.height - padding - paddingSpace.toPx() / 2 - ((height - paddingSpace.toPx()) * (y - minValueY) / yRange)
-
-                drawCircle(
-                    color = Color.Blue,
-                    center = Offset(pointX, pointY),
-                    radius = 20f
-                )
+                    size.height - padding - paddingSpace.toPx() / 2 - ((size.height - padding * 2 - paddingSpace.toPx() / 2) * (y - minValueY) / yRange)
+                // i * (size.width-padding*2  -paddingSpace.toPx() / 2) / stepsX + padding + paddingSpace.toPx() / 2
+                coordinates.add(PointF(pointX, pointY))
             }
+            if (bezierPath.isEmpty) {
+                for (i in coordinates.indices) {
+                    if (i == 0) {
+                        bezierPath.moveTo(coordinates[i].x, coordinates[i].y)
+                    } else {
+                        bezierPath.cubicTo(
+                            coordinates[i - 1].x,
+                            coordinates[i - 1].y,
+                            coordinates[i - 1].x + 30f,
+                            coordinates[i - 1].y + 30f, // Control points for Bezier curve
+                            coordinates[i].x,
+                            coordinates[i].y
+                        )
+                    }
+
+
+                }
+            }
+            coordinates.forEach{coord->
+                drawCircle(
+                color = Color.Black,
+                center = Offset(coord.x, coord.y),
+                radius = 20f
+            )}
+
+
+            drawPath(
+                path = bezierPath,
+                color = Color.Red,
+                style = Stroke(width = 5f)
+            )
         }
     }
 }
