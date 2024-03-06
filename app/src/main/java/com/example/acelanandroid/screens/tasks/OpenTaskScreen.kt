@@ -248,8 +248,21 @@ fun OpenTaskScreen(
                                 listOf(-1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f,8.0f,15.0f,16.0f,17.0f,18.0f),
                                 listOf(0.0f, 2.0f, 30.0f, 100.0f, 50.0f, 40.0f, 20.0f, 24.0f, 16.0f, 8.0f, 4.0f),
                                 "x",
-                                "y"
+                                "y",
+                                false,
+                                listOf()
                             )
+                            Text(text = "another graph")
+                            PointChart(
+                                120.dp,
+                                listOf(-1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f,8.0f,15.0f,16.0f,17.0f,18.0f),
+                                listOf(0.0f, 2.0f, 30.0f, 100.0f, 50.0f, 40.0f, 20.0f, 24.0f, 16.0f, 8.0f, 4.0f),
+                                "name material",
+                                "name parameter, divide factor",
+                                true,
+                                listOf("pzt1", "pzt2", "pzt3", "pzt4", "pzt5", "pzt6")
+                            )
+
                             //fun to draw by x/y
                             //DrawGraph(x = taskDB.x!!, y = taskDB.y!!, colorBackground = MaterialTheme.colorScheme.background, modifier =Modifier.fieldModifier() )
                         }
