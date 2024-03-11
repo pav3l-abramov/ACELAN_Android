@@ -19,10 +19,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             AcelanAndroidTheme {
                 // A surface container using the 'background' color from the theme
-                Surface {
+
                     val context= LocalContext.current
                     AppNavigation(context)
-                }
+
             }
         }
     }

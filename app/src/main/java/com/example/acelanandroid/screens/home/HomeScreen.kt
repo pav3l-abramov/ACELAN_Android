@@ -47,6 +47,10 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     mainViewModel: MainViewModel = hiltViewModel(),
 ) {
+    val s = ArrayList<String>(3)
+    s.add("1")
+    s.add("1")
+    Log.d("12121",s.size.toString())
     val checkUser by mainViewModel.checkUser
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
@@ -74,6 +78,8 @@ fun HomeScreen(
                     "\n" +
                     "Welcome to the ACELAN mobile application! We are pleased to offer you a wide range of services and opportunities to make your life easier and more convenient.")
         }
+
+
 
     }
 }

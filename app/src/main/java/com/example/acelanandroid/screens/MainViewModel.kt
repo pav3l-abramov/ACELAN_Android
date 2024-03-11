@@ -178,10 +178,6 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
     ) = database.dao.updateMaterialDetailMain(young, poison, stiffness, piezo, dielectric, id)
 
 
-    suspend fun insertMaterialToDraw(materialToDraw: MaterialToDraw) {
-        database.dao.insertMaterialToDraw(materialToDraw)
-    }
-
     suspend fun handleSuccessStateMaterialScreen(state: GetStateMaterial.Success) {
 
         val materials = state.materials.materials
@@ -227,15 +223,18 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
     private val _materialGraphDB = MutableStateFlow<List<MaterialToDraw>>(emptyList())
     val materialGraphDB: StateFlow<List<MaterialToDraw>> = _materialGraphDB
 
+    private val _materialListDraw = MutableStateFlow<List<MaterialMain>>(emptyList())
+    val materialListDraw: StateFlow<List<MaterialMain>> = _materialListDraw
+
     suspend fun updateMaterialGraph() {
         viewModelScope.launch {
             _materialGraphDB.value = database.dao.getDrawMain()
         }
     }
-
-    suspend fun insertMaterialGraph(insertMaterial: MaterialToDraw) {
-        database.dao.insertMaterialToDraw(insertMaterial)
+    suspend fun insertMaterialToDraw(materialToDraw: MaterialToDraw) {
+        database.dao.insertMaterialToDraw(materialToDraw)
     }
+
     suspend fun deleteMaterialToDraw(id: Int) {
         database.dao.deleteMaterialToDrawById(id)
     }
