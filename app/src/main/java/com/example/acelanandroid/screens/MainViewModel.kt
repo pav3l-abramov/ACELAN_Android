@@ -3,6 +3,8 @@ package com.example.acelanandroid.screens
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
 import com.example.acelanandroid.data.MaterialMain
 import com.example.acelanandroid.data.MaterialToDraw
 import com.example.acelanandroid.data.TaskMain
@@ -12,7 +14,9 @@ import com.example.acelanandroid.retrofit.GetStateMaterial
 import com.example.acelanandroid.retrofit.GetStateMaterialDetail
 import com.example.acelanandroid.retrofit.GetStateTaskDetail
 import com.example.acelanandroid.retrofit.GetStateTasks
+import com.example.acelanandroid.room.FloatListConverter
 import com.example.acelanandroid.room.MainDB
+import com.example.acelanandroid.screens.materials.GraphList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -223,8 +227,8 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
     private val _materialGraphDB = MutableStateFlow<List<MaterialToDraw>>(emptyList())
     val materialGraphDB: StateFlow<List<MaterialToDraw>> = _materialGraphDB
 
-    private val _materialListDraw = MutableStateFlow<List<MaterialMain>>(emptyList())
-    val materialListDraw: StateFlow<List<MaterialMain>> = _materialListDraw
+    private val _materialListDraw = MutableStateFlow(GraphList())
+    val materialListDraw: StateFlow<GraphList> = _materialListDraw
 
     suspend fun updateMaterialGraph() {
         viewModelScope.launch {
@@ -237,5 +241,26 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
 
     suspend fun deleteMaterialToDraw(id: Int) {
         database.dao.deleteMaterialToDrawById(id)
+    }
+    suspend fun getDataToGraph(){
+        val nameList = mutableListOf<String>()
+        val youngList = mutableListOf<Float>()
+        val poisonList = mutableListOf<Float>()
+        val stiffnessList = mutableListOf<List<Float>>()
+        val piezoList = mutableListOf<List<Float>>()
+        val dielectricList = mutableListOf<List<Float>>()
+        val listId = database.dao.getDrawMain()
+        listId.forEach { id ->
+            val data = id.id?.let { database.dao.getMaterialMainByID(it) }
+            if (data != null) {
+                nameList.add(data.name!!)
+                youngList.add(data.young!!.toFloat()/1E9f)
+                poisonList.add(data.poison!!.toFloat())
+                stiffnessList.add(data.stiffness!!)
+                piezoList.add(data.piezo!!)
+                dielectricList.add(data.dielectric!!)
+            }
+        }
+        _materialListDraw.value=GraphList(nameList,youngList,poisonList,stiffnessList,piezoList,dielectricList)
     }
 }

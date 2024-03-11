@@ -128,7 +128,8 @@ fun MaterialsScreen(
                             mainButtonOn = isMainFABOpen.value,
                             onCancelMain = { isMainFABOpen.value=!isMainFABOpen.value },
                             onCancelFilter = { isDialogOpen.value =true },
-                            onCancelGraph = {navController.navigate(route = GRAPH_SCREEN)})
+                            onCancelGraph = {navController.navigate(route = GRAPH_SCREEN)},
+                            color = MaterialTheme.colorScheme.background)
 
                 },
                 content = {
