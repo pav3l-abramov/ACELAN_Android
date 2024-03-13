@@ -38,9 +38,8 @@ sealed class BottomBarScreen(
     )
 }
 val screens = listOf(
+    BottomBarScreen.Home,
+    BottomBarScreen.Profile,
     BottomBarScreen.Materials,
     BottomBarScreen.Tasks,
-    //BottomBarScreen.Models,
-    BottomBarScreen.Profile,
-    BottomBarScreen.Home,
 )
