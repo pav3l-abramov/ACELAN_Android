@@ -5,12 +5,16 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -28,14 +32,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import com.example.acelanandroid.GRAPH_SCREEN
 import com.example.acelanandroid.common.composable.CustomLinearProgressBar
 import com.example.acelanandroid.common.composable.FABOpenMaterialComposable
+import com.example.acelanandroid.common.composable.InterfaceButton
 import com.example.acelanandroid.common.composable.MaterialDetailCard
 import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.common.ext.fieldModifier
@@ -129,11 +136,9 @@ fun OpenMaterialScreen(
                         }
                     },
                     actions = {
-                        Switch(
-                            checked = isShowButton.value,
-                            onCheckedChange = {
-                                isShowButton.value = it
-                            }
+                        InterfaceButton(
+                            mainButtonOn = isShowButton.value,
+                            onCancelMain = {isShowButton.value = !isShowButton.value}
                         )
                     },
 
@@ -157,7 +162,8 @@ fun OpenMaterialScreen(
                                 mainViewModel.deleteMaterialToDraw(idMaterial)
                                 isMainFABOpen.value = false
                             }
-                        })
+                        },
+                        color = MaterialTheme.colorScheme.background)
                 }
             },
             content = {

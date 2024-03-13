@@ -145,47 +145,77 @@ fun FABTaskComposable(
 fun FABOpenMaterialComposable(
     mainButtonOn: Boolean,
     onCancelMain: () -> Unit,
-    onDelete:()->Unit
+    onDelete:()->Unit,
+    color: Color
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.End
     ) {
-if (mainButtonOn) {
-    FloatingActionButton(
-        shape = CircleShape,
-        onClick = { onDelete() },
-        content = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    painter = painterResource(R.drawable.baseline_delete_outline_24),
-                    contentDescription = null
+        if (mainButtonOn) {
+                FloatingActionButton(
+                    shape = CircleShape,
+                    onClick = { onDelete() },
+                    content = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                painter = painterResource(R.drawable.baseline_delete_outline_24),
+                                contentDescription = null
+                            )
+                        }
+
+                    },
+                    modifier = Modifier
+                        .size(55.dp)
+
                 )
-            }
+            Spacer(modifier = Modifier.height(5.dp))
 
-        },
-        modifier = Modifier
-            .size(55.dp)
+                FloatingActionButton(
+                    shape = CircleShape,
+                    onClick = { onCancelMain() },
+                    content = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                painter = painterResource(R.drawable.baseline_auto_graph_24 ),
+                                contentDescription = null
+                            )
+                        }
 
-    )
-    Spacer(modifier = Modifier.height(5.dp))
-}
-        FloatingActionButton(
-            shape = CircleShape,
-            onClick = { onCancelMain() },
-            content = {
-                Row(verticalAlignment = Alignment.CenterVertically){
-                    Icon(
-                        painter = painterResource(if (mainButtonOn) R.drawable.baseline_auto_graph_24 else R.drawable.baseline_add_circle_outline_24),
-                        contentDescription = null
+                    },
+                    modifier = Modifier
+                        .size(55.dp)
+
+                )
+
+        }
+        else{
+            Column(
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.background(color, shape = RoundedCornerShape(20.dp))
+                    .width(170.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                        .clickable { onCancelMain() }) {
+                    Text("Add To Graph")
+                    FloatingActionButton(
+                        shape = CircleShape,
+                        onClick = { onCancelMain() },
+                        content = {
+                            Icon(
+                                painter = painterResource(R.drawable.baseline_add_circle_outline_24),
+                                contentDescription = null
+                            )
+
+                        },
+                        modifier = Modifier
+                            .size(55.dp)
                     )
                 }
-
-            },
-            modifier= Modifier
-                .size(55.dp)
-
-        )
+            }
+        }
     }
 }
 

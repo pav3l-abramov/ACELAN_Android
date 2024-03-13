@@ -46,6 +46,7 @@ import com.example.acelanandroid.OpenGLES20Activity
 import com.example.acelanandroid.common.composable.CustomLinearProgressBar
 import com.example.acelanandroid.common.composable.FABOpenMaterialComposable
 import com.example.acelanandroid.common.composable.FABTaskDrawComposable
+import com.example.acelanandroid.common.composable.InterfaceButton
 import com.example.acelanandroid.common.composable.MaterialDetailCard
 import com.example.acelanandroid.common.composable.PointChart
 import com.example.acelanandroid.common.composable.TextCardStandart
@@ -133,11 +134,10 @@ fun OpenTaskScreen(
                         )
                     },
                     actions = {
-                        Switch(
-                            checked = isShowButton.value,
-                            onCheckedChange = {
-                                isShowButton.value = it
-                            }
+                        InterfaceButton(
+                            mainButtonOn = isShowButton.value,
+                            onCancelMain = {isShowButton.value=!isShowButton.value}
+
                         )
                     },
                     navigationIcon = {
