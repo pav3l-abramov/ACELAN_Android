@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(
+class ProfileViewModel @Inject constructor(
     private val appRetrofit: AppRetrofit
 ) : ViewModel() {
 
@@ -40,7 +40,7 @@ class LoginViewModel @Inject constructor(
             login(email,password)
         } catch (e: Exception) {
             // Handle the error and retry the request if necessary
-            login(email,password)
+
         }
     }
 

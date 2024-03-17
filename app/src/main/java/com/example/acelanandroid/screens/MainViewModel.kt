@@ -42,7 +42,11 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
 
     suspend fun deleteUserDB() {
         database.dao.deleteUser()
+        database.dao.deleteMaterial()
+        database.dao.deleteTask()
         checkUser.value = false
+        _materialListDB.value= emptyList()
+        _taskListDB.value= emptyList()
     }
 
     suspend fun insertUserToDB(userData: UserData) {
@@ -144,6 +148,7 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
 
     private val _materialDetailDB = MutableStateFlow(MaterialMain())
     val materialDetailDB: StateFlow<MaterialMain> = _materialDetailDB
+
 
     suspend fun updateMaterialList() {
         viewModelScope.launch {

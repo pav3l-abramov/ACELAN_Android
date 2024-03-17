@@ -15,20 +15,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.acelanandroid.common.composable.BasicButton
 import com.example.acelanandroid.common.composable.CustomLinearProgressBar
 import com.example.acelanandroid.common.composable.EmailField
@@ -41,9 +34,7 @@ import com.example.acelanandroid.screens.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -53,11 +44,11 @@ import kotlinx.coroutines.withContext
 fun ProfileScreen(
     modifier: Modifier = Modifier,
     mainViewModel: MainViewModel = hiltViewModel(),
-    loginViewModel: LoginViewModel = hiltViewModel(),
+    profileViewModel: ProfileViewModel = hiltViewModel(),
     context: Context
 ) {
-    val uiState by loginViewModel.uiState
-    val uiCheckStatus by loginViewModel.uiCheckStatus
+    val uiState by profileViewModel.uiState
+    val uiCheckStatus by profileViewModel.uiCheckStatus
     val checkUser by mainViewModel.checkUser
     val userDB by mainViewModel.userDB
 
@@ -80,10 +71,10 @@ fun ProfileScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (!checkUser) {
-            EmailField(uiState.email, loginViewModel::onEmailChange, Modifier.fieldModifier())
+            EmailField(uiState.email, profileViewModel::onEmailChange, Modifier.fieldModifier())
             PasswordField(
                 uiState.password,
-                loginViewModel::onPasswordChange,
+                profileViewModel::onPasswordChange,
                 Modifier.fieldModifier()
             )
             when (uiCheckStatus.status) {
@@ -97,14 +88,14 @@ fun ProfileScreen(
                         uiCheckStatus.body.toString(),
                         Toast.LENGTH_SHORT
                     ).show()
-                    loginViewModel.nullStatus()
+                    profileViewModel.nullStatus()
                 }
 
             }
             BasicButton("Sign In", Modifier.basicButton()) {
 
-                loginViewModel.loginWithRetry(uiState.email, uiState.password)
-                loginViewModel.loginState.observe(lifecycleOwner, Observer { state ->
+                profileViewModel.loginWithRetry(uiState.email, uiState.password)
+                profileViewModel.loginState.observe(lifecycleOwner, Observer { state ->
                     Log.d("start", state.toString())
                     when (state) {
                         PostState.Loading -> {
@@ -128,13 +119,13 @@ fun ProfileScreen(
                                     mainViewModel.userIsExist()
                                 }
                             }
-                            loginViewModel.nullStatus()
+                            profileViewModel.nullStatus()
                         }
 
                         is PostState.Error -> {
                             Log.d("Error", state.toString())
                             val error = state.error
-                            loginViewModel.typeError(error)
+                            profileViewModel.typeError(error)
                             // Handle error
                         }
 

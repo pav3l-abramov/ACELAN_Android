@@ -109,5 +109,9 @@ interface Dao {
     @Query("SELECT COUNT(*) FROM $TASK")
     fun countTasks(): Int
 
+    @Query("DELETE FROM $TASK")
+    suspend fun deleteTask()
+    @Query("DELETE FROM $MATERIAL")
+    suspend fun deleteMaterial()
 
 }
