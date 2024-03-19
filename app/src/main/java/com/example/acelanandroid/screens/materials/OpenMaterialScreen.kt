@@ -33,6 +33,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -44,6 +46,7 @@ import com.example.acelanandroid.common.composable.CustomLinearProgressBar
 import com.example.acelanandroid.common.composable.FABOpenMaterialComposable
 import com.example.acelanandroid.common.composable.InterfaceButton
 import com.example.acelanandroid.common.composable.MaterialDetailCard
+import com.example.acelanandroid.common.composable.SampleContent
 import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.common.ext.fieldModifier
 import com.example.acelanandroid.data.MaterialToDraw
@@ -78,6 +81,10 @@ fun OpenMaterialScreen(
     val isMainFABOpen = remember { mutableStateOf(false) }
     val isShowButton = remember { mutableStateOf(true) }
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
+    val pad = 10;
+    val width = with(LocalDensity.current) {
+        ((LocalConfiguration.current.screenWidthDp - pad * 2) / 6)
+    }
     LaunchedEffect(Unit) {
         mainViewModel.userIsExist()
         mainViewModel.getUserDB()
@@ -243,6 +250,13 @@ fun OpenMaterialScreen(
                                 TextCardStandart("Properties", Modifier.fieldModifier())
                             }
                         }
+                        SampleContent(
+                            param="d",
+                            row=3,
+                            col=6,
+                            widt=width,
+                            item=listOf(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f,1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f,1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f,),
+                        )
                         if (isLoading) {
                             CustomLinearProgressBar(Modifier.fieldModifier())
                         }
