@@ -49,7 +49,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-@SuppressLint("CoroutineCreationDuringComposition", "UnrememberedMutableState",
+@SuppressLint(
+    "CoroutineCreationDuringComposition", "UnrememberedMutableState",
     "UnusedMaterial3ScaffoldPaddingParameter"
 )
 @Composable
@@ -78,7 +79,7 @@ fun TasksScreen(
         }
 
     }
-    CoroutineScope(Job()).launch { mainViewModel.updateTaskList()}
+    CoroutineScope(Job()).launch { mainViewModel.updateTaskList() }
     Log.d("checkUsercheckUsercheckUser", checkUser.toString())
     if (!checkUser) {
 
@@ -114,12 +115,11 @@ fun TasksScreen(
                 TextCardStandart("Download data...", Modifier.fieldModifier())
                 CustomLinearProgressBar(Modifier.fieldModifier())
             }
-        }
-        else {
+        } else {
             Scaffold(
                 floatingActionButton = {
                     FABTaskComposable(
-                        onCancelFilter = { isDialogOpen.value =true })
+                        onCancelFilter = { isDialogOpen.value = true })
                 },
                 content = {
                     SwipeRefresh(state = swipeRefreshState,
@@ -131,15 +131,15 @@ fun TasksScreen(
                         }) {
                         LazyColumn {
                             items(tasksList) { item ->
-                                if(item.status==uiStateFilter.filterStatusTask||uiStateFilter.filterStatusTask=="All") {
-                                    item.name?.let {
-                                        item.status?.let { it1 ->
-                                            TaskCard(
-                                                it, Modifier.fieldModifier(), it1
-                                            ) {
-                                                navController.navigate(route = OPEN_TASK_SCREEN + "/${item.id}")
-                                            }
-                                        }
+                                if (item.status == uiStateFilter.filterStatusTask || uiStateFilter.filterStatusTask == "All") {
+                                    TaskCard(
+                                        item.name.toString(),
+                                        Modifier.fieldModifier(),
+                                        item.status.toString(),
+                                        item.started_at.toString(),
+                                        item.finished_at.toString()
+                                    ) {
+                                        navController.navigate(route = OPEN_TASK_SCREEN + "/${item.id}")
                                     }
                                 }
                             }
@@ -151,7 +151,7 @@ fun TasksScreen(
                 FilterDialogTask(
                     message = "Filter",
                     status = uiStateFilter.filterStatusTask,
-                    onNewValueStatusFilter=filterViewModel::onNewValueStatusFilter,
+                    onNewValueStatusFilter = filterViewModel::onNewValueStatusFilter,
                     modifier = Modifier.fieldModifier(),
                     onCancel = { isDialogOpen.value = false },
                     color = MaterialTheme.colorScheme.background
@@ -185,8 +185,8 @@ fun TasksScreen(
 
             is GetStateTasks.Error -> {
                 mainViewModel.handleErrorStateTasksScreen(state)
-                    val error = state.error
-                    tasksViewModel.typeError(error)
+                val error = state.error
+                tasksViewModel.typeError(error)
             }
         }
     }

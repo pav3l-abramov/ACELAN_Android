@@ -33,10 +33,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.acelanandroid.R
+import com.example.acelanandroid.common.ext.fieldModifier
 import com.example.acelanandroid.ui.theme.DarkBlue
 import com.example.acelanandroid.ui.theme.DarkGreen
 import com.example.acelanandroid.ui.theme.DarkRed
@@ -54,9 +59,11 @@ fun TaskCard(
     content: String,
     modifier: Modifier,
     status: String,
+    startTime: String,
+    finishTime: String,
     onEditClick: () -> Unit
 ) {
-    TaskCardMain(content, status, onEditClick, modifier)
+    TaskCardMain(content, status, startTime, finishTime, onEditClick, modifier)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,29 +71,32 @@ fun TaskCard(
 private fun TaskCardMain(
     content: String,
     status: String,
+    startTime: String,
+    finishTime: String,
     onEditClick: () -> Unit,
     modifier: Modifier
 ) {
     val color = getColorStatus(status, isSystemInDarkTheme())
+    val listStart =if (startTime!="null") startTime.split("T", "Z",".") else listOf("","-")
+    val listFinish = if (finishTime!="null") finishTime.split("T", "Z",".") else listOf("","-")
     Card(
         modifier = modifier,
         onClick = onEditClick
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+
             ) {
                 if (content.isNotBlank()) {
                     Text(
-                        text = content, modifier = Modifier.padding(16.dp, 0.dp),
-                        fontWeight = FontWeight.Bold
+                        text = content,
+                        fontWeight = FontWeight.Bold, fontSize = 24.sp
                     )
                 }
                 Column(
@@ -105,9 +115,36 @@ private fun TaskCardMain(
                     )
                 }
             }
+            Spacer(modifier = Modifier.size(5.dp))
+            Row {
+                Text(text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+                        append("Start:")
+                    }
+                },modifier = Modifier
+                        .width(60.dp))
+                Text(text ="${listStart[1]}    ${listStart[0]}")
+            }
+            Spacer(modifier = Modifier.size(5.dp))
+            Row {
+                Text(text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+                        append("Finish:")
+                    }
+                },modifier = Modifier
+                    .width(60.dp))
+                Text(text ="${listFinish[1]}    ${listFinish[0]}")
+            }
         }
     }
 }
+
+@Preview
+@Composable
+fun checkCard() {
+    TaskCardMain("content", "success", "2023-04-12T14:30:05.580Z", "null", {}, Modifier.fieldModifier())
+}
+
 
 @Composable
 fun MaterialCard(
@@ -378,7 +415,6 @@ fun TextCardStandart(
         }
     }
 }
-
 
 
 fun getColorStatus(status: String, systemTheme: Boolean): Color {

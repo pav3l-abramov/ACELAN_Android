@@ -26,3 +26,6 @@ val LightYellow = Color(0xFFFFE500)
 
 val LightText = Color(0xFFDFDFDF)
 val DarkText = Color(0xFF363636)
+
+val LightEmerald = Color(0xFF22684C)
+val DarkEmerald = Color(0xFF36AC7D)

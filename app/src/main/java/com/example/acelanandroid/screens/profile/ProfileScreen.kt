@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,6 +20,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
@@ -26,6 +31,8 @@ import com.example.acelanandroid.common.composable.BasicButton
 import com.example.acelanandroid.common.composable.CustomLinearProgressBar
 import com.example.acelanandroid.common.composable.EmailField
 import com.example.acelanandroid.common.composable.PasswordField
+import com.example.acelanandroid.common.composable.TextHello
+import com.example.acelanandroid.common.composable.TextSignIn
 import com.example.acelanandroid.common.ext.basicButton
 import com.example.acelanandroid.common.ext.fieldModifier
 import com.example.acelanandroid.data.UserData
@@ -71,6 +78,7 @@ fun ProfileScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (!checkUser) {
+            TextSignIn( Modifier.fieldModifier())
             EmailField(uiState.email, profileViewModel::onEmailChange, Modifier.fieldModifier())
             PasswordField(
                 uiState.password,
@@ -146,7 +154,8 @@ fun ProfileScreen(
                     mainViewModel.getUserDB()
                 }
             }
-                 Text(text = "Hello ${userDB.email}")
+            userDB.email?.let { TextHello(Modifier.fieldModifier(), it) }
+//                 Text(text = "Hello ${userDB.email}")
 
                 BasicButton("Log Out", Modifier.basicButton()) {
                     CoroutineScope(Job()).launch {
