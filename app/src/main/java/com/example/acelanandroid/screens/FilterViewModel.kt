@@ -3,13 +3,21 @@ package com.example.acelanandroid.screens
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.acelanandroid.data.MaterialMain
+import com.example.acelanandroid.data.TaskMain
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 @HiltViewModel
 class FilterViewModel @Inject constructor() : ViewModel() {
     var uiStateFilter = mutableStateOf(FilterData())
         private set
+    var uiStateSorted = mutableStateOf(SortedData())
+        private set
+
+    private val _sortedTaskListDB = MutableStateFlow<List<TaskMain>>(emptyList())
+    val sortedTaskListDB: StateFlow<List<TaskMain>> = _sortedTaskListDB
 
     fun checkCoreFilter(item: MaterialMain, filterParam:String): Boolean {
         return (item.core == true && filterParam == "Yes") || (item.core==false && filterParam == "No") || filterParam == "All"
@@ -38,5 +46,19 @@ class FilterViewModel @Inject constructor() : ViewModel() {
     }
     fun onYoungMaxFilterChange(newValue: String) {
         uiStateFilter.value = uiStateFilter.value.copy(filterYoungMax = newValue)
+    }
+
+    fun onNewSortedParam(newValue: String){
+        uiStateSorted.value=uiStateSorted.value.copy(sortedBy = newValue)}
+    fun onSortedTaskMain(listNotSorted:List<TaskMain>){
+        when(uiStateSorted.value.sortedBy){
+            "Not Sorted"->_sortedTaskListDB.value=listNotSorted
+            "Start Up"->_sortedTaskListDB.value=listNotSorted.sortedBy { it.started_at }
+            "Start Down"->_sortedTaskListDB.value=listNotSorted.sortedBy { it.started_at }.reversed()
+            "Finish Up"->_sortedTaskListDB.value=listNotSorted.sortedBy { it.finished_at }
+            "Finish Down"->_sortedTaskListDB.value=listNotSorted.sortedBy { it.finished_at }.reversed()
+            else->{_sortedTaskListDB.value=listNotSorted}
+        }
+
     }
 }

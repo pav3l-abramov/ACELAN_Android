@@ -113,5 +113,6 @@ interface Dao {
     suspend fun deleteTask()
     @Query("DELETE FROM $MATERIAL")
     suspend fun deleteMaterial()
-
+    @Query("DELETE FROM $DRAW")
+    suspend fun deleteDraw()
 }

@@ -257,7 +257,8 @@ fun MaterialDetailCard(
     contentFirst: String,
     contentSecond: String,
     timeBoolean: Boolean,
-    modifier: Modifier
+    modifier: Modifier,
+    isParam:Boolean
 ) {
     val color = getColorStatus(contentSecond, isSystemInDarkTheme())
     Card(
@@ -276,7 +277,7 @@ fun MaterialDetailCard(
             ) {
                 Column(
                     modifier = Modifier
-                        .width(100.dp),
+                        .width( if (isParam)180.dp else 80.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.Start
                 ) {
@@ -408,7 +409,8 @@ fun TextCardStandart(
 
                     Text(
                         text = content,
-                        color = color
+                        color = color,
+                        fontSize = 20.sp
                     )
                 }
             }

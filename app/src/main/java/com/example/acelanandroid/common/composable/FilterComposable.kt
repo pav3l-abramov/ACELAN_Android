@@ -273,15 +273,20 @@ fun FilterDialogMaterial(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterDialogTask(
-    message: String,
+    filterText: String,
+    sortedText: String,
     status: String,
+    sortedParam: String,
     onNewValueStatusFilter: (String) -> Unit,
+    onNewValueSortedParam: (String) -> Unit,
     onCancel: () -> Unit,
     modifier: Modifier = Modifier,
     color: Color
 ) {
     var expanded by remember { mutableStateOf(false) }
+    var expandedSorted by remember { mutableStateOf(false) }
     val taskStatus = arrayOf("All", "queued", "working", "failure", "success")
+    val taskSorted = arrayOf("Not Sorted", "Start Up", "Start Down", "Finish Up", "Finish Down")
     Dialog(
         onDismissRequest = onCancel,
     ) {
@@ -291,7 +296,7 @@ fun FilterDialogTask(
                 .padding(8.dp),
         ) {
             Text(
-                text = message,
+                text = filterText,
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
@@ -310,7 +315,7 @@ fun FilterDialogTask(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
-                            .width(70.dp)
+                            .width(80.dp)
                     )
                     Box(
                         modifier = Modifier.padding(8.dp)
@@ -339,6 +344,63 @@ fun FilterDialogTask(
                                         onClick = {
                                             onNewValueStatusFilter(item)
                                             expanded = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            Text(
+                text = sortedText,
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
+                fontWeight = FontWeight.Bold
+            )
+            Card(
+                modifier = modifier
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp, 0.dp)
+                ) {
+                    Text(
+                        text = "Sorted by",
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .width(80.dp)
+                    )
+                    Box(
+                        modifier = Modifier.padding(8.dp)
+                    ) {
+                        ExposedDropdownMenuBox(
+                            expanded = expandedSorted,
+                            onExpandedChange = {
+                                expandedSorted = !expandedSorted
+                            }
+                        ) {
+                            TextField(
+                                value = sortedParam,
+                                onValueChange = {},
+                                readOnly = true,
+                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSorted) },
+                                modifier = Modifier.menuAnchor()
+                            )
+
+                            ExposedDropdownMenu(
+                                expanded = expandedSorted,
+                                onDismissRequest = { expandedSorted = false }
+                            ) {
+                                taskSorted.forEach { item ->
+                                    DropdownMenuItem(
+                                        text = { Text(text = item) },
+                                        onClick = {
+                                            onNewValueSortedParam(item)
+                                            expandedSorted = false
                                         }
                                     )
                                 }

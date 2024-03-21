@@ -5,6 +5,7 @@ import android.graphics.PointF
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
@@ -345,11 +346,13 @@ fun PointChart(
         }
     }
 
-    Column(Modifier.background(Color.White), horizontalAlignment = Alignment.End) {
+    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         Canvas(
             modifier = Modifier
                 .height(screenMin)
-                .width(screenMin),
+                .width(screenMin)
+                .background(Color.White)
+                .align(Alignment.CenterHorizontally),
 
             ) {
             val padding = 72f

@@ -83,7 +83,7 @@ fun MaterialsScreen(
             mainViewModel.getUserDB()
         }
     }
-    CoroutineScope(Job()).launch { mainViewModel.updateMaterialList() }
+     mainViewModel.updateMaterialList()
     if (!checkUser) {
         Column(
             modifier = modifier
@@ -110,7 +110,7 @@ fun MaterialsScreen(
                 }
             }
         }
-        if (materialsList.isEmpty()) {
+        if (materialsList.isEmpty()&&isLoading) {
             Column(
                 modifier = modifier
                     .fillMaxSize()

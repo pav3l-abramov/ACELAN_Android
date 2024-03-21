@@ -1,5 +1,6 @@
 package com.example.acelanandroid.screens
 
+import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -44,6 +45,7 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
         database.dao.deleteUser()
         database.dao.deleteMaterial()
         database.dao.deleteTask()
+        database.dao.deleteDraw()
         checkUser.value = false
         _materialListDB.value= emptyList()
         _taskListDB.value= emptyList()
@@ -66,7 +68,7 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
     private val _taskListDB = MutableStateFlow<List<TaskMain>>(emptyList())
     val taskListDB: StateFlow<List<TaskMain>> = _taskListDB
 
-    suspend fun updateTaskList() {
+    fun updateTaskList() {
         viewModelScope.launch {
             _taskListDB.value = database.dao.getTaskMain()
         }
@@ -150,7 +152,7 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
     val materialDetailDB: StateFlow<MaterialMain> = _materialDetailDB
 
 
-    suspend fun updateMaterialList() {
+    fun updateMaterialList() {
         viewModelScope.launch {
             _materialListDB.value = database.dao.getMaterialMain()
         }

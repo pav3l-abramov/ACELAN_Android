@@ -9,10 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -24,15 +21,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import com.example.acelanandroid.OPEN_TASK_SCREEN
-import com.example.acelanandroid.R
-import com.example.acelanandroid.common.composable.FilterDialogMaterial
 import com.example.acelanandroid.common.composable.CustomLinearProgressBar
-import com.example.acelanandroid.common.composable.FABMaterialComposable
 import com.example.acelanandroid.common.composable.FABTaskComposable
 import com.example.acelanandroid.common.composable.FilterDialogTask
 import com.example.acelanandroid.common.composable.TaskCard
@@ -72,6 +65,8 @@ fun TasksScreen(
     val isDialogOpen = remember { mutableStateOf(false) }
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
     val uiStateFilter by filterViewModel.uiStateFilter
+    val uiStateSorted by filterViewModel.uiStateSorted
+    val sortedTaskListDB by filterViewModel.sortedTaskListDB.collectAsState()
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
             mainViewModel.userIsExist()
@@ -79,7 +74,7 @@ fun TasksScreen(
         }
 
     }
-    CoroutineScope(Job()).launch { mainViewModel.updateTaskList() }
+    mainViewModel.updateTaskList()
     Log.d("checkUsercheckUsercheckUser", checkUser.toString())
     if (!checkUser) {
 
@@ -97,7 +92,6 @@ fun TasksScreen(
         LaunchedEffect(tasksList) {
             withContext(Dispatchers.IO) {
                 if (tasksList.isEmpty()) {
-                    Log.d("tasksListtasksListtasksListtasksListtasksList", tasksList.toString())
                     tasksViewModel.getListTasksWithRetry(userDB.token.toString(), context)
                     mainViewModel.updateTaskList()
                 }
@@ -120,45 +114,47 @@ fun TasksScreen(
                 floatingActionButton = {
                     FABTaskComposable(
                         onCancelFilter = { isDialogOpen.value = true })
-                },
-                content = {
-                    SwipeRefresh(state = swipeRefreshState,
-                        onRefresh = {
-                            tasksViewModel.getListTasksWithRetry(
-                                userDB.token.toString(),
-                                context
-                            )
-                        }) {
-                        LazyColumn {
-                            items(tasksList) { item ->
-                                if (item.status == uiStateFilter.filterStatusTask || uiStateFilter.filterStatusTask == "All") {
-                                    TaskCard(
-                                        item.name.toString(),
-                                        Modifier.fieldModifier(),
-                                        item.status.toString(),
-                                        item.started_at.toString(),
-                                        item.finished_at.toString()
-                                    ) {
-                                        navController.navigate(route = OPEN_TASK_SCREEN + "/${item.id}")
-                                    }
+                }
+            ) {
+                SwipeRefresh(state = swipeRefreshState,
+                    onRefresh = {
+                        tasksViewModel.getListTasksWithRetry(
+                            userDB.token.toString(),
+                            context
+                        )
+                    }) {
+                    filterViewModel.onSortedTaskMain(tasksList)
+                    LazyColumn {
+                        items(sortedTaskListDB) { item ->
+                            if (item.status == uiStateFilter.filterStatusTask || uiStateFilter.filterStatusTask == "All") {
+                                TaskCard(
+                                    item.name.toString(),
+                                    Modifier.fieldModifier(),
+                                    item.status.toString(),
+                                    item.started_at.toString(),
+                                    item.finished_at.toString()
+                                ) {
+                                    navController.navigate(route = OPEN_TASK_SCREEN + "/${item.id}")
                                 }
                             }
                         }
                     }
+                }
 
-                })
+            }
             if (isDialogOpen.value) {
                 FilterDialogTask(
-                    message = "Filter",
+                    filterText = "Filter",
+                    sortedText = "Sorted",
                     status = uiStateFilter.filterStatusTask,
+                    sortedParam = uiStateSorted.sortedBy,
                     onNewValueStatusFilter = filterViewModel::onNewValueStatusFilter,
+                    onNewValueSortedParam = filterViewModel::onNewSortedParam,
                     modifier = Modifier.fieldModifier(),
                     onCancel = { isDialogOpen.value = false },
                     color = MaterialTheme.colorScheme.background
                 )
             }
-
-
         }
     }
     tasksViewModel.tasksState.observe(lifecycleOwner) { state ->

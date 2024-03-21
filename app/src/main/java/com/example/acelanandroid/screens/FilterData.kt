@@ -11,3 +11,6 @@ data class FilterData(
     val filterYoungMin:String="10000000",
     val filterYoungMax:String="1000000000",
 )
+data class SortedData(
+    val sortedBy:String="Not Sorted"
+)

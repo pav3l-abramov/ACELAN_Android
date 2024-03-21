@@ -2,10 +2,18 @@ package com.example.acelanandroid.screens.materials
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -62,9 +70,15 @@ fun GraphScreen(
             mainViewModel.getDataToGraph()
         }
     }
-
+    val scrollState = rememberLazyListState()
+    val heightTopBar = 56.dp
     Scaffold(
         topBar = {
+            AnimatedVisibility(
+                visible = !(scrollState.firstVisibleItemIndex > 0 ||scrollState.firstVisibleItemScrollOffset>0) ,
+                enter = slideInVertically(),
+                exit = slideOutVertically()
+            ) {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -85,45 +99,73 @@ fun GraphScreen(
                         )
                     }
                 },
-                actions = {}
+                //actions = {}
             )
+        }
         },
-        floatingActionButton = {},
-        content = {
-            Column(modifier = Modifier
+        floatingActionButton = {}
+    ) {
+        Column(
+            modifier = Modifier
                 .padding(it)
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally) {
+                ,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
-                val listGraphMaterial = listOf(
-                    materialListDraw.poisonList?.let { it1 -> materialListDraw.nameList?.let { it2 ->GraphMaterialData(it1,"poison",it2)}},
-                    materialListDraw.youngList?.let { it1 -> materialListDraw.nameList?.let { it2 ->GraphMaterialData(it1,"young, 10^9",it2)}}
-                )
-                when(materialGraphDB.size){
-                    0->
-                        Column(
+            val listGraphMaterial = listOf(
+                materialListDraw.poisonList?.let { it1 ->
+                    materialListDraw.nameList?.let { it2 ->
+                        GraphMaterialData(
+                            it1,
+                            "μ",
+                            "Poison Coefficient",
+                            it2
+                        )
+                    }
+                },
+                materialListDraw.youngList?.let { it1 ->
+                    materialListDraw.nameList?.let { it2 ->
+                        GraphMaterialData(
+                            it1,
+                            "E, 10⁹ N/m²",
+                            "Young Modulus",
+                            it2
+                        )
+                    }
+                }
+            )
+            when (materialGraphDB.size) {
+                0 ->
+                    Column(
                         modifier = modifier
-                            .fillMaxSize(),
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState()),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        TextCardStandart("Nothing to show. Add 2 materials to draw graph", Modifier.fieldModifier())
+                        TextCardStandart(
+                            "Nothing to show. Add 2 materials to draw graph",
+                            Modifier.fieldModifier()
+                        )
                     }
-                    1->
-                        Column(
-                            modifier = modifier
-                                .fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            TextCardStandart("Add another material", Modifier.fieldModifier())
-                        }
-                    else ->{
-                        listGraphMaterial.forEach{data->
-                            if (data != null) {
-                                TextCardStandart(data.yLabelName, Modifier.fieldModifier())
 
+                1 ->
+                    Column(
+                        modifier = modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        TextCardStandart("Add another material", Modifier.fieldModifier())
+                    }
+
+                else -> {
+                    LazyColumn(state = scrollState, modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                        items(listGraphMaterial) { data ->
+                            if (data != null) {
+                                TextCardStandart(data.paramName, Modifier.fieldModifier())
                                 PointChart(
                                     120.dp,
                                     listOf(),
@@ -135,10 +177,26 @@ fun GraphScreen(
                                 )
                             }
                         }
+
                     }
+//                    listGraphMaterial.forEach { data ->
+//                        if (data != null) {
+//                            //TextCardStandart(data.paramName, Modifier.fieldModifier())
+//                            PointChart(
+//                                120.dp,
+//                                listOf(),
+//                                data.yValues,
+//                                "name material",
+//                                data.yLabelName,
+//                                true,
+//                                data.materialNameList
+//                            )
+//                        }
+//                    }
                 }
             }
+        }
 
-        })
+    }
 }
 

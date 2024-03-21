@@ -25,6 +25,7 @@ class TasksViewModel @Inject constructor(
     val mainApi = appRetrofit.retrofit.create(GetDataApi::class.java)
 
     var uiCheckStatus = mutableStateOf(StatusUI())
+
     private val _tasksState = MutableLiveData<GetStateTasks>()
     val tasksState: LiveData<GetStateTasks> = _tasksState
 

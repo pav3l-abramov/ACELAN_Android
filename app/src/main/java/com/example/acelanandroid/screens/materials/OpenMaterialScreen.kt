@@ -27,8 +27,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -54,7 +52,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 @OptIn(DelicateCoroutinesApi::class, ExperimentalMaterial3Api::class)
-@SuppressLint("CoroutineCreationDuringComposition", "UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("CoroutineCreationDuringComposition", "UnusedMaterial3ScaffoldPaddingParameter",
+    "SuspiciousIndentation"
+)
 @Composable
 fun OpenMaterialScreen(
     navController: NavController,
@@ -159,98 +159,191 @@ fun OpenMaterialScreen(
                         },
                         color = MaterialTheme.colorScheme.background)
                 }
-            },
-            content = {
+            }
+        ) {
 
-                SwipeRefresh(modifier = Modifier.padding(it), state = swipeRefreshState,
-                    onRefresh = {
-                        openMaterialViewModel.getListMaterialDetailWithRetry(
-                            userDB.token.toString(),
-                            idMaterial,
-                            context
+            SwipeRefresh(modifier = Modifier.padding(it), state = swipeRefreshState,
+                onRefresh = {
+                    openMaterialViewModel.getListMaterialDetailWithRetry(
+                        userDB.token.toString(),
+                        idMaterial,
+                        context
+                    )
+                }) {
+                Column(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    val listDetail = listOf(
+                        DataDetailCard(
+                            "Name: ",
+                            materialDetailDB.name.toString(),
+                            false,
+                            Modifier.fieldModifier()
+                        ),
+                        DataDetailCard(
+                            "Type: ",
+                            materialDetailDB.type.toString(),
+                            false,
+                            Modifier.fieldModifier()
+                        ),
+                        DataDetailCard(
+                            "Create: ",
+                            materialDetailDB.created_at.toString(),
+                            true,
+                            Modifier.fieldModifier()
+                        ),
+                        DataDetailCard(
+                            "Update: ",
+                            materialDetailDB.updated_at.toString(),
+                            true,
+                            Modifier.fieldModifier()
+                        ),
+                        DataDetailCard(
+                            "Core: ",
+                            materialDetailDB.core.toString(),
+                            false,
+                            Modifier.fieldModifier()
+                        ),
+                        DataDetailCard(
+                            "Source: ",
+                            materialDetailDB.source.toString(),
+                            false,
+                            Modifier.fieldModifier()
+                        ),
+                        DataDetailCard(
+                            "Young Modulus, N/m²: ",
+                            materialDetailDB.young.toString(),
+                            false,
+                            Modifier.fieldModifier()
+                        ),
+                        DataDetailCard(
+                            "Poison Coefficient: ",
+                            materialDetailDB.poison.toString(),
+                            false,
+                            Modifier.fieldModifier()
+                        ),
+                    )
+                    listDetail.forEach { detail ->
+                        MaterialDetailCard(
+                            detail.content,
+                            detail.materialData,
+                            detail.checkTime,
+                            detail.modifier,
+                            detail.content=="Poison Coefficient: " || detail.content=="Young Modulus, N/m²: "
                         )
-                    }) {
-                    Column(
-                        modifier = modifier
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState()),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        val listDetail = listOf(
-                            DataDetailCard(
-                                "Name: ",
-                                materialDetailDB.name.toString(),
-                                false,
-                                Modifier.fieldModifier()
-                            ),
-                            DataDetailCard(
-                                "Type: ",
-                                materialDetailDB.type.toString(),
-                                false,
-                                Modifier.fieldModifier()
-                            ),
-                            DataDetailCard(
-                                "Create: ",
-                                materialDetailDB.created_at.toString(),
-                                true,
-                                Modifier.fieldModifier()
-                            ),
-                            DataDetailCard(
-                                "Update: ",
-                                materialDetailDB.updated_at.toString(),
-                                true,
-                                Modifier.fieldModifier()
-                            ),
-                            DataDetailCard(
-                                "Core: ",
-                                materialDetailDB.core.toString(),
-                                false,
-                                Modifier.fieldModifier()
-                            ),
-                            DataDetailCard(
-                                "Source: ",
-                                materialDetailDB.source.toString(),
-                                false,
-                                Modifier.fieldModifier()
-                            ),
-                            DataDetailCard(
-                                "Young Modulus: ",
-                                materialDetailDB.young.toString(),
-                                false,
-                                Modifier.fieldModifier()
-                            ),
-                            DataDetailCard(
-                                "Poison Coefficient: ",
-                                materialDetailDB.poison.toString(),
-                                false,
-                                Modifier.fieldModifier()
-                            ),
+                        if (detail.content == "Source: ") {
+                            TextCardStandart("Properties", Modifier.fieldModifier())
+                        }
+                    }
+                    if (materialDetailDB.type?.contains("Isotropic") == true) {
+                        MaterialDetailCard(
+                           "d, C/N:",
+                            "not exist",
+                            false,
+                            Modifier.fieldModifier(),
+                            true
                         )
-                        listDetail.forEach { detail ->
-                            MaterialDetailCard(
-                                detail.content,
-                                detail.materialData,
-                                detail.checkTime,
-                                detail.modifier
+                        val paramIsotropicToTable = listOf(
+                            materialDetailDB.stiffness?.let { it1 ->
+                                TableList(
+                                    param = "C",
+                                    row = 1,
+                                    col = 2,
+                                    item = it1,
+                                    maxItemsInRow = 2,
+                                    description = "Elastic Properties: ",
+                                    dimension = "10⁹ N/m²"
+                                )
+                            },
+                            materialDetailDB.dielectric?.let { it1 ->
+                                TableList(
+                                    param = "ε",
+                                    row = 1,
+                                    col = 1,
+                                    item = it1,
+                                    maxItemsInRow = 1,
+                                    description = "Dielectric: ",
+                                    dimension = "F/m∙ε₀"
+                                )
+                            }
                             )
-                            if (detail.content == "Source: ") {
-                                TextCardStandart("Properties", Modifier.fieldModifier())
+                        paramIsotropicToTable.forEach { data ->
+                            if (data != null) {
+                                DrawTable(
+                                    param = data.param,
+                                    row = data.row,
+                                    col = data.col,
+                                    item = data.item,
+                                    maxItemsInRow = data.maxItemsInRow,
+                                    modifier = Modifier.fieldModifier(),
+                                    description = data.description,
+                                    dimension = data.dimension
+                                )
                             }
                         }
-                        DrawTable(
-                            param="d",
-                            row=3,
-                            col=6,
-                            item=listOf(100.0f, 2.1f, 3.0f, 4.0f, 5.0f, 6.0f,1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f,1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f,),
-                        )
-                        if (isLoading) {
-                            CustomLinearProgressBar(Modifier.fieldModifier())
-                        }
-
                     }
-                }
+                    if (materialDetailDB.type?.contains("Anisotropic") == true||isMainFABOpen.value) {
+                        val paramAnisotropicToTable = listOf(
+                            materialDetailDB.piezo?.let { it1 ->
+                                TableList(
+                                    param = "d",
+                                    row = 3,
+                                    col = 6,
+                                    item = it1,
+                                    maxItemsInRow = 6,
+                                    description = "Piezoelectric Properties:",
+                                    dimension = "C/N"
+                                )
+                            },
+                            materialDetailDB.stiffness?.let { it1 ->
+                                TableList(
+                                    param = "C",
+                                    row = 6,
+                                    col = 6,
+                                    item = it1,
+                                    maxItemsInRow = 6,
+                                    description = "Elastic Properties: ",
+                                    dimension = "10⁹ N/m²"
+                                )
+                            },
+                            materialDetailDB.dielectric?.let { it1 ->
+                                TableList(
+                                    param = "ε",
+                                    row = 3,
+                                    col = 3,
+                                    item = it1,
+                                    maxItemsInRow = 3,
+                                    description = "Dielectric: ",
+                                    dimension = "F/m∙ε₀"
+                                )
+                            }
+                        )
+                            paramAnisotropicToTable.forEach { data ->
+                                if (data != null) {
+                                    DrawTable(
+                                        param = data.param,
+                                        row = data.row,
+                                        col = data.col,
+                                        item = data.item,
+                                        maxItemsInRow = data.maxItemsInRow,
+                                        modifier = Modifier.fieldModifier(),
+                                        description = data.description,
+                                        dimension = data.dimension
+                                    )
+                                }
+                            }
+                    }
+                    if (isLoading) {
+                        CustomLinearProgressBar(Modifier.fieldModifier())
+                    }
 
-            })
+                }
+            }
+
+        }
     }
     openMaterialViewModel.materialDetailState.observe(lifecycleOwner) { state ->
         Log.d("start", state.toString())
