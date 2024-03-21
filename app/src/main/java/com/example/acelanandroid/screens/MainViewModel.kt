@@ -1,6 +1,7 @@
 package com.example.acelanandroid.screens
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -68,11 +69,21 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
     private val _taskListDB = MutableStateFlow<List<TaskMain>>(emptyList())
     val taskListDB: StateFlow<List<TaskMain>> = _taskListDB
 
-    fun updateTaskList() {
+    fun getTaskFromDB() {
         viewModelScope.launch {
-            _taskListDB.value = database.dao.getTaskMain()
+            database.dao.getTaskMain().collect {
+                _taskListDB.value = it
+            }
+            Log.d("_taskListDB_taskListDB_taskListDB",_taskListDB.toString())
         }
     }
+
+
+//    fun updateTaskList() {
+//        viewModelScope.launch {
+//            _taskListDB.value = database.dao.getTaskMain()
+//        }
+//    }
 
     private suspend fun insertTaskToDB(taskFromServer: TaskMain) {
         database.dao.insertTask(taskFromServer)
@@ -151,12 +162,15 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
     private val _materialDetailDB = MutableStateFlow(MaterialMain())
     val materialDetailDB: StateFlow<MaterialMain> = _materialDetailDB
 
-
-    fun updateMaterialList() {
+    fun getMaterialFromDB() {
         viewModelScope.launch {
-            _materialListDB.value = database.dao.getMaterialMain()
+            database.dao.getMaterialMain().collect {
+                _materialListDB.value = it
+            }
+            Log.d("_taskListDB_taskListDB_taskListDB",_taskListDB.toString())
         }
     }
+
 
     private suspend fun insertMaterialToDB(materialFromServer: MaterialMain) {
         database.dao.insertMaterial(materialFromServer)

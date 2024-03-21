@@ -55,7 +55,6 @@ fun TasksScreen(
     context: Context,
     filterViewModel: FilterViewModel = hiltViewModel()
 ) {
-
     val tasksList by mainViewModel.taskListDB.collectAsState()
     val userDB by mainViewModel.userDB
     val checkUser by mainViewModel.checkUser
@@ -72,9 +71,8 @@ fun TasksScreen(
             mainViewModel.userIsExist()
             mainViewModel.getUserDB()
         }
-
     }
-    mainViewModel.updateTaskList()
+    mainViewModel.getTaskFromDB()
     Log.d("checkUsercheckUsercheckUser", checkUser.toString())
     if (!checkUser) {
 
@@ -93,7 +91,7 @@ fun TasksScreen(
             withContext(Dispatchers.IO) {
                 if (tasksList.isEmpty()) {
                     tasksViewModel.getListTasksWithRetry(userDB.token.toString(), context)
-                    mainViewModel.updateTaskList()
+                    //mainViewModel.updateTaskList()
                 }
             }
         }

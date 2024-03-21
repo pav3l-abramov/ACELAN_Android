@@ -83,7 +83,7 @@ fun MaterialsScreen(
             mainViewModel.getUserDB()
         }
     }
-     mainViewModel.updateMaterialList()
+     mainViewModel.getMaterialFromDB()
     if (!checkUser) {
         Column(
             modifier = modifier
@@ -106,7 +106,6 @@ fun MaterialsScreen(
                         context,
                         false
                     )
-                    mainViewModel.updateMaterialList()
                 }
             }
         }

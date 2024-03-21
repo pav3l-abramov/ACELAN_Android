@@ -46,10 +46,10 @@ interface Dao {
     suspend fun deleteTask(taskMain: TaskMain)
 
     @Query("SELECT * FROM $MATERIAL")
-    suspend fun getMaterialMain(): List<MaterialMain>
+    fun getMaterialMain(): Flow<List<MaterialMain>>
 
     @Query("SELECT * FROM $TASK")
-    suspend fun getTaskMain(): List<TaskMain>
+    fun getTaskMain(): Flow<List<TaskMain>>
 
     @Query("SELECT * FROM $DRAW")
     suspend fun getDrawMain(): List<MaterialToDraw>
