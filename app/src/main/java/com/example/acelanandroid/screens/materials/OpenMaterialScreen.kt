@@ -148,6 +148,7 @@ fun OpenMaterialScreen(
                                 CoroutineScope(Job()).launch {
                                     mainViewModel.insertMaterialToDraw(MaterialToDraw(idMaterial))
                                     isMainFABOpen.value = true
+                                    mainViewModel.updateMaterialCardDraw(isMainFABOpen.value,idMaterial)
                                 }
                             } else navController.navigate(route = GRAPH_SCREEN)
                         },
@@ -155,6 +156,7 @@ fun OpenMaterialScreen(
                             CoroutineScope(Job()).launch {
                                 mainViewModel.deleteMaterialToDraw(idMaterial)
                                 isMainFABOpen.value = false
+                                mainViewModel.updateMaterialCardDraw(isMainFABOpen.value,idMaterial)
                             }
                         },
                         color = MaterialTheme.colorScheme.background)

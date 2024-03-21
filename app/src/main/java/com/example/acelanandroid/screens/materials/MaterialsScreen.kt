@@ -43,6 +43,7 @@ import com.example.acelanandroid.GRAPH_SCREEN
 import com.example.acelanandroid.R
 import com.example.acelanandroid.common.composable.FABMaterialComposable
 import com.example.acelanandroid.common.composable.FilterDialogMaterial
+import com.example.acelanandroid.common.composable.MaterialCardMain
 import com.example.acelanandroid.retrofit.GetStateMaterial
 import com.example.acelanandroid.screens.FilterViewModel
 import com.example.acelanandroid.screens.MainViewModel
@@ -65,6 +66,7 @@ fun MaterialsScreen(
     filterViewModel: FilterViewModel = hiltViewModel(),
     context: Context
 ) {
+    val materialGraphDB by mainViewModel.materialGraphDB.collectAsState()
     val uiStateFilter by filterViewModel.uiStateFilter
     val materialsList by mainViewModel.materialListDB.collectAsState()
     val materialToSearch by mainViewModel.materialToSearch.collectAsState()
@@ -81,6 +83,7 @@ fun MaterialsScreen(
         withContext(Dispatchers.IO) {
             mainViewModel.userIsExist()
             mainViewModel.getUserDB()
+            mainViewModel.updateMaterialGraph()
         }
     }
      mainViewModel.getMaterialFromDB()
@@ -201,13 +204,14 @@ fun MaterialsScreen(
                                         )
                                     ) {
                                         isListEmpty.value=false
-                                        item.name?.let {
-                                            MaterialCard(
-                                                content = it,
-                                                modifier = Modifier.fieldModifier()
-                                            ) { navController.navigate(route = OPEN_MATERIAL_SCREEN + "/${item.id}") }
 
-                                        }
+                                            MaterialCardMain(
+                                                content = item.name.toString(),
+                                                typeMaterial = item.type.toString(),
+                                                isDraw = item.isDraw,
+                                                onEditClick = {navController.navigate(route = OPEN_MATERIAL_SCREEN + "/${item.id}")},
+                                                modifier = Modifier.fieldModifier()
+                                            )
                                     }
                                 }
                             }

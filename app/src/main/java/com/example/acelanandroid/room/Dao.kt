@@ -80,6 +80,12 @@ interface Dao {
         id: Int
     )
 
+    @Query("UPDATE $MATERIAL SET isDraw=:isDraw  WHERE id=:id")
+    suspend fun updateMaterialCardDraw(
+        isDraw: Boolean?=null,
+        id: Int
+    )
+
 
 
 

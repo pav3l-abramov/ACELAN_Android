@@ -182,6 +182,9 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
             _materialDetailDB.value = database.dao.getMaterialMainByID(id)
         }
     }
+    suspend fun updateMaterialCardDraw(isDraw:Boolean,id: Int) {
+        database.dao.updateMaterialCardDraw(isDraw,id)
+    }
 
     private fun updateMaterialMain(
         name: String? = null,
@@ -204,7 +207,6 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
 
 
     suspend fun handleSuccessStateMaterialScreen(state: GetStateMaterial.Success) {
-
         val materials = state.materials.materials
         if (state.onSearch) {
             _materialToSearch.value = materials
@@ -217,7 +219,6 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
                 )
             }
         }
-
     }
 
     fun handleErrorStateMaterialsScreen(state: GetStateMaterial.Error) {

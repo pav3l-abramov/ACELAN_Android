@@ -142,7 +142,7 @@ private fun TaskCardMain(
 @Preview
 @Composable
 fun checkCard() {
-    TaskCardMain("content", "success", "2023-04-12T14:30:05.580Z", "null", {}, Modifier.fieldModifier())
+    MaterialCardMain("content","IZOTROPIC", true,  {}, Modifier.fieldModifier())
 }
 
 
@@ -152,11 +152,11 @@ fun MaterialCard(
     modifier: Modifier,
     onEditClick: () -> Unit
 ) {
-    MaterialCardMain(content, onEditClick, modifier)
+    MaterialCardOnSearch(content, onEditClick, modifier)
 }
 
 @Composable
-private fun MaterialCardMain(
+private fun MaterialCardOnSearch(
     content: String,
     onEditClick: () -> Unit,
     modifier: Modifier
@@ -165,10 +165,7 @@ private fun MaterialCardMain(
         modifier = modifier,
         onClick = onEditClick
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -183,6 +180,64 @@ private fun MaterialCardMain(
                     )
                 }
             }
+
+    }
+}
+
+@Composable
+fun MaterialCardMain(
+    content: String,
+    typeMaterial: String,
+    isDraw: Boolean,
+    onEditClick: () -> Unit,
+    modifier: Modifier
+) {
+    val list = if (typeMaterial != "null") typeMaterial.split("Material", "::") else listOf("","","no data")
+    Card(
+        modifier = modifier,
+        onClick = onEditClick
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)) {
+            Column {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+
+                    ) {
+                    if (content.isNotBlank()) {
+                        Text(
+                            text = content,
+                            fontWeight = FontWeight.Bold, fontSize = 24.sp
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.size(5.dp))
+                Row {
+                    Text(text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+                            append(list[2])
+                        }
+                    }, modifier = Modifier)
+                }
+            }
+            if (isDraw) {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.End,
+                modifier = Modifier
+                    .width(30.dp)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.baseline_auto_graph_24),
+                    contentDescription = null
+                )
+            }
+        }
         }
     }
 }
