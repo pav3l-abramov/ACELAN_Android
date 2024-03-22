@@ -55,7 +55,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-@SuppressLint("CoroutineCreationDuringComposition", "UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("CoroutineCreationDuringComposition", "UnusedMaterial3ScaffoldPaddingParameter",
+    "SuspiciousIndentation"
+)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MaterialsScreen(
@@ -66,12 +68,12 @@ fun MaterialsScreen(
     filterViewModel: FilterViewModel = hiltViewModel(),
     context: Context
 ) {
-    val materialGraphDB by mainViewModel.materialGraphDB.collectAsState()
     val uiStateFilter by filterViewModel.uiStateFilter
     val materialsList by mainViewModel.materialListDB.collectAsState()
     val materialToSearch by mainViewModel.materialToSearch.collectAsState()
-    val userDB by mainViewModel.userDB
-    val checkUser by mainViewModel.checkUser
+    val userDB by mainViewModel.userDB.collectAsState()
+    val checkUser by mainViewModel.checkUser.collectAsState()
+    val checkOpenMaterialScreen by mainViewModel.checkOpenMaterialScreen.collectAsState()
     val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
     val isLoading by materialViewModel.isLoading.collectAsState()
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
@@ -79,15 +81,8 @@ fun MaterialsScreen(
     val isDialogOpen = remember { mutableStateOf(false) }
     val isMainFABOpen = remember { mutableStateOf(false) }
     val isListEmpty = remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
-        withContext(Dispatchers.IO) {
-            mainViewModel.userIsExist()
-            mainViewModel.getUserDB()
-            mainViewModel.updateMaterialGraph()
-        }
-    }
-     mainViewModel.getMaterialFromDB()
-    if (!checkUser) {
+
+    if (checkUser) {
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -101,14 +96,14 @@ fun MaterialsScreen(
     } else {
         LaunchedEffect(materialsList) {
             withContext(Dispatchers.IO) {
-                if (materialsList.isEmpty()) {
-                    Log.d("tasksListtasksListtasksListtasksListtasksList", materialsList.toString())
+                if (materialsList.isEmpty()|| !checkOpenMaterialScreen) {
                     materialViewModel.getListMaterialsWithRetry(
                         "",
                         userDB.token.toString(),
                         context,
                         false
                     )
+                    mainViewModel.isOpenMaterialScreen()
                 }
             }
         }

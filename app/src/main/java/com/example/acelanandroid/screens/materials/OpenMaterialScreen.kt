@@ -66,24 +66,19 @@ fun OpenMaterialScreen(
 ) {
     val materialDetailDB by mainViewModel.materialDetailDB.collectAsState()
     val materialGraphDB by mainViewModel.materialGraphDB.collectAsState()
-    val userDB by mainViewModel.userDB
-    val checkUser by mainViewModel.checkUser
+    val userDB by mainViewModel.userDB.collectAsState()
+    val checkUser by mainViewModel.checkUser.collectAsState()
     val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
     val uiCheckStatus by openMaterialViewModel.uiCheckStatus
     val isLoading by openMaterialViewModel.isLoading.collectAsState()
     val isMainFABOpen = remember { mutableStateOf(false) }
     val isShowButton = remember { mutableStateOf(true) }
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
-    LaunchedEffect(Unit) {
-        mainViewModel.userIsExist()
-        mainViewModel.getUserDB()
 
-    }
     CoroutineScope(Job()).launch {
         mainViewModel.getMaterialByID(idMaterial)
-        mainViewModel.updateMaterialGraph()
     }
-    if (!checkUser) {
+    if (checkUser) {
         Column(
             modifier = modifier
                 .fillMaxSize()

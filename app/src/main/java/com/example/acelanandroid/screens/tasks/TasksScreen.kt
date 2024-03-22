@@ -56,8 +56,9 @@ fun TasksScreen(
     filterViewModel: FilterViewModel = hiltViewModel()
 ) {
     val tasksList by mainViewModel.taskListDB.collectAsState()
-    val userDB by mainViewModel.userDB
-    val checkUser by mainViewModel.checkUser
+    val userDB by mainViewModel.userDB.collectAsState()
+    val checkUser by mainViewModel.checkUser.collectAsState()
+    val checkOpenTaskScreen by mainViewModel.checkOpenTaskScreen.collectAsState()
     val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
     val uiCheckStatus by tasksViewModel.uiCheckStatus
     val isLoading by tasksViewModel.isLoading.collectAsState()
@@ -66,15 +67,9 @@ fun TasksScreen(
     val uiStateFilter by filterViewModel.uiStateFilter
     val uiStateSorted by filterViewModel.uiStateSorted
     val sortedTaskListDB by filterViewModel.sortedTaskListDB.collectAsState()
-    LaunchedEffect(Unit) {
-        withContext(Dispatchers.IO) {
-            mainViewModel.userIsExist()
-            mainViewModel.getUserDB()
-        }
-    }
-    mainViewModel.getTaskFromDB()
-    Log.d("checkUsercheckUsercheckUser", checkUser.toString())
-    if (!checkUser) {
+
+
+    if (checkUser) {
 
         Column(
             modifier = modifier
@@ -89,14 +84,14 @@ fun TasksScreen(
     } else {
         LaunchedEffect(tasksList) {
             withContext(Dispatchers.IO) {
-                if (tasksList.isEmpty()) {
+                if (tasksList.isEmpty()|| !checkOpenTaskScreen) {
                     tasksViewModel.getListTasksWithRetry(userDB.token.toString(), context)
-                    //mainViewModel.updateTaskList()
+                    mainViewModel.isOpenTaskScreen()
                 }
             }
         }
 
-        if (tasksList.isEmpty()) {
+        if (tasksList.isEmpty() && isLoading) {
             Column(
                 modifier = modifier
                     .fillMaxSize()

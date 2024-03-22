@@ -31,14 +31,40 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
 
-    val checkUser = mutableStateOf(false)
-    val userDB = mutableStateOf(UserData())
+    init{
+        getUserDB()
+        userIsExist()
+        getMaterialFromDB()
+        getTaskFromDB()
+    }
+
+    private val _checkOpenMaterialScreen = MutableStateFlow(false)
+    val checkOpenMaterialScreen: StateFlow<Boolean> = _checkOpenMaterialScreen
+
+    fun isOpenMaterialScreen() {
+        _checkOpenMaterialScreen.value=true
+    }
+    private val _checkOpenTaskScreen = MutableStateFlow(false)
+    val checkOpenTaskScreen: StateFlow<Boolean> = _checkOpenTaskScreen
+    fun isOpenTaskScreen() {
+        _checkOpenTaskScreen.value=true
+    }
+
+    private val _userDB = MutableStateFlow(UserData())
+    val userDB: StateFlow<UserData> = _userDB
+
+    private val _checkUser = MutableStateFlow(false)
+    val checkUser: StateFlow<Boolean> = _checkUser
+//    val checkUser = mutableStateOf(false)
+//    val userDB = mutableStateOf(UserData())
 
     //user
-    suspend fun getUserDB() {
-        return withContext(Dispatchers.IO) {
-            userDB.value = database.dao.getUser()
-
+    fun getUserDB() {
+        viewModelScope.launch {
+            database.dao.getUser().collect {
+                _userDB.value = it
+            }
+            Log.d("_taskListDB_taskListDB_taskListDB",_taskListDB.toString())
         }
     }
 
@@ -47,7 +73,7 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
         database.dao.deleteMaterial()
         database.dao.deleteTask()
         database.dao.deleteDraw()
-        checkUser.value = false
+        //checkUser.value = false
         _materialListDB.value= emptyList()
         _taskListDB.value= emptyList()
     }
@@ -55,12 +81,14 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
     suspend fun insertUserToDB(userData: UserData) {
         database.dao.insertUser(userData)
 
+
     }
 
-    suspend fun userIsExist() {
-        return withContext(Dispatchers.IO) {
-            val count = database.dao.isUserExists()
-            checkUser.value = count > 0
+    private fun userIsExist() {
+        viewModelScope.launch {
+            database.dao.isUserExists().collect {
+                _checkUser.value = it==0
+            }
         }
     }
 
@@ -69,7 +97,7 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
     private val _taskListDB = MutableStateFlow<List<TaskMain>>(emptyList())
     val taskListDB: StateFlow<List<TaskMain>> = _taskListDB
 
-    fun getTaskFromDB() {
+    private fun getTaskFromDB() {
         viewModelScope.launch {
             database.dao.getTaskMain().collect {
                 _taskListDB.value = it

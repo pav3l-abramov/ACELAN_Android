@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
@@ -32,6 +33,7 @@ import androidx.navigation.navArgument
 import com.example.acelanandroid.GRAPH_SCREEN
 import com.example.acelanandroid.OPEN_MATERIAL_SCREEN
 import com.example.acelanandroid.OPEN_TASK_SCREEN
+import com.example.acelanandroid.screens.MainViewModel
 import com.example.acelanandroid.screens.home.HomeScreen
 import com.example.acelanandroid.screens.materials.GraphScreen
 import com.example.acelanandroid.screens.materials.MaterialsScreen
@@ -46,7 +48,7 @@ fun AppNavigation(context:Context) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-
+    val mainViewModel : MainViewModel= hiltViewModel()
     Scaffold(
         bottomBar = {
             if (currentDestination != null) {
@@ -86,11 +88,11 @@ fun AppNavigation(context:Context) {
         ) {
 
             composable(route = BottomBarScreen.Home.route) {
-                 HomeScreen()
+                 HomeScreen(mainViewModel = mainViewModel)
 
             }
             composable(route = BottomBarScreen.Materials.route) {
-                EnterAnimation{MaterialsScreen(navController = navController, context = context)}
+                EnterAnimation{MaterialsScreen(navController = navController, context = context,mainViewModel = mainViewModel)}
 
             }
             composable(route = "$OPEN_MATERIAL_SCREEN/{id}", arguments = listOf(
@@ -98,12 +100,12 @@ fun AppNavigation(context:Context) {
                     type = NavType.IntType
                 }
             )) { idMaterial ->
-                idMaterial.arguments?.getInt("id")?.let {  EnterAnimation{OpenMaterialScreen(idMaterial = it, context = context,navController = navController) }}
+                idMaterial.arguments?.getInt("id")?.let {  EnterAnimation{OpenMaterialScreen(idMaterial = it, context = context,navController = navController,mainViewModel = mainViewModel) }}
             }
 
 
             composable(route = BottomBarScreen.Tasks.route) {
-                EnterAnimation{TasksScreen(navController = navController, context = context)}
+                EnterAnimation{TasksScreen(navController = navController, context = context,mainViewModel = mainViewModel)}
             }
             composable(route = "$OPEN_TASK_SCREEN/{id}", arguments = listOf(
                 navArgument(name = "id") {
@@ -111,15 +113,15 @@ fun AppNavigation(context:Context) {
                 }
             )) { idTask ->
                 idTask.arguments?.getInt("id")
-                    ?.let {  EnterAnimation{OpenTaskScreen(idTask = it, context = context,navController = navController) }}
+                    ?.let {  EnterAnimation{OpenTaskScreen(idTask = it, context = context,navController = navController,mainViewModel = mainViewModel) }}
             }
 
 
             composable(route = BottomBarScreen.Profile.route) {
-                ProfileScreen(context = context)
+                ProfileScreen(context = context,mainViewModel = mainViewModel)
             }
             composable(route = GRAPH_SCREEN) {
-                GraphScreen(context = context,navController = navController)
+                GraphScreen(context = context,navController = navController,mainViewModel = mainViewModel)
             }
         }
 

@@ -13,6 +13,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 
 import androidx.compose.ui.Alignment
@@ -35,16 +36,8 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     mainViewModel: MainViewModel = hiltViewModel(),
 ) {
-    val s = ArrayList<String>(3)
-    s.add("1")
-    s.add("1")
-    Log.d("12121",s.size.toString())
-    val checkUser by mainViewModel.checkUser
-    LaunchedEffect(Unit) {
-        withContext(Dispatchers.IO) {
-            mainViewModel.userIsExist()
-        }
-    }
+    val userDB by mainViewModel.userDB.collectAsState()
+    val checkUser by mainViewModel.checkUser.collectAsState()
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -58,7 +51,7 @@ fun HomeScreen(
                 .size(200.dp)
                 .align(Alignment.CenterHorizontally)
         )
-    if (!checkUser) {
+  if (checkUser) {
         TextCardStandart("Go to profile and login",Modifier.fieldModifier())
         }
     else{

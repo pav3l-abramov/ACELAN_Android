@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.Flow
 interface Dao {
     //user
     @Query("SELECT COUNT(*) FROM $USER")
-    fun isUserExists(): Int
+    fun isUserExists(): Flow<Int>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUser(userData: UserData)
@@ -28,7 +28,7 @@ interface Dao {
     suspend fun deleteUser()
 
     @Query("SELECT * FROM $USER")
-    suspend fun getUser(): UserData
+    fun getUser(): Flow<UserData>
 
 
     //material and task

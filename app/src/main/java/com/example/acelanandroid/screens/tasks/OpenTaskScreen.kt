@@ -66,8 +66,8 @@ fun OpenTaskScreen(
     navController: NavController
 ) {
     val taskDB by mainViewModel.taskDetailDB.collectAsState()
-    val userDB by mainViewModel.userDB
-    val checkUser by mainViewModel.checkUser
+    val userDB by mainViewModel.userDB.collectAsState()
+    val checkUser by mainViewModel.checkUser.collectAsState()
     val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
     val uiCheckStatus by openTaskViewModel.uiCheckStatus
     val isLoading by openTaskViewModel.isLoading.collectAsState()
@@ -76,12 +76,9 @@ fun OpenTaskScreen(
     val isShowButton = remember { mutableStateOf(true) }
     val isShowGraphOnScreen = remember { mutableStateOf(false) }
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
-    LaunchedEffect(Unit) {
-        mainViewModel.userIsExist()
-        mainViewModel.getUserDB()
-    }
+
     CoroutineScope(Job()).launch { mainViewModel.getTaskByID(idTask) }
-    if (!checkUser) {
+    if (checkUser) {
         Column(
             modifier = modifier
                 .fillMaxSize()

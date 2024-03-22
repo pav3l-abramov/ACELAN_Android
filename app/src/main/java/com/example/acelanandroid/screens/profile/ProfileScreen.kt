@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,18 +57,11 @@ fun ProfileScreen(
 ) {
     val uiState by profileViewModel.uiState
     val uiCheckStatus by profileViewModel.uiCheckStatus
-    val checkUser by mainViewModel.checkUser
-    val userDB by mainViewModel.userDB
+    val userDB by mainViewModel.userDB.collectAsState()
+    val checkUser by mainViewModel.checkUser.collectAsState()
 
     val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
     //val coroutineScope = rememberCoroutineScope()
-
-
-    LaunchedEffect(Unit) {
-        withContext(Dispatchers.IO) {
-            mainViewModel.userIsExist()
-        }
-    }
 
     Column(
         modifier = modifier
@@ -77,7 +71,7 @@ fun ProfileScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (!checkUser) {
+        if (checkUser) {
             TextSignIn( Modifier.fieldModifier())
             EmailField(uiState.email, profileViewModel::onEmailChange, Modifier.fieldModifier())
             PasswordField(
@@ -123,8 +117,6 @@ fun ProfileScreen(
                                             token
                                         )
                                     )
-
-                                    mainViewModel.userIsExist()
                                 }
                             }
                             profileViewModel.nullStatus()
