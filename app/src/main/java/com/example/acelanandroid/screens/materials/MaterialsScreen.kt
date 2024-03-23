@@ -203,7 +203,7 @@ fun MaterialsScreen(
                                             MaterialCardMain(
                                                 content = item.name.toString(),
                                                 typeMaterial = item.type.toString(),
-                                                isDraw = item.isDraw,
+                                                isDraw = item.isDraw==1,
                                                 onEditClick = {navController.navigate(route = OPEN_MATERIAL_SCREEN + "/${item.id}")},
                                                 modifier = Modifier.fieldModifier()
                                             )

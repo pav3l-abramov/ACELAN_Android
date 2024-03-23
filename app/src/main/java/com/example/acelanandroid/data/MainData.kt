@@ -27,7 +27,7 @@ data class MaterialMain(
     val piezo: List<Float>? = null,
     @TypeConverters(FloatListConverter::class)
     val dielectric: List<Float>? = null,
-    val isDraw: Boolean = false,
+    val isDraw: Int = 0,
 )
 @Entity(tableName = TASK)
 data class TaskMain(
@@ -52,9 +52,4 @@ data class UserData(
     val id :Int?=null,
     val email:String?="",
     val token: String? = null
-)
-@Entity(tableName = DRAW)
-data class MaterialToDraw(
-    @PrimaryKey(autoGenerate = false)
-    val id :Int?=null,
 )

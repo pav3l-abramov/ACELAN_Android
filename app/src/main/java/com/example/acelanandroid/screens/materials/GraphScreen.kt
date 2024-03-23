@@ -43,7 +43,6 @@ import com.example.acelanandroid.common.composable.FABOpenMaterialComposable
 import com.example.acelanandroid.common.composable.PointChart
 import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.common.ext.fieldModifier
-import com.example.acelanandroid.data.MaterialToDraw
 import com.example.acelanandroid.screens.FilterViewModel
 import com.example.acelanandroid.screens.MainViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -62,17 +61,16 @@ fun GraphScreen(
     graphViewModel: GraphViewModel = hiltViewModel(),
     context: Context
 ) {
-    val materialGraphDB by mainViewModel.materialGraphDB.collectAsState()
     val materialListDraw by mainViewModel.materialListDraw.collectAsState()
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
-            mainViewModel.updateMaterialGraph()
             mainViewModel.getDataToGraph()
         }
     }
     val scrollState = rememberLazyListState()
     val heightTopBar = 56.dp
+    Log.d("2materialGraphDB.size.toString()",materialListDraw.toString())
     Scaffold(
         topBar = {
             AnimatedVisibility(
@@ -136,11 +134,11 @@ fun GraphScreen(
                     }
                 }
             )
-            Log.d("materialGraphDB.size.toString()",materialGraphDB.toString())
-            Log.d("materialGraphDB.size.toString()",materialListDraw.toString())
+            Log.d("4materialGraphDB.size.toString()",materialListDraw.nameList?.size.toString())
 
-            when (materialGraphDB.size) {
-                0 ->
+            when (materialListDraw.nameList?.size) {
+
+                0,null ->
                     Column(
                         modifier = modifier
                             .fillMaxSize()
@@ -152,7 +150,9 @@ fun GraphScreen(
                             "Nothing to show. Add 2 materials to draw graph",
                             Modifier.fieldModifier()
                         )
+                        Log.d("6materialGraphDB.size.toString()",materialListDraw.toString())
                     }
+
 
                 1 ->
                     Column(
@@ -163,9 +163,11 @@ fun GraphScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         TextCardStandart("Add another material", Modifier.fieldModifier())
+                        Log.d("8materialGraphDB.size.toString()",materialListDraw.toString())
                     }
 
                 else -> {
+                    Log.d("10materialGraphDB.size.toString()",materialListDraw.toString())
                     LazyColumn(state = scrollState, modifier = Modifier.align(Alignment.CenterHorizontally)) {
                         items(listGraphMaterial) { data ->
                             if (data != null) {

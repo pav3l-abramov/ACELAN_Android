@@ -6,7 +6,6 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.acelanandroid.data.MaterialMain
-import com.example.acelanandroid.data.MaterialToDraw
 import com.example.acelanandroid.data.TaskMain
 import com.example.acelanandroid.data.UserData
 
@@ -14,8 +13,7 @@ import com.example.acelanandroid.data.UserData
     entities = [
         MaterialMain::class,
         TaskMain::class,
-        UserData::class,
-        MaterialToDraw::class,
+        UserData::class
     ],
     version = 1,
     exportSchema = false

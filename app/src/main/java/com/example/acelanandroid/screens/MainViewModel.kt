@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.example.acelanandroid.data.MaterialMain
-import com.example.acelanandroid.data.MaterialToDraw
 import com.example.acelanandroid.data.TaskMain
 import com.example.acelanandroid.data.UserData
 import com.example.acelanandroid.data.singleData.Material
@@ -31,23 +30,25 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
 
-    init{
+    init {
         getUserDB()
         userIsExist()
         getMaterialFromDB()
         getTaskFromDB()
+        getMaterialFromDBDraw()
     }
 
     private val _checkOpenMaterialScreen = MutableStateFlow(false)
     val checkOpenMaterialScreen: StateFlow<Boolean> = _checkOpenMaterialScreen
 
     fun isOpenMaterialScreen() {
-        _checkOpenMaterialScreen.value=true
+        _checkOpenMaterialScreen.value = true
     }
+
     private val _checkOpenTaskScreen = MutableStateFlow(false)
     val checkOpenTaskScreen: StateFlow<Boolean> = _checkOpenTaskScreen
     fun isOpenTaskScreen() {
-        _checkOpenTaskScreen.value=true
+        _checkOpenTaskScreen.value = true
     }
 
     private val _userDB = MutableStateFlow(UserData())
@@ -64,7 +65,7 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
             database.dao.getUser().collect {
                 _userDB.value = it
             }
-            Log.d("_taskListDB_taskListDB_taskListDB",_taskListDB.toString())
+            Log.d("_taskListDB_taskListDB_taskListDB", _taskListDB.toString())
         }
     }
 
@@ -72,10 +73,9 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
         database.dao.deleteUser()
         database.dao.deleteMaterial()
         database.dao.deleteTask()
-        database.dao.deleteDraw()
         //checkUser.value = false
-        _materialListDB.value= emptyList()
-        _taskListDB.value= emptyList()
+        _materialListDB.value = emptyList()
+        _taskListDB.value = emptyList()
     }
 
     suspend fun insertUserToDB(userData: UserData) {
@@ -87,7 +87,7 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
     private fun userIsExist() {
         viewModelScope.launch {
             database.dao.isUserExists().collect {
-                _checkUser.value = it==0
+                _checkUser.value = it == 0
             }
         }
     }
@@ -102,7 +102,7 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
             database.dao.getTaskMain().collect {
                 _taskListDB.value = it
             }
-            Log.d("_taskListDB_taskListDB_taskListDB",_taskListDB.toString())
+            Log.d("_taskListDB_taskListDB_taskListDB", _taskListDB.toString())
         }
     }
 
@@ -184,18 +184,30 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
     private val _materialListDB = MutableStateFlow<List<MaterialMain>>(emptyList())
     val materialListDB: StateFlow<List<MaterialMain>> = _materialListDB
 
+    private val _materialListDBDraw = MutableStateFlow<List<MaterialMain>>(emptyList())
+    val materialListDBDraw: StateFlow<List<MaterialMain>> = _materialListDBDraw
+
     private val _materialToSearch = MutableStateFlow<List<Material>>(emptyList())
     val materialToSearch: StateFlow<List<Material>> = _materialToSearch.asStateFlow()
 
     private val _materialDetailDB = MutableStateFlow(MaterialMain())
     val materialDetailDB: StateFlow<MaterialMain> = _materialDetailDB
 
-    fun getMaterialFromDB() {
+    private fun getMaterialFromDB() {
         viewModelScope.launch {
             database.dao.getMaterialMain().collect {
                 _materialListDB.value = it
             }
-            Log.d("_taskListDB_taskListDB_taskListDB",_taskListDB.toString())
+            Log.d("_taskListDB_taskListDB_taskListDB", _taskListDB.toString())
+        }
+    }
+
+    private fun getMaterialFromDBDraw() {
+        viewModelScope.launch {
+            database.dao.getDrawMaterial().collect {
+                _materialListDBDraw.value = it
+            }
+            Log.d("_taskListDB_taskListDB_taskListDB", _taskListDB.toString())
         }
     }
 
@@ -205,13 +217,14 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
     }
 
 
-    fun getMaterialByID(id: Int) {
+    suspend fun getMaterialByID(id: Int) {
         viewModelScope.launch {
             _materialDetailDB.value = database.dao.getMaterialMainByID(id)
         }
     }
-    suspend fun updateMaterialCardDraw(isDraw:Boolean,id: Int) {
-        database.dao.updateMaterialCardDraw(isDraw,id)
+
+    suspend fun updateMaterialCardDraw(isDraw: Boolean, id: Int) {
+        database.dao.updateMaterialCardDraw(isDraw, id)
     }
 
     private fun updateMaterialMain(
@@ -274,44 +287,32 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
     }
 
     //graph
-    private val _materialGraphDB = MutableStateFlow<List<MaterialToDraw>>(emptyList())
-    val materialGraphDB: StateFlow<List<MaterialToDraw>> = _materialGraphDB
 
     private val _materialListDraw = MutableStateFlow(GraphList())
     val materialListDraw: StateFlow<GraphList> = _materialListDraw
 
 
-    suspend fun updateMaterialGraph() {
-        viewModelScope.launch {
-            _materialGraphDB.value = database.dao.getDrawMain()
-        }
-    }
-    suspend fun insertMaterialToDraw(materialToDraw: MaterialToDraw) {
-        database.dao.insertMaterialToDraw(materialToDraw)
-    }
-
-    suspend fun deleteMaterialToDraw(id: Int) {
-        database.dao.deleteMaterialToDrawById(id)
-    }
-    suspend fun getDataToGraph(){
+    //    suspend fun updateMaterialGraph() {
+//        viewModelScope.launch {
+//            _materialGraphDB.value = database.dao.getDrawMain()
+//        }
+//    }
+    suspend fun getDataToGraph() {
         val nameList = mutableListOf<String>()
         val youngList = mutableListOf<Float>()
         val poisonList = mutableListOf<Float>()
         val stiffnessList = mutableListOf<List<Float>>()
         val piezoList = mutableListOf<List<Float>>()
         val dielectricList = mutableListOf<List<Float>>()
-        val listId = database.dao.getDrawMain()
-        listId.forEach { id ->
-            val data = id.id?.let { database.dao.getMaterialMainByID(it) }
-            if (data != null) {
-                nameList.add(data.name!!)
-                youngList.add(data.young!!.toFloat()/1E9f)
-                poisonList.add(data.poison!!.toFloat())
-                stiffnessList.add(data.stiffness!!)
-                piezoList.add(data.piezo!!)
-                dielectricList.add(data.dielectric!!)
-            }
+        _materialListDBDraw.value.forEach { material ->
+            nameList.add(material.name!!)
+            youngList.add(material.young!!.toFloat() / 1E9f)
+            poisonList.add(material.poison!!.toFloat())
+            stiffnessList.add(material.stiffness!!)
+            piezoList.add(material.piezo!!)
+            dielectricList.add(material.dielectric!!)
+            _materialListDraw.value =
+                GraphList(nameList, youngList, poisonList, stiffnessList, piezoList, dielectricList)
         }
-        _materialListDraw.value=GraphList(nameList,youngList,poisonList,stiffnessList,piezoList,dielectricList)
     }
 }
