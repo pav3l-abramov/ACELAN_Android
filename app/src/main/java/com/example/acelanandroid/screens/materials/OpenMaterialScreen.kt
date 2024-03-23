@@ -71,13 +71,11 @@ fun OpenMaterialScreen(
     val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
     val uiCheckStatus by openMaterialViewModel.uiCheckStatus
     val isLoading by openMaterialViewModel.isLoading.collectAsState()
-    val isMainFABOpen = remember { mutableStateOf(false) }
+   // val isMainFABOpen = remember { mutableStateOf(false) }
     val isShowButton = remember { mutableStateOf(true) }
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
 
-    CoroutineScope(Job()).launch {
-        mainViewModel.getMaterialByID(idMaterial)
-    }
+
     if (checkUser) {
         Column(
             modifier = modifier
@@ -90,6 +88,7 @@ fun OpenMaterialScreen(
         }
     } else {
         LaunchedEffect(materialDetailDB) {
+            mainViewModel.getMaterialByID(idMaterial)
             if (materialDetailDB.young == null && materialDetailDB.id != null) {
                 openMaterialViewModel.getListMaterialDetailWithRetry(
                     userDB.token.toString(),
@@ -98,7 +97,7 @@ fun OpenMaterialScreen(
                 )
                 mainViewModel.getMaterialByID(idMaterial)
             }
-            isMainFABOpen.value = materialGraphDB.contains(MaterialToDraw(idMaterial))
+            //isMainFABOpen.value = materialGraphDB.contains(MaterialToDraw(idMaterial))
         }
 
 
@@ -137,21 +136,21 @@ fun OpenMaterialScreen(
                 if (isShowButton.value) {
 
                     FABOpenMaterialComposable(
-                        mainButtonOn = isMainFABOpen.value,
+                        mainButtonOn = materialDetailDB.isDraw,
                         onCancelMain = {
-                            if (!isMainFABOpen.value) {
+                            if (!materialDetailDB.isDraw) {
                                 CoroutineScope(Job()).launch {
                                     mainViewModel.insertMaterialToDraw(MaterialToDraw(idMaterial))
-                                    isMainFABOpen.value = true
-                                    mainViewModel.updateMaterialCardDraw(isMainFABOpen.value,idMaterial)
+                                    mainViewModel.updateMaterialCardDraw(true,idMaterial)
+                                    mainViewModel.getMaterialByID(idMaterial)
                                 }
                             } else navController.navigate(route = GRAPH_SCREEN)
                         },
                         onDelete = {
                             CoroutineScope(Job()).launch {
                                 mainViewModel.deleteMaterialToDraw(idMaterial)
-                                isMainFABOpen.value = false
-                                mainViewModel.updateMaterialCardDraw(isMainFABOpen.value,idMaterial)
+                                mainViewModel.updateMaterialCardDraw(false,idMaterial)
+                                mainViewModel.getMaterialByID(idMaterial)
                             }
                         },
                         color = MaterialTheme.colorScheme.background)
@@ -282,7 +281,7 @@ fun OpenMaterialScreen(
                             }
                         }
                     }
-                    if (materialDetailDB.type?.contains("Anisotropic") == true||isMainFABOpen.value) {
+                    if (materialDetailDB.type?.contains("Anisotropic") == true||materialDetailDB.isDraw) {
                         val paramAnisotropicToTable = listOf(
                             materialDetailDB.piezo?.let { it1 ->
                                 TableList(

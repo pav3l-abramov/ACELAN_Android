@@ -2,6 +2,7 @@ package com.example.acelanandroid.screens.materials
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -135,6 +136,9 @@ fun GraphScreen(
                     }
                 }
             )
+            Log.d("materialGraphDB.size.toString()",materialGraphDB.toString())
+            Log.d("materialGraphDB.size.toString()",materialListDraw.toString())
+
             when (materialGraphDB.size) {
                 0 ->
                     Column(

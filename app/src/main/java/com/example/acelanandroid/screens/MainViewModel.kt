@@ -205,7 +205,7 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
     }
 
 
-    suspend fun getMaterialByID(id: Int) {
+    fun getMaterialByID(id: Int) {
         viewModelScope.launch {
             _materialDetailDB.value = database.dao.getMaterialMainByID(id)
         }
@@ -279,6 +279,7 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
 
     private val _materialListDraw = MutableStateFlow(GraphList())
     val materialListDraw: StateFlow<GraphList> = _materialListDraw
+
 
     suspend fun updateMaterialGraph() {
         viewModelScope.launch {

@@ -60,6 +60,7 @@ interface Dao {
     @Query("SELECT * FROM $MATERIAL WHERE id=:id")
     suspend fun getMaterialMainByID(id: Int): MaterialMain
 
+
     @Query("UPDATE $MATERIAL SET name=:name,type=:type,source=:source,created_at=:created_at,updated_at=:updated_at,core=:core  WHERE id=:id")
     fun updateMaterialMain(
         name: String?=null,
