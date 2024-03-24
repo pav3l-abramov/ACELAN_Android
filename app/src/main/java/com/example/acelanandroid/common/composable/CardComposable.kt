@@ -16,6 +16,7 @@ limitations under the License.
 
 package com.example.acelanandroid.common.composable
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -32,6 +33,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -77,15 +79,22 @@ private fun TaskCardMain(
     modifier: Modifier
 ) {
     val color = getColorStatus(status, isSystemInDarkTheme())
-    val listStart =if (startTime!="null") startTime.split("T", "Z",".") else listOf("","-")
-    val listFinish = if (finishTime!="null") finishTime.split("T", "Z",".") else listOf("","-")
+    val listStart = if (startTime != "null") startTime.split("T", "Z", ".") else listOf("", "-")
+    val listFinish = if (finishTime != "null") finishTime.split("T", "Z", ".") else listOf("", "-")
+    val scale = remember { mutableStateOf(1f) }
+
+
+
+
     Card(
         modifier = modifier,
         onClick = onEditClick
     ) {
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -117,32 +126,37 @@ private fun TaskCardMain(
             }
             Spacer(modifier = Modifier.size(5.dp))
             Row {
-                Text(text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
-                        append("Start:")
-                    }
-                },modifier = Modifier
-                        .width(60.dp))
-                Text(text ="${listStart[1]}    ${listStart[0]}")
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+                            append("Start:")
+                        }
+                    }, modifier = Modifier
+                        .width(60.dp)
+                )
+                Text(text = "${listStart[1]}    ${listStart[0]}")
             }
             Spacer(modifier = Modifier.size(5.dp))
             Row {
-                Text(text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
-                        append("Finish:")
-                    }
-                },modifier = Modifier
-                    .width(60.dp))
-                Text(text ="${listFinish[1]}    ${listFinish[0]}")
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+                            append("Finish:")
+                        }
+                    }, modifier = Modifier
+                        .width(60.dp)
+                )
+                Text(text = "${listFinish[1]}    ${listFinish[0]}")
             }
         }
     }
 }
 
+
 @Preview
 @Composable
 fun checkCard() {
-    MaterialCardMain("content","IZOTROPIC", true,  {}, Modifier.fieldModifier())
+    TaskCard("content",Modifier.fieldModifier(),"IZOTROPIC", "IZOTROPIC","IZOTROPIC",  {})
 }
 
 

@@ -2,6 +2,7 @@ package com.example.acelanandroid.screens.materials
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,17 +34,24 @@ import com.example.acelanandroid.common.composable.MaterialCard
 import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.common.ext.fieldModifier
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import com.example.acelanandroid.GRAPH_SCREEN
+import com.example.acelanandroid.OPEN_TASK_SCREEN
 import com.example.acelanandroid.R
 import com.example.acelanandroid.common.composable.FABMaterialComposable
 import com.example.acelanandroid.common.composable.FilterDialogMaterial
 import com.example.acelanandroid.common.composable.MaterialCardMain
+import com.example.acelanandroid.common.composable.TaskCard
 import com.example.acelanandroid.retrofit.GetStateMaterial
 import com.example.acelanandroid.screens.FilterViewModel
 import com.example.acelanandroid.screens.MainViewModel
@@ -81,6 +89,7 @@ fun MaterialsScreen(
     val isDialogOpen = remember { mutableStateOf(false) }
     val isMainFABOpen = remember { mutableStateOf(false) }
     val isListEmpty = remember { mutableStateOf(false) }
+    val state = rememberLazyStaggeredGridState()
 
     if (checkUser) {
         Column(
@@ -128,111 +137,151 @@ fun MaterialsScreen(
                             onCancelGraph = {navController.navigate(route = GRAPH_SCREEN)},
                             color = MaterialTheme.colorScheme.background)
 
-                },
-                content = {
-                    SwipeRefresh(state = swipeRefreshState,
-                        onRefresh = {
-                            materialViewModel.getListMaterialsWithRetry(
-                                "",
-                                userDB.token.toString(),
-                                context,
-                                false
-                            )
-                        }) {
-                        Column(
-                            modifier = modifier
-                                .fillMaxSize(),
-                            verticalArrangement = Arrangement.Top,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            val searchText = remember { mutableStateOf("") }
-                            SearchBar(
-                                modifier = Modifier.fieldModifier(),
-                                query = searchText.value,
-                                onQueryChange = { text ->
-                                    searchText.value = text
-                                    if (searchText.value == "") {
-                                        materialViewModel.getListMaterialsWithRetry(
-                                            searchText.value,
-                                            userDB.token.toString(),
-                                            context,
-                                            true
-                                        )
-                                    }
-                                },
-                                onSearch = {
-                                    Log.d("searchText.value", searchText.value)
+                }
+            ) {
+                SwipeRefresh(state = swipeRefreshState,
+                    onRefresh = {
+                        materialViewModel.getListMaterialsWithRetry(
+                            "",
+                            userDB.token.toString(),
+                            context,
+                            false
+                        )
+                    }) {
+                    Column(
+                        modifier = modifier
+                            .fillMaxSize(),
+                        verticalArrangement = Arrangement.Top,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        val searchText = remember { mutableStateOf("") }
+                        SearchBar(
+                            modifier = Modifier.fieldModifier(),
+                            query = searchText.value,
+                            onQueryChange = { text ->
+                                searchText.value = text
+                                if (searchText.value == "") {
                                     materialViewModel.getListMaterialsWithRetry(
                                         searchText.value,
                                         userDB.token.toString(),
                                         context,
                                         true
                                     )
+                                }
+                            },
+                            onSearch = {
+                                Log.d("searchText.value", searchText.value)
+                                materialViewModel.getListMaterialsWithRetry(
+                                    searchText.value,
+                                    userDB.token.toString(),
+                                    context,
+                                    true
+                                )
 
-                                },
-                                placeholder = {
-                                    Text(text = "Search...")
-                                },
-                                active = isActiveSearch.value,
-                                onActiveChange = {
-                                    isActiveSearch.value = it
+                            },
+                            placeholder = {
+                                Text(text = "Search...")
+                            },
+                            active = isActiveSearch.value,
+                            onActiveChange = {
+                                isActiveSearch.value = it
 
-                                }) {
-                                LazyColumn {
-                                    items(materialToSearch) { item ->
-                                        MaterialCard(
-                                            content = item.name, modifier = Modifier.fieldModifier()
-                                        ) { navController.navigate(route = OPEN_MATERIAL_SCREEN + "/${item.id}") }
-                                    }
+                            }) {
+                            LazyColumn {
+                                items(materialToSearch) { item ->
+                                    MaterialCard(
+                                        content = item.name, modifier = Modifier.fieldModifier()
+                                    ) { navController.navigate(route = OPEN_MATERIAL_SCREEN + "/${item.id}") }
                                 }
                             }
+                        }
 
-                            LazyColumn {
-                                isListEmpty.value=true
-                                items(materialsList) { item ->
-                                    if (filterViewModel.checkCoreFilter(
-                                            item,
-                                            uiStateFilter.filterCore
-                                        ) && filterViewModel.checkTypeFilter(
-                                            item,
-                                            uiStateFilter.filterType
-                                        )
-                                    ) {
-                                        isListEmpty.value=false
+
+                        val configuration = LocalConfiguration.current
+
+                        when (configuration.orientation) {
+                            Configuration.ORIENTATION_LANDSCAPE -> {
+                                LazyVerticalStaggeredGrid(
+                                    columns = StaggeredGridCells.Fixed(2),
+                                    modifier = Modifier.fillMaxSize(),
+                                    state = state,
+                                    content = {
+                                        isListEmpty.value = true
+                                        items(materialsList) { item ->
+                                            if (filterViewModel.checkCoreFilter(
+                                                    item,
+                                                    uiStateFilter.filterCore
+                                                ) && filterViewModel.checkTypeFilter(
+                                                    item,
+                                                    uiStateFilter.filterType
+                                                )
+                                            ) {
+                                                isListEmpty.value = false
+
+                                                MaterialCardMain(
+                                                    content = item.name.toString(),
+                                                    typeMaterial = item.type.toString(),
+                                                    isDraw = item.isDraw == 1,
+                                                    onEditClick = { navController.navigate(route = OPEN_MATERIAL_SCREEN + "/${item.id}") },
+                                                    modifier = Modifier.fieldModifier()
+                                                )
+                                            }
+                                        }
+                                    }
+                                )
+                            }
+
+                            else -> {
+                                LazyColumn {
+                                    isListEmpty.value = true
+                                    items(materialsList) { item ->
+                                        if (filterViewModel.checkCoreFilter(
+                                                item,
+                                                uiStateFilter.filterCore
+                                            ) && filterViewModel.checkTypeFilter(
+                                                item,
+                                                uiStateFilter.filterType
+                                            )
+                                        ) {
+                                            isListEmpty.value = false
 
                                             MaterialCardMain(
                                                 content = item.name.toString(),
                                                 typeMaterial = item.type.toString(),
-                                                isDraw = item.isDraw==1,
-                                                onEditClick = {navController.navigate(route = OPEN_MATERIAL_SCREEN + "/${item.id}")},
+                                                isDraw = item.isDraw == 1,
+                                                onEditClick = { navController.navigate(route = OPEN_MATERIAL_SCREEN + "/${item.id}") },
                                                 modifier = Modifier.fieldModifier()
                                             )
+                                        }
                                     }
                                 }
                             }
+                        }
 
-                            if (isDialogOpen.value) {
-                                FilterDialogMaterial(
-                                    message = "Filter",
+
+
+                        if (isDialogOpen.value) {
+                            FilterDialogMaterial(
+                                message = "Filter",
 //                                    youngMin = uiStateFilter.filterYoungMin,
 //                                    youngMax = uiStateFilter.filterYoungMax,
 //                                    youngOn = uiStateFilter.filterYoungOn,
-                                    core = uiStateFilter.filterCore,
-                                    type = uiStateFilter.filterType,
+                                core = uiStateFilter.filterCore,
+                                type = uiStateFilter.filterType,
 //                                    onNewValueMainYoungFilter = {
 //                                        filterViewModel.onNewValueMainYoungFilter(
 //                                            !uiStateFilter.filterYoungOn
 //                                        )
 //                                    },
-                                    onNewValueCoreFilter = filterViewModel::onCoreFilterChange,
-                                    onNewValueTypeFilter = filterViewModel::onTypeFilterChange,
+                                onNewValueCoreFilter = filterViewModel::onCoreFilterChange,
+                                onNewValueTypeFilter = filterViewModel::onTypeFilterChange,
 //                                    onNewValueYoungMinFilter = filterViewModel::onYoungMinFilterChange,
 //                                    onNewValueYoungMaxFilter = filterViewModel::onYoungMaxFilterChange,
-                                    onCancel = { isDialogOpen.value = false },
-                                    modifier = Modifier.fieldModifier(),
-                                    color = MaterialTheme.colorScheme.background
-                                )
-                            }
+                                onCancel = { isDialogOpen.value = false },
+                                modifier = Modifier.fieldModifier(),
+                                color = MaterialTheme.colorScheme.background
+                            )
+                        }
 //                                                        if (isListEmpty.value) {
 ////                                Column(
 ////                                    modifier = modifier
@@ -246,10 +295,9 @@ fun MaterialsScreen(
 //
 //                            }
 
-                        }
                     }
                 }
-            )
+            }
 
         }
     }

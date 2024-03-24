@@ -330,6 +330,8 @@ fun PointChart(
     val density = LocalDensity.current
     val coordinates = mutableListOf<PointF>()
     val bezierPath = remember { Path() }
+    val scale= paddingSpace+screenMin*0.05f
+
 
     val textPaint = remember(density) {
         Paint().apply {
@@ -362,12 +364,12 @@ fun PointChart(
             // Draw x-axis
             drawLine(
                 start = Offset(
-                    padding / 2 + paddingSpace.toPx() / 2,
-                    size.height - padding / 2 - paddingSpace.toPx() / 2
+                    padding / 2 + scale.toPx() / 2,
+                    size.height - padding / 2 - scale.toPx() / 2
                 ),
                 end = Offset(
                     size.width - padding / 2,
-                    size.height - padding / 2 - paddingSpace.toPx() / 2
+                    size.height - padding / 2 - scale.toPx() / 2
                 ),
                 color = Color.Black
             )
@@ -375,15 +377,15 @@ fun PointChart(
             // Draw y-axis
             drawLine(
                 start = Offset(
-                    padding / 2 + paddingSpace.toPx() / 2,
-                    size.height - padding / 2 - paddingSpace.toPx() / 2
+                    padding / 2 + scale.toPx() / 2,
+                    size.height - padding / 2 - scale.toPx() / 2
                 ),
-                end = Offset(padding / 2 + paddingSpace.toPx() / 2, padding / 2),
+                end = Offset(padding / 2 + scale.toPx() / 2, padding / 2),
                 color = Color.Black
             )
             drawContext.canvas.nativeCanvas.drawText(
                 String.format(xLabelName),
-                (size.width - padding * 2 - paddingSpace.toPx() / 2) / 2 + padding + paddingSpace.toPx() / 2,
+                (size.width - padding * 2 - scale.toPx() / 2) / 2 + padding + scale.toPx() / 2,
                 size.height - padding,
                 textPaintLabel
             )
@@ -391,7 +393,7 @@ fun PointChart(
             rotate(degrees = -90f, rect.center) {
                 drawContext.canvas.nativeCanvas.drawText(
                     String.format(yLabelName),
-                    (size.width - padding * 2 - paddingSpace.toPx() / 2) / 2 + padding + paddingSpace.toPx() / 2,
+                    (size.width - padding * 2 - scale.toPx() / 2) / 2 + padding + scale.toPx() / 2,
                     padding,
                     textPaintLabel
                 )
@@ -402,18 +404,18 @@ fun PointChart(
                 for (i in xValuesLabelMaterial.indices) {
                     drawContext.canvas.nativeCanvas.drawText(
                         String.format(materialNameList[i]),
-                        i * (size.width - padding * 2 - paddingSpace.toPx() / 2) / sizeMaterial + padding + paddingSpace.toPx() / 2,
-                        size.height + padding / 2 - paddingSpace.toPx() / 2,
+                        i * (size.width - padding * 2 - scale.toPx() / 2) / sizeMaterial + padding + scale.toPx() / 2,
+                        size.height + padding / 2 - scale.toPx() / 2,
                         textPaint
                     )
 
                     drawLine(
                         start = Offset(
-                            i * (size.width - padding * 2 - paddingSpace.toPx() / 2) / sizeMaterial + padding + paddingSpace.toPx() / 2,
-                            size.height - padding / 2 - paddingSpace.toPx() / 2
+                            i * (size.width - padding * 2 - scale.toPx() / 2) / sizeMaterial + padding + scale.toPx() / 2,
+                            size.height - padding / 2 - scale.toPx() / 2
                         ),
                         end = Offset(
-                            i * (size.width - padding * 2 - paddingSpace.toPx() / 2) / sizeMaterial + padding + paddingSpace.toPx() / 2,
+                            i * (size.width - padding * 2 - scale.toPx() / 2) / sizeMaterial + padding + scale.toPx() / 2,
                             padding / 2
                         ),
                         color = Color.Gray
@@ -423,18 +425,18 @@ fun PointChart(
                 for (i in xValuesLabel.indices) {
                     drawContext.canvas.nativeCanvas.drawText(
                         String.format("%.1f", (xValuesLabel[i])),
-                        i * (size.width - padding * 2 - paddingSpace.toPx() / 2) / stepsX + padding + paddingSpace.toPx() / 2,
-                        size.height + padding / 2 - paddingSpace.toPx() / 2,
+                        i * (size.width - padding * 2 - scale.toPx() / 2) / stepsX + padding + scale.toPx() / 2,
+                        size.height + padding / 2 - scale.toPx() / 2,
                         textPaint
                     )
 
                     drawLine(
                         start = Offset(
-                            i * (size.width - padding * 2 - paddingSpace.toPx() / 2) / stepsX + padding + paddingSpace.toPx() / 2,
-                            size.height - padding / 2 - paddingSpace.toPx() / 2
+                            i * (size.width - padding * 2 - scale.toPx() / 2) / stepsX + padding + scale.toPx() / 2,
+                            size.height - padding / 2 - scale.toPx() / 2
                         ),
                         end = Offset(
-                            i * (size.width - padding * 2 - paddingSpace.toPx() / 2) / stepsX + padding + paddingSpace.toPx() / 2,
+                            i * (size.width - padding * 2 - scale.toPx() / 2) / stepsX + padding + scale.toPx() / 2,
                             padding / 2
                         ),
                         color = Color.Gray
@@ -445,21 +447,21 @@ fun PointChart(
             for (i in yValuesLabel.indices) {
                 drawContext.canvas.nativeCanvas.drawText(
                     String.format("%.1f", (yValuesLabel[i])),
-                    padding / 2 + paddingSpace.toPx() / 2 - 12 * String.format(
+                    padding / 2 + scale.toPx() / 2 - 12 * String.format(
                         "%.1f",
                         (yValuesLabel[i])
                     ).length,
-                    (size.height - padding * 2 - paddingSpace.toPx() / 2) * (1 * stepsY - i) / stepsY + padding,
+                    (size.height - padding * 2 - scale.toPx() / 2) * (1 * stepsY - i) / stepsY + padding,
                     textPaint
                 )
                 drawLine(
                     start = Offset(
-                        padding / 2 + paddingSpace.toPx() / 2,
-                        (size.height - padding * 2 - paddingSpace.toPx() / 2) * (1 * stepsY - i) / stepsY + padding
+                        padding / 2 + scale.toPx() / 2,
+                        (size.height - padding * 2 - scale.toPx() / 2) * (1 * stepsY - i) / stepsY + padding
                     ),
                     end = Offset(
                         size.width - padding / 2,
-                        (size.height - padding * 2 - paddingSpace.toPx() / 2) * (1 * stepsY - i) / stepsY + padding
+                        (size.height - padding * 2 - scale.toPx() / 2) * (1 * stepsY - i) / stepsY + padding
                     ),
                     color = Color.Gray
                 )
@@ -468,9 +470,9 @@ if (isMaterial) {
     // Draw points
     xValuesLabelMaterial.zip(yValues).forEach { (x, y) ->
         val pointX =
-            padding + paddingSpace.toPx() / 2 + ((size.width - padding * 2 - paddingSpace.toPx() / 2) * (x) / sizeMaterial)
+            padding + scale.toPx() / 2 + ((size.width - padding * 2 - scale.toPx() / 2) * (x) / sizeMaterial)
         val pointY =
-            size.height - padding - paddingSpace.toPx() / 2 - ((size.height - padding * 2 - paddingSpace.toPx() / 2) * (y - minValueY) / yRange)
+            size.height - padding - scale.toPx() / 2 - ((size.height - padding * 2 - scale.toPx() / 2) * (y - minValueY) / yRange)
         // i * (size.width-padding*2  -paddingSpace.toPx() / 2) / stepsX + padding + paddingSpace.toPx() / 2
         coordinates.add(PointF(pointX, pointY))
     }
@@ -479,9 +481,9 @@ if (isMaterial) {
             else{
     xValues.zip(yValues).forEach { (x, y) ->
         val pointX =
-            padding + paddingSpace.toPx() / 2 + ((size.width - padding * 2 - paddingSpace.toPx() / 2) * (x - minValueX) / xRange)
+            padding + scale.toPx() / 2 + ((size.width - padding * 2 - scale.toPx() / 2) * (x - minValueX) / xRange)
         val pointY =
-            size.height - padding - paddingSpace.toPx() / 2 - ((size.height - padding * 2 - paddingSpace.toPx() / 2) * (y - minValueY) / yRange)
+            size.height - padding - scale.toPx() / 2 - ((size.height - padding * 2 - scale.toPx() / 2) * (y - minValueY) / yRange)
         // i * (size.width-padding*2  -paddingSpace.toPx() / 2) / stepsX + padding + paddingSpace.toPx() / 2
         coordinates.add(PointF(pointX, pointY))
     }

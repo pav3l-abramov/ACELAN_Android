@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -76,6 +77,7 @@ fun OpenTaskScreen(
     val isShowButton = remember { mutableStateOf(true) }
     val isShowGraphOnScreen = remember { mutableStateOf(false) }
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading)
+    val state = rememberLazyStaggeredGridState()
 
     CoroutineScope(Job()).launch { mainViewModel.getTaskByID(idTask) }
     if (checkUser) {
@@ -165,43 +167,16 @@ fun OpenTaskScreen(
                     ) {
 
                         val listDetail = listOf(
-                            DataDetailCard(
-                                "Name: ",
-                                taskDB.name.toString(),
-                                false,
-                                Modifier.fieldModifier()
-                            ),
-                            DataDetailCard(
-                                "Status: ",
-                                taskDB.status.toString(),
-                                false,
-                                Modifier.fieldModifier()
-                            ),
-                            DataDetailCard(
-                                "Start: ",
-                                taskDB.started_at.toString(),
-                                true,
-                                Modifier.fieldModifier()
-                            ),
-                            DataDetailCard(
-                                "Finish: ",
-                                taskDB.finished_at.toString(),
-                                true,
-                                Modifier.fieldModifier()
-                            ),
-                            DataDetailCard(
-                                if (isGraph.value) "Graph type:" else "File type: ",
-                                if (isGraph.value) taskDB.graph_type.toString() else taskDB.file_type.toString(),
-                                false,
-                                Modifier.fieldModifier()
-                            ),
-                            DataDetailCard(
-                                if (isGraph.value) "Count point:" else "File url: ",
-                                if (isGraph.value) taskDB.x?.size.toString() else taskDB.url.toString(),
-                                false,
-                                Modifier.fieldModifier()
-                            ),
+                            DataDetailCard("Name: ",taskDB.name.toString(),false,Modifier.fieldModifier()),
+                            DataDetailCard("Status: ",taskDB.status.toString(),false,Modifier.fieldModifier()),
+                            DataDetailCard("Start: ",taskDB.started_at.toString(),true,Modifier.fieldModifier()),
+                            DataDetailCard("Finish: ",taskDB.finished_at.toString(),true,Modifier.fieldModifier()),
+                            DataDetailCard(if (isGraph.value) "Graph type:" else "File type: ",if (isGraph.value) taskDB.graph_type.toString() else taskDB.file_type.toString(), false, Modifier.fieldModifier()),
+                            DataDetailCard(if (isGraph.value) "Count point:" else "File url: ",if (isGraph.value) taskDB.x?.size.toString() else taskDB.url.toString(), false, Modifier.fieldModifier()),
                         )
+
+
+
                         listDetail.forEach { detail ->
                                 TaskDetailCard(
                                     detail.content,
