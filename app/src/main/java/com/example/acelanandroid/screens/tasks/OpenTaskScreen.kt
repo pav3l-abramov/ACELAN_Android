@@ -165,6 +165,7 @@ fun OpenTaskScreen(
                             .verticalScroll(rememberScrollState()),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        isDraw.value=false
 
                         val listDetail = listOf(
                             DataDetailCard("Name: ",taskDB.name.toString(),false,Modifier.fieldModifier()),
