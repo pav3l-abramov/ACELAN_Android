@@ -242,6 +242,13 @@ fun OpenMaterialScreen(
                             Modifier.fieldModifier(),
                             true
                         )
+                        MaterialDetailCard(
+                            "ε, F/m∙ε₀:",
+                            if(materialDetailDB.dielectric?.isEmpty() == true)"no data" else materialDetailDB.dielectric.toString(),
+                            false,
+                            Modifier.fieldModifier(),
+                            true
+                        )
                         val paramIsotropicToTable = listOf(
                             materialDetailDB.stiffness?.let { it1 ->
                                 TableList(
@@ -252,17 +259,6 @@ fun OpenMaterialScreen(
                                     maxItemsInRow = 2,
                                     description = "Elastic Properties: ",
                                     dimension = "10⁹ N/m²"
-                                )
-                            },
-                            materialDetailDB.dielectric?.let { it1 ->
-                                TableList(
-                                    param = "ε",
-                                    row = 1,
-                                    col = 1,
-                                    item = it1,
-                                    maxItemsInRow = 1,
-                                    description = "Dielectric: ",
-                                    dimension = "F/m∙ε₀"
                                 )
                             }
                             )

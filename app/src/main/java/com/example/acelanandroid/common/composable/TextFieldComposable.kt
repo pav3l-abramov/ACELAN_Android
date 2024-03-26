@@ -16,26 +16,15 @@ limitations under the License.
 package com.example.acelanandroid.common.composable
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -57,20 +46,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.acelanandroid.ui.theme.DarkBlue
 import com.example.acelanandroid.ui.theme.DarkEmerald
-import com.example.acelanandroid.ui.theme.DarkGreen
-import com.example.acelanandroid.ui.theme.DarkRed
-import com.example.acelanandroid.ui.theme.DarkText
-import com.example.acelanandroid.ui.theme.DarkYellow
-import com.example.acelanandroid.ui.theme.LightBlue
 import com.example.acelanandroid.ui.theme.LightEmerald
-import com.example.acelanandroid.ui.theme.LightGreen
-import com.example.acelanandroid.ui.theme.LightRed
-import com.example.acelanandroid.ui.theme.LightText
-import com.example.acelanandroid.ui.theme.LightYellow
 import com.example.acelanandroid.R.drawable as AppIcon
-import com.example.acelanandroid.R.string as AppText
 
 @Composable
 fun BasicField(
@@ -167,6 +145,25 @@ fun TextSignIn(modifier: Modifier) {
         Spacer(Modifier.size(16.dp))
     }
 }
+
+@Composable
+fun TextGraphMaterialType(content:String, modifier: Modifier) {
+    val firstLetter =content.first()
+    val otherLetter= content.drop(1)
+
+    Column(modifier = modifier,horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(text = buildAnnotatedString {
+            withStyle(style = SpanStyle(color = getColor(isSystemInDarkTheme()))) {
+                append(firstLetter)
+            }
+            withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+                append(otherLetter)
+            }
+        }, fontSize = 30.sp)
+        Spacer(Modifier.size(16.dp))
+    }
+}
+
 
 @Composable
 fun TextHello(modifier: Modifier, content: String) {

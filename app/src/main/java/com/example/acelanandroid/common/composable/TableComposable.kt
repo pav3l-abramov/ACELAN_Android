@@ -2,38 +2,36 @@ package com.example.acelanandroid.common.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
-import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.acelanandroid.common.ext.fieldModifier
-import com.example.acelanandroid.ui.theme.DarkEmerald
-import com.example.acelanandroid.ui.theme.LightEmerald
 
 @OptIn(ExperimentalLayoutApi::class)
 @Preview
@@ -49,35 +47,17 @@ fun Check() {
 //        isAnizotropic = true,
 //    )
 
-    DrawTable(
-        param = "ε",
-        row = 3,
-        col = 3,
-        item = listOf(
-            1.1f,
-            2.0f,
-            3.0f,
-            4.0f,
-            5.0f,
-            6.0f,
-            1.0f,
-            2.0f,
-            3.0f,
-            4.0f,
-            5.0f,
-            6.0f,
-            1.0f,
-            2.0f,
-            3.0f,
-            4.0f,
-            5.0f,
-
-        ),
-        maxItemsInRow=3,
-        modifier = Modifier.fieldModifier(),
-        description="Piezoelectric Properties:",
-        dimension="C/N",
-    )
+//    DrawTableToGraph(
+//        param = "ε",
+//        row = 3,
+//        col = 3,
+//        maxItemsInRow=3,
+//        modifier = Modifier.fieldModifier(),
+//        description="Piezoelectric Properties:",
+//        dimension="C/N",
+//        onEditClick = {},
+//        items = mutableListOf(0,1,5)
+//    )
 
 
 }
@@ -195,6 +175,74 @@ fun DrawTable(
         }
     }
 }
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun DrawTableToGraph(
+    param: String,
+    description: String,
+    dimension: String,
+    row: Int,
+    col: Int,
+    maxItemsInRow:Int,
+    modifier:Modifier,
+    onEditClick: (String,Int) -> Unit,
+    items:List<Int>
+) {
+    val configuration = LocalConfiguration.current
+    val screenMin = (listOf(configuration.screenHeightDp.dp, configuration.screenWidthDp.dp).min()-32.dp)/6
+    val subscript = SpanStyle(
+        baselineShift = BaselineShift.Subscript,
+        fontSize = 16.sp, // font size of subscript
+        color =  getColor(isSystemInDarkTheme())
+    )
+    Column (modifier = modifier.fillMaxWidth()) {
+        Spacer(Modifier.size(16.dp))
+        Text(
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle()) {
+                    append(description)
+                }
+                withStyle(style = SpanStyle(color =  getColor(isSystemInDarkTheme()))) {
+                    append( " $param"+"ᵢⱼ"+" ,$dimension")
+                }
+            }, fontSize = 20.sp, modifier=Modifier.align(Alignment.CenterHorizontally))
+        Spacer(Modifier.size(16.dp))
+
+        FlowRow(maxItemsInEachRow = maxItemsInRow, modifier = Modifier.align(Alignment.CenterHorizontally)) {
+            repeat(row * col) {
+                val rowIndex = it / maxItemsInRow
+                val colIndex = it % col
+                Box(
+                    modifier = Modifier
+                        .clickable{onEditClick(param,colIndex+rowIndex*maxItemsInRow)}
+                        .size(screenMin)
+                        .border(width = 1.dp, color = colorBackground(!isSystemInDarkTheme()))
+                        .background( if (items.contains(colIndex+rowIndex*maxItemsInRow)) colorBackground(isSystemInDarkTheme()) else  MaterialTheme.colorScheme.background
+                        ),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        fontSize = 20.sp,
+                        text = buildAnnotatedString {
+                            withStyle(style = SpanStyle(color =  getColor(isSystemInDarkTheme()))){
+                                append(param)
+                            }
+                            withStyle(subscript) {
+                                append("${rowIndex + 1}${colIndex + 1}")
+                            }
+                        }
+                    )
+
+
+                }
+
+
+            }
+        }
+    }
+}
+
 
 fun colorBackground(systemTheme: Boolean): Color {
     val color = if (systemTheme) {

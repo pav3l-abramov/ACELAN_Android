@@ -8,10 +8,8 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -25,7 +23,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -38,17 +35,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.acelanandroid.GRAPH_SCREEN
-import com.example.acelanandroid.common.composable.FABOpenMaterialComposable
+import com.example.acelanandroid.common.composable.DrawTableToGraph
 import com.example.acelanandroid.common.composable.PointChart
 import com.example.acelanandroid.common.composable.TextCardStandart
+import com.example.acelanandroid.common.composable.TextGraphMaterialType
 import com.example.acelanandroid.common.ext.fieldModifier
-import com.example.acelanandroid.screens.FilterViewModel
 import com.example.acelanandroid.screens.MainViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,6 +55,9 @@ fun GraphScreen(
     context: Context
 ) {
     val materialListDraw by mainViewModel.materialListDraw.collectAsState()
+    val elasticPropertiesList by graphViewModel.elasticPropertiesList.collectAsState()
+    val piezoelectricPropertiesList by graphViewModel.piezoelectricPropertiesList.collectAsState()
+    val dielectricPropertiesList by graphViewModel.dielectricPropertiesList.collectAsState()
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
@@ -169,6 +165,7 @@ fun GraphScreen(
                 else -> {
                     Log.d("10materialGraphDB.size.toString()",materialListDraw.toString())
                     LazyColumn(state = scrollState, modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                        item{TextGraphMaterialType("Isotropic materials", Modifier.fieldModifier()) }
                         items(listGraphMaterial) { data ->
                             if (data != null) {
                                 TextCardStandart(data.paramName, Modifier.fieldModifier())
@@ -183,26 +180,60 @@ fun GraphScreen(
                                 )
                             }
                         }
+                        item{TextGraphMaterialType("Anisotropic materials", Modifier.fieldModifier()) }
+                        item{DrawTableToGraph(
+                            param = "d",
+                            row = 3,
+                            col = 6,
+                            maxItemsInRow = 6,
+                            description = "Piezoelectric Properties:",
+                            dimension = "C/N",
+                            items = piezoelectricPropertiesList,
+                            onEditClick = graphViewModel::onEditGraphDraw,
+                            modifier = Modifier.fieldModifier()
+                        )
 
+                        }
+                        items(piezoelectricPropertiesList) { data ->
+                                Text(data.toString(), Modifier.fieldModifier())
+                        }
+                        item{DrawTableToGraph(
+                            param = "C",
+                            row = 6,
+                            col = 6,
+                            maxItemsInRow = 6,
+                            description = "Elastic Properties: ",
+                            dimension = "10⁹ N/m²",
+                            items = elasticPropertiesList,
+                            onEditClick = graphViewModel::onEditGraphDraw,
+                            modifier = Modifier.fieldModifier()
+                        )
+                        }
+                        items(elasticPropertiesList) { data ->
+                            Text(data.toString(), Modifier.fieldModifier())
+                        }
+
+                        item{DrawTableToGraph(
+                            param = "ε",
+                            row = 3,
+                            col = 3,
+                            maxItemsInRow = 3,
+                            description = "Dielectric: ",
+                            dimension = "F/m∙ε₀",
+                            items = dielectricPropertiesList,
+                            onEditClick = graphViewModel::onEditGraphDraw,
+                            modifier = Modifier.fieldModifier()
+                        )
+                        }
+                        items(dielectricPropertiesList) { data ->
+                            Text(data.toString(), Modifier.fieldModifier())
+                        }
                     }
-//                    listGraphMaterial.forEach { data ->
-//                        if (data != null) {
-//                            //TextCardStandart(data.paramName, Modifier.fieldModifier())
-//                            PointChart(
-//                                120.dp,
-//                                listOf(),
-//                                data.yValues,
-//                                "name material",
-//                                data.yLabelName,
-//                                true,
-//                                data.materialNameList
-//                            )
-//                        }
-//                    }
                 }
             }
         }
 
     }
 }
+
 
