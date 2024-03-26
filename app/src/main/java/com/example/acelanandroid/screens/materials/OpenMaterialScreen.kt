@@ -277,7 +277,7 @@ fun OpenMaterialScreen(
                             }
                         }
                     }
-                    if (materialDetailDB.type?.contains("Anisotropic") == true||materialDetailDB.isDraw==1) {
+                    if (materialDetailDB.type?.contains("Anisotropic") == true) {
                         val paramAnisotropicToTable = listOf(
                             materialDetailDB.piezo?.let { it1 ->
                                 TableList(

@@ -225,8 +225,7 @@ fun GraphScreen(
 
                 item { TextGraphMaterialType("Anisotropic materials", Modifier.fieldModifier()) }
                 when (materialAnisotropicListDraw.nameList?.size) {
-                    //0, null -> item {
-                    2 -> item {
+                    0, null -> item {
                         TextCardStandart(
                             "Nothing to show. Add 2 materials to draw graph",
                             Modifier.fieldModifier()
