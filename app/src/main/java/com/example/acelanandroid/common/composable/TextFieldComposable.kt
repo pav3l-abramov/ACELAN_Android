@@ -1,30 +1,23 @@
-/*
-Copyright 2022 Google LLC
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    https://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
- */
 package com.example.acelanandroid.common.composable
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -42,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -201,8 +195,79 @@ fun TextHello(modifier: Modifier, content: String) {
             }
         }
     }
-
 }
+@Composable
+fun TextWithSubString(param:String,rowIndex:Int,colIndex:Int ){
+    val subscript = SpanStyle(
+        baselineShift = BaselineShift.Subscript,
+        fontSize = 16.sp, // font size of subscript
+        color =  getColor(isSystemInDarkTheme())
+    )
+
+    Text(
+        fontSize = 20.sp,
+        text = buildAnnotatedString {
+            withStyle(style = SpanStyle(color =  getColor(isSystemInDarkTheme()))){
+                append(param)
+            }
+            withStyle(subscript) {
+                append("${rowIndex + 1}${colIndex + 1}")
+            }
+        },
+
+    )
+}
+
+@Composable
+fun TextCardWithSubstring(
+    param:String,rowIndex:Int,colIndex:Int,
+    modifier: Modifier
+) {
+    Card(
+        modifier = modifier
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        MaterialTheme.colorScheme.background,
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                    .padding(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier,
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    val subscript = SpanStyle(
+                        baselineShift = BaselineShift.Subscript,
+                        fontSize = 16.sp
+                    )
+
+                    Text(
+                        fontSize = 20.sp,
+                        text = buildAnnotatedString {
+                            append(param)
+                            withStyle(subscript) {
+                                append("${rowIndex + 1}${colIndex + 1}")
+                            }
+                        },
+
+                        )
+                }
+            }
+        }
+    }
+}
+
 
 @Preview
 @Composable

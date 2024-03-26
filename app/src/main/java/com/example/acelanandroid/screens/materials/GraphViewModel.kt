@@ -53,4 +53,27 @@ class GraphViewModel @Inject constructor() : ViewModel() {
             }
         }
     }
+    fun getParamToList (allParam : List<List<Float>>,number : Int):List<Float>{
+        val listParam = mutableListOf<Float>()
+        allParam.forEach{
+            listParam.add(it[number])
+        }
+        return listParam
+    }
+    fun getSubShiftString(param:Int):String{
+        var subString =""
+        when (param){
+            0->{subString="₀"}
+            1->{subString="₁"}
+            2->{subString="₂"}
+            3->{subString="₃"}
+            4->{subString="₄"}
+            5->{subString="₅"}
+            6->{subString="₆"}
+            7->{subString="₇"}
+            8->{subString="₈"}
+            9->{subString="₉"}
+        }
+        return subString
+    }
 }

@@ -191,11 +191,7 @@ fun DrawTableToGraph(
 ) {
     val configuration = LocalConfiguration.current
     val screenMin = (listOf(configuration.screenHeightDp.dp, configuration.screenWidthDp.dp).min()-32.dp)/6
-    val subscript = SpanStyle(
-        baselineShift = BaselineShift.Subscript,
-        fontSize = 16.sp, // font size of subscript
-        color =  getColor(isSystemInDarkTheme())
-    )
+
     Column (modifier = modifier.fillMaxWidth()) {
         Spacer(Modifier.size(16.dp))
         Text(
@@ -222,19 +218,7 @@ fun DrawTableToGraph(
                         ),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Text(
-                        fontSize = 20.sp,
-                        text = buildAnnotatedString {
-                            withStyle(style = SpanStyle(color =  getColor(isSystemInDarkTheme()))){
-                                append(param)
-                            }
-                            withStyle(subscript) {
-                                append("${rowIndex + 1}${colIndex + 1}")
-                            }
-                        }
-                    )
-
-
+                    TextWithSubString(param,rowIndex,colIndex)
                 }
 
 

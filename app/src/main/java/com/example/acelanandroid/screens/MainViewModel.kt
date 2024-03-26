@@ -1,12 +1,8 @@
 package com.example.acelanandroid.screens
 
-import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
 import com.example.acelanandroid.data.MaterialMain
 import com.example.acelanandroid.data.TaskMain
 import com.example.acelanandroid.data.UserData
@@ -15,16 +11,14 @@ import com.example.acelanandroid.retrofit.GetStateMaterial
 import com.example.acelanandroid.retrofit.GetStateMaterialDetail
 import com.example.acelanandroid.retrofit.GetStateTaskDetail
 import com.example.acelanandroid.retrofit.GetStateTasks
-import com.example.acelanandroid.room.FloatListConverter
 import com.example.acelanandroid.room.MainDB
-import com.example.acelanandroid.screens.materials.GraphList
+import com.example.acelanandroid.screens.materials.GraphListAnisotropic
+import com.example.acelanandroid.screens.materials.GraphListIsotropic
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -288,9 +282,11 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
 
     //graph
 
-    private val _materialListDraw = MutableStateFlow(GraphList())
-    val materialListDraw: StateFlow<GraphList> = _materialListDraw
+    private val _materialIsotropicListDraw = MutableStateFlow(GraphListIsotropic())
+    val materialIsotropicListDraw: StateFlow<GraphListIsotropic> = _materialIsotropicListDraw
 
+    private val _materialAnisotropicListDraw = MutableStateFlow(GraphListAnisotropic())
+    val materialAnisotropicListDraw: StateFlow<GraphListAnisotropic> = _materialAnisotropicListDraw
 
     //    suspend fun updateMaterialGraph() {
 //        viewModelScope.launch {
@@ -298,21 +294,28 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
 //        }
 //    }
     suspend fun getDataToGraph() {
-        val nameList = mutableListOf<String>()
+        val nameIsotropicList = mutableListOf<String>()
         val youngList = mutableListOf<Float>()
         val poisonList = mutableListOf<Float>()
+
+        val nameAnisotropicList = mutableListOf<String>()
         val stiffnessList = mutableListOf<List<Float>>()
         val piezoList = mutableListOf<List<Float>>()
         val dielectricList = mutableListOf<List<Float>>()
         _materialListDBDraw.value.forEach { material ->
-            nameList.add(material.name!!)
-            youngList.add(material.young!!.toFloat() / 1E9f)
-            poisonList.add(material.poison!!.toFloat())
-            stiffnessList.add(material.stiffness!!)
-            piezoList.add(material.piezo!!)
-            dielectricList.add(material.dielectric!!)
-            _materialListDraw.value =
-                GraphList(nameList, youngList, poisonList, stiffnessList, piezoList, dielectricList)
+            if(material.type!!.contains("Isotropic")) {
+                nameIsotropicList.add(material.name!!)
+                youngList.add(material.young!!.toFloat() / 1E9f)
+                poisonList.add(material.poison!!.toFloat())
+            }
+            else if (material.type!!.contains("Anisotropic")){
+                nameAnisotropicList.add(material.name!!)
+                stiffnessList.add(material.stiffness!!)
+                piezoList.add(material.piezo!!)
+                dielectricList.add(material.dielectric!!)
+            }
         }
+        _materialIsotropicListDraw.value =    GraphListIsotropic(nameIsotropicList, youngList, poisonList)
+        _materialAnisotropicListDraw.value= GraphListAnisotropic(nameAnisotropicList, stiffnessList, piezoList, dielectricList)
     }
 }
