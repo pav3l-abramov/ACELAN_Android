@@ -1,5 +1,6 @@
 package com.example.acelanandroid.common.composable
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -104,7 +105,9 @@ fun DrawTable(
     modifier:Modifier
 ) {
     val configuration = LocalConfiguration.current
-    val screenMin = (listOf(configuration.screenHeightDp.dp, configuration.screenWidthDp.dp).min()-32.dp)/6
+    val currentWidth= if (configuration.orientation== Configuration.ORIENTATION_LANDSCAPE)  configuration.screenWidthDp.dp/2 else configuration.screenWidthDp.dp
+    val currentHeight= if (configuration.orientation== Configuration.ORIENTATION_LANDSCAPE)  configuration.screenHeightDp.dp else configuration.screenHeightDp.dp
+    val screenMin = (listOf(currentHeight, currentWidth).min()-33.dp)/6
     Column (modifier = modifier.fillMaxWidth()) {
         Spacer(Modifier.size(16.dp))
             Text(
