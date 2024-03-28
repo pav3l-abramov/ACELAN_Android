@@ -242,7 +242,7 @@ fun OpenMaterialScreen(
                         ),
                         DataDetailCard(
                             "ε, F/m∙ε₀:",
-                            if (materialDetailDB.dielectric?.isEmpty() == true) "no data" else materialDetailDB.dielectric.toString(),
+                            materialDetailDB.dielectricScalar.toString(),
                             false,
                             Modifier.fieldModifier(),
                         ),

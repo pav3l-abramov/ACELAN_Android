@@ -237,8 +237,9 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
         stiffness: List<Float>? = null,
         piezo: List<Float>? = null,
         dielectric: List<Float>? = null,
+        dielectricScalar: Float? = null,
         id: Int
-    ) = database.dao.updateMaterialDetailMain(young, poison, stiffness, piezo, dielectric, id)
+    ) = database.dao.updateMaterialDetailMain(young, poison, stiffness, piezo, dielectric,dielectricScalar, id)
 
 
     suspend fun handleSuccessStateMaterialScreen(state: GetStateMaterial.Success) {
@@ -268,6 +269,7 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
             materialDetail.properties?.stiffness,
             materialDetail.properties?.piezo,
             materialDetail.properties?.dielectric,
+            materialDetail.properties?.dielectricScalar,
             materialDetail.id!!
         )
     }
