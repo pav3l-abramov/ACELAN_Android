@@ -192,7 +192,7 @@ fun OpenTaskScreen(
                         }
                         if (taskDB.url != null) {
                             when (taskDB.file_type) {
-                                "jpg", "png" -> DrawImage(taskDB.url!!, Modifier.fieldModifier())
+                                "jpg", "png","webm" -> DrawImage(taskDB.url!!, Modifier.fieldModifier())
                                 "ply", "obj", "stl" -> isDraw.value = true
                                 else -> TextCard(
                                     "I don't know how to draw this file",
