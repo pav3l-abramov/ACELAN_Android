@@ -137,11 +137,7 @@ private fun TaskCardMain(
 }
 
 
-@Preview
-@Composable
-fun checkCard() {
-    TaskCard("content",Modifier.fieldModifier(),"IZOTROPIC", "IZOTROPIC","IZOTROPIC",  {})
-}
+
 
 
 @Composable
@@ -470,6 +466,77 @@ fun TextCardStandart(
         }
     }
 }
+
+
+@Composable
+fun HomeCard(
+    content: String,
+    title: String,
+    isShow: Boolean,
+    onEditClick: () -> Unit,
+    modifier: Modifier
+) {
+    Card(
+        modifier = modifier,
+        onClick = onEditClick
+    ) {
+        Row(
+
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.padding(16.dp).fillMaxWidth()
+
+                ) {
+
+                Column(
+//                verticalArrangement = Arrangement.Center,
+                    //horizontalAlignment = Alignment.End,
+                    modifier = Modifier.width(250.dp)
+
+                ) {
+                Text(
+                    text = title,
+                    fontWeight = FontWeight.Bold, fontSize = 24.sp,
+                    modifier = Modifier
+                )
+
+            }
+            Column(
+//                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.End,
+                modifier = Modifier
+                    .width(30.dp)
+            ) {
+                Icon(
+                    painter = painterResource(if (isShow) R.drawable.baseline_expand_more_24 else R.drawable.baseline_chevron_left_24),
+                    contentDescription = null
+                )
+                  }
+
+        }
+        if (isShow) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.padding(start=16.dp,end= 16.dp, bottom = 16.dp)
+                .fillMaxWidth()
+        ) {
+
+                Text(
+                    text = content,
+                    fontSize = 20.sp
+                )
+            }
+        }
+    }
+}
+@Preview
+@Composable
+fun checkCard() {
+    HomeCard("content","titleeeeeeeeeeeeeeee eeeeeeee",true,{},Modifier.fieldModifier())
+}
+
+
 
 
 fun getColorStatus(status: String, systemTheme: Boolean): Color {
