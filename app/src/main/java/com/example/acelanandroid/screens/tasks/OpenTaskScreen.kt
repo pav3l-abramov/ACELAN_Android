@@ -3,11 +3,18 @@ package com.example.acelanandroid.screens.tasks
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -29,6 +36,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -40,8 +48,10 @@ import com.example.acelanandroid.common.composable.TextCard
 import com.example.acelanandroid.common.ext.fieldModifier
 import com.example.acelanandroid.OpenGLES20Activity
 import com.example.acelanandroid.common.composable.CustomLinearProgressBar
+import com.example.acelanandroid.common.composable.DrawTable
 import com.example.acelanandroid.common.composable.FABTaskDrawComposable
 import com.example.acelanandroid.common.composable.InterfaceButton
+import com.example.acelanandroid.common.composable.MaterialDetailCard
 import com.example.acelanandroid.common.composable.PointChart
 import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.retrofit.GetStateTaskDetail
@@ -159,91 +169,197 @@ fun OpenTaskScreen(
                             context
                         )
                     }) {
-                    Column(
-                        modifier = modifier
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState()),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        isDraw.value=false
+                    val listDetail = listOf(
+                        DataDetailCard("Name: ",taskDB.name.toString(),false,Modifier.fieldModifier()),
+                        DataDetailCard("Status: ",taskDB.status.toString(),false,Modifier.fieldModifier()),
+                        DataDetailCard("Start: ",taskDB.started_at.toString(),true,Modifier.fieldModifier()),
+                        DataDetailCard("Finish: ",taskDB.finished_at.toString(),true,Modifier.fieldModifier()),
+                        DataDetailCard(if (isGraph.value) "Graph type:" else "File type: ",if (isGraph.value) taskDB.graph_type.toString() else taskDB.file_type.toString(), false, Modifier.fieldModifier()),
+                        DataDetailCard(if (isGraph.value) "Count point:" else "File url: ",if (isGraph.value) taskDB.x?.size.toString() else taskDB.url.toString(), false, Modifier.fieldModifier()),
+                    )
+                    val configuration = LocalConfiguration.current
+                    isDraw.value=false
+                    when (configuration.orientation) {
+                        Configuration.ORIENTATION_LANDSCAPE -> {
+                            LazyVerticalStaggeredGrid(
+                                columns = StaggeredGridCells.Fixed(2),
+                                modifier = Modifier.fillMaxSize(),
+                                state = state,
+                                content = {
+                                    items(listDetail) { detail ->
+                                        TaskDetailCard(
+                                            detail.content,
+                                            detail.materialData,
+                                            detail.checkTime,
+                                            detail.modifier,
+                                        )
+                                    }
+                                    if (isLoading) {
+                                        item(span = StaggeredGridItemSpan.FullLine) {
+                                            CustomLinearProgressBar(Modifier.fieldModifier())
+                                        }
+                                    }
 
-                        val listDetail = listOf(
-                            DataDetailCard("Name: ",taskDB.name.toString(),false,Modifier.fieldModifier()),
-                            DataDetailCard("Status: ",taskDB.status.toString(),false,Modifier.fieldModifier()),
-                            DataDetailCard("Start: ",taskDB.started_at.toString(),true,Modifier.fieldModifier()),
-                            DataDetailCard("Finish: ",taskDB.finished_at.toString(),true,Modifier.fieldModifier()),
-                            DataDetailCard(if (isGraph.value) "Graph type:" else "File type: ",if (isGraph.value) taskDB.graph_type.toString() else taskDB.file_type.toString(), false, Modifier.fieldModifier()),
-                            DataDetailCard(if (isGraph.value) "Count point:" else "File url: ",if (isGraph.value) taskDB.x?.size.toString() else taskDB.url.toString(), false, Modifier.fieldModifier()),
-                        )
+                                    if (taskDB.url != null) {
+                                        when (taskDB.file_type) {
+                                            "jpg", "png","webm" -> item(span = StaggeredGridItemSpan.FullLine){DrawImage(taskDB.url!!, Modifier.fieldModifier())}
+                                            "ply", "obj", "stl" -> isDraw.value = true
+                                            else ->
+                                                item(span = StaggeredGridItemSpan.FullLine) {
+                                                    TextCard(
+                                                        "I don't know how to draw this file",
+                                                        Modifier.fieldModifier()
+                                                    )
+                                                }
+                                        }
+                                    }
+                                    if (taskDB.graph_type=="2DGraph") {
+                                        isGraph.value = true
+                                        if (isShowGraphOnScreen.value) {
+                                            item(span = StaggeredGridItemSpan.FullLine){
+                                                taskDB.x?.let { it1 ->
+                                                    taskDB.y?.let { it2 ->
+                                                        PointChart(
+                                                            120.dp,
+                                                            it1,
+                                                            it2,
+                                                            "x",
+                                                            "y",
+                                                            false,
+                                                            listOf()
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if (taskDB.url == null && taskDB.graph_type == null) {
+                                        item(span = StaggeredGridItemSpan.FullLine) {
+                                            TextCard(
+                                                "There is nothing to draw in this task",
+                                                Modifier.fieldModifier()
+                                            )
+                                        }
+                                    }
 
-
-
-                        listDetail.forEach { detail ->
-                                TaskDetailCard(
-                                    detail.content,
-                                    detail.materialData,
-                                    detail.checkTime,
-                                    detail.modifier
-                                )
-
-                        }
-                        if (isLoading) {
-                            CustomLinearProgressBar(Modifier.fieldModifier())
-                        }
-                        if (taskDB.url != null) {
-                            when (taskDB.file_type) {
-                                "jpg", "png","webm" -> DrawImage(taskDB.url!!, Modifier.fieldModifier())
-                                "ply", "obj", "stl" -> isDraw.value = true
-                                else -> TextCard(
-                                    "I don't know how to draw this file",
-                                    Modifier.fieldModifier()
-                                )
-                            }
-                        }
-                        if (taskDB.graph_type=="2DGraph") {
-                        isGraph.value = true
-                        if (isShowGraphOnScreen.value) {
-                            taskDB.x?.let { it1 ->
-                                taskDB.y?.let { it2 ->
-                                    PointChart(
-                                        120.dp,
-                                        it1,
-                                        it2,
-                                        "x",
-                                        "y",
-                                        false,
-                                        listOf()
-                                    )
                                 }
-                            }
-//                            Text(text = "another graph")
-//                            PointChart(
-//                                120.dp,
-//                                listOf(-1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f,8.0f,15.0f,16.0f,17.0f,18.0f),
-//                                listOf(0.0f, 2.0f, 30.0f, 100.0f, 50.0f, 40.0f, 20.0f, 24.0f, 16.0f, 8.0f, 4.0f),
-//                                "name material",
-//                                "name parameter, divide factor",
-//                                true,
-//                                listOf("pzt1", "pzt2", "pzt3", "pzt4", "pzt5", "pzt6")
-//                            )
-
-                            //fun to draw by x/y
-                            //DrawGraph(x = taskDB.x!!, y = taskDB.y!!, colorBackground = MaterialTheme.colorScheme.background, modifier =Modifier.fieldModifier() )
-                        }
-                           }
-
-                        //DrawGraph(x = listOf(1.0f,2.0f,5.0f), y = listOf(1.0f,2.0f,5.0f), colorBackground = MaterialTheme.colorScheme.background, modifier =Modifier.fieldModifier() )
-
-
-                        if (taskDB.url == null && taskDB.graph_type == null) {
-                            TextCard(
-                                "There is nothing to draw in this task",
-                                Modifier.fieldModifier()
                             )
                         }
+
+                        else -> {
+                            LazyColumn {
+                                items(listDetail){ detail ->
+                                    TaskDetailCard(
+                                        detail.content,
+                                        detail.materialData,
+                                        detail.checkTime,
+                                        detail.modifier,
+                                    )
+                                }
+                                if (isLoading) {
+                                    item{CustomLinearProgressBar(Modifier.fieldModifier())}
+                                }
+                                if (taskDB.url != null) {
+                                    when (taskDB.file_type) {
+                                        "jpg", "png","webm" -> item{DrawImage(taskDB.url!!, Modifier.fieldModifier())}
+                                        "ply", "obj", "stl" -> isDraw.value = true
+                                        else ->
+                                            item {
+                                                TextCard(
+                                                    "I don't know how to draw this file",
+                                                    Modifier.fieldModifier()
+                                                )
+                                            }
+                                    }
+                                }
+                                if (taskDB.graph_type=="2DGraph") {
+                                    isGraph.value = true
+                                    if (isShowGraphOnScreen.value) {
+                                        item{
+                                        taskDB.x?.let { it1 ->
+                                            taskDB.y?.let { it2 ->
+                                                PointChart(
+                                                    120.dp,
+                                                    it1,
+                                                    it2,
+                                                    "x",
+                                                    "y",
+                                                    false,
+                                                    listOf()
+                                                )
+                                            }
+                                        }
+                                        }
+                                    }
+                                }
+                                if (taskDB.url == null && taskDB.graph_type == null) {
+                                    item {
+                                        TextCard(
+                                            "There is nothing to draw in this task",
+                                            Modifier.fieldModifier()
+                                        )
+                                    }
+                                }
+
+
+
+                            }
+                        }
                     }
+
+
+
+
+//                    Column(
+//                        modifier = modifier
+//                            .fillMaxSize()
+//                            .verticalScroll(rememberScrollState()),
+//                        horizontalAlignment = Alignment.CenterHorizontally
+//                    ) {
+//
+////                        if (taskDB.url != null) {
+////                            when (taskDB.file_type) {
+////                                "jpg", "png","webm" -> DrawImage(taskDB.url!!, Modifier.fieldModifier())
+////                                "ply", "obj", "stl" -> isDraw.value = true
+////                                else -> TextCard(
+////                                    "I don't know how to draw this file",
+////                                    Modifier.fieldModifier()
+////                                )
+////                            }
+////                        }
+////                        if (taskDB.graph_type=="2DGraph") {
+////                        isGraph.value = true
+////                        if (isShowGraphOnScreen.value) {
+////                            taskDB.x?.let { it1 ->
+////                                taskDB.y?.let { it2 ->
+////                                    PointChart(
+////                                        120.dp,
+////                                        it1,
+////                                        it2,
+////                                        "x",
+////                                        "y",
+////                                        false,
+////                                        listOf()
+////                                    )
+////                                }
+////                            }
+////                        }
+////                           }
+//
+//                        //DrawGraph(x = listOf(1.0f,2.0f,5.0f), y = listOf(1.0f,2.0f,5.0f), colorBackground = MaterialTheme.colorScheme.background, modifier =Modifier.fieldModifier() )
+//
+//
+//                        if (taskDB.url == null && taskDB.graph_type == null) {
+//                            TextCard(
+//                                "There is nothing to draw in this task",
+//                                Modifier.fieldModifier()
+//                            )
+//                        }
+//                    }
                 }
-            })
+            }
+
+        )
 
 
         //        when (uiCheckStatus.status) {

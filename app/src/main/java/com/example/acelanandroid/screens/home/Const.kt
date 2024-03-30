@@ -1,8 +1,6 @@
 package com.example.acelanandroid.screens.home
 
-const val welcomeText ="Hello dear user!\n" +
-        "\n" +
-        "Welcome to the ACELAN mobile application! We are pleased to offer you a wide range of services and opportunities to make your life easier and more convenient."
+const val welcomeText ="Welcome to the ACELAN mobile application! We are pleased to offer you a wide range of services and opportunities to make your life easier and more convenient."
 const val aboutApp = "This mobile application is developed for ACELAN. You can view the data in this application that you have added to your personal account on the site.\n" +
         "You can also build graphs based on materials data, view 3D models of different formats (ply, obj, stl), monitor the status of a task, display a picture based on data from a task, build graphs based on data from a task."
 const val aboutMaterial = "You can see a list of materials that you have added in your personal account. The material's name and type are written on the material card. If you have added this material to be displayed in graphs, then on the right side you will see the corresponding sign.\n" +
