@@ -5,6 +5,7 @@ const val HOST_NAME = "https://acelan.ru"
 const val PROFILE_SCREEN = "ProfileScreen"
 
 const val HOME_SCREEN = "HomeScreen"
+const val SPLASH_SCREEN = "SplashScreen"
 
 const val TASKS_SCREEN = "TasksScreen"
 const val OPEN_TASK_SCREEN = "OpenTaskScreen"

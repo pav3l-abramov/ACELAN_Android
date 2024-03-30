@@ -32,6 +32,12 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
         getMaterialFromDBDraw()
     }
 
+    private val _checkOpenApp = MutableStateFlow(false)
+    val checkOpenApp: StateFlow<Boolean> = _checkOpenApp
+    fun isOpenApp() {
+        _checkOpenApp.value = true
+    }
+
     private val _checkOpenMaterialScreen = MutableStateFlow(false)
     val checkOpenMaterialScreen: StateFlow<Boolean> = _checkOpenMaterialScreen
 

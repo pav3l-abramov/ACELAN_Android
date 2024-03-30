@@ -17,7 +17,11 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -33,12 +37,14 @@ import androidx.navigation.navArgument
 import com.example.acelanandroid.GRAPH_SCREEN
 import com.example.acelanandroid.OPEN_MATERIAL_SCREEN
 import com.example.acelanandroid.OPEN_TASK_SCREEN
+import com.example.acelanandroid.SPLASH_SCREEN
 import com.example.acelanandroid.screens.MainViewModel
 import com.example.acelanandroid.screens.home.HomeScreen
 import com.example.acelanandroid.screens.materials.GraphScreen
 import com.example.acelanandroid.screens.materials.MaterialsScreen
 import com.example.acelanandroid.screens.materials.OpenMaterialScreen
 import com.example.acelanandroid.screens.profile.ProfileScreen
+import com.example.acelanandroid.screens.splash.SplashScreen
 import com.example.acelanandroid.screens.tasks.OpenTaskScreen
 import com.example.acelanandroid.screens.tasks.TasksScreen
 
@@ -46,14 +52,17 @@ import com.example.acelanandroid.screens.tasks.TasksScreen
 @Composable
 fun AppNavigation(context:Context) {
     val navController = rememberNavController()
+
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val mainViewModel : MainViewModel= hiltViewModel()
+    val checkOpenApp by mainViewModel.checkOpenApp.collectAsState()
     Scaffold(
         bottomBar = {
             if (currentDestination != null) {
                 if(currentDestination.route?.contains(OPEN_MATERIAL_SCREEN, ignoreCase = true) == false &&
                     currentDestination.route?.contains(GRAPH_SCREEN, ignoreCase = true) == false &&
+                    currentDestination.route?.contains(SPLASH_SCREEN, ignoreCase = true) == false &&
                     currentDestination.route?.contains(OPEN_TASK_SCREEN, ignoreCase = true) == false){
             NavigationBar {
                 screens.forEach { navItem ->
@@ -83,10 +92,16 @@ fun AppNavigation(context:Context) {
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = BottomBarScreen.Home.route,
+            startDestination = if (checkOpenApp) {
+                BottomBarScreen.Home.route
+            } else {
+                SPLASH_SCREEN
+            },
             modifier = Modifier.padding(paddingValues)
         ) {
-
+            composable(route = SPLASH_SCREEN) {
+                SplashScreen(mainViewModel = mainViewModel,navController = navController)
+            }
             composable(route = BottomBarScreen.Home.route) {
                  HomeScreen(mainViewModel = mainViewModel, context = context)
 

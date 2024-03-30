@@ -146,9 +146,10 @@ fun ProfileScreen(
                     mainViewModel.getUserDB()
                 }
             }
-            userDB.email?.let { TextHello(Modifier.fieldModifier(), it) }
+            if (userDB.email!=null) {
+                userDB.email?.let { TextHello(Modifier.fieldModifier(), it) }
 //                 Text(text = "Hello ${userDB.email}")
-
+            }
                 BasicButton("Log Out", Modifier.basicButton()) {
                     CoroutineScope(Job()).launch {
                         mainViewModel.deleteUserDB()
