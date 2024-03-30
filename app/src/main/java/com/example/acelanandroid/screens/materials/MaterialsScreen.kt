@@ -206,7 +206,6 @@ fun MaterialsScreen(
                                     modifier = Modifier.fillMaxSize(),
                                     state = state,
                                     content = {
-                                        isListEmpty.value = true
                                         items(materialsList) { item ->
                                             if (filterViewModel.checkCoreFilter(
                                                     item,
@@ -216,7 +215,6 @@ fun MaterialsScreen(
                                                     uiStateFilter.filterType
                                                 )
                                             ) {
-                                                isListEmpty.value = false
 
                                                 MaterialCardMain(
                                                     content = item.name.toString(),
@@ -233,7 +231,6 @@ fun MaterialsScreen(
 
                             else -> {
                                 LazyColumn {
-                                    isListEmpty.value = true
                                     items(materialsList) { item ->
                                         if (filterViewModel.checkCoreFilter(
                                                 item,
@@ -243,8 +240,6 @@ fun MaterialsScreen(
                                                 uiStateFilter.filterType
                                             )
                                         ) {
-                                            isListEmpty.value = false
-
                                             MaterialCardMain(
                                                 content = item.name.toString(),
                                                 typeMaterial = item.type.toString(),

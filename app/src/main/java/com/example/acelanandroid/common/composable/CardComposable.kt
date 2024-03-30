@@ -418,7 +418,7 @@ fun TextCard(
 
                     Text(
                         text = content,
-                        color = color,fontSize = 20.sp
+                        color = color,fontSize = 16.sp
                     )
                 }
             }
