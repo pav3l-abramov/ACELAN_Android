@@ -160,7 +160,6 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
 
     fun handleSuccessStateOpenTaskScreen(state: GetStateTaskDetail.Success) {
         val taskDetail = state.taskDetails
-
         updateTaskDetail(
             taskDetail.artifacts?.takeIf { it.isNotEmpty() }?.get(0)?.file_type,
             taskDetail.artifacts?.takeIf { it.isNotEmpty() }?.get(0)?.url,
@@ -295,6 +294,19 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
 
     private val _materialAnisotropicListDraw = MutableStateFlow(GraphListAnisotropic())
     val materialAnisotropicListDraw: StateFlow<GraphListAnisotropic> = _materialAnisotropicListDraw
+
+    suspend fun updateGraphSetting(
+        graphTypeXLabel: Int,
+        graphLineShow: Int,
+        graphColorLine: Int,
+        graphColorPoint: Int ,
+        graphDivideFactorStiffness: Int,
+        graphDivideFactorPiezo: Int,
+        graphDivideFactorDielectric: Int,
+        graphDivideFactorYoung: Int,
+        graphDivideFactorPoison: Int,
+        id: Int
+    ) = database.dao.updateGraphSetting(graphTypeXLabel, graphLineShow, graphColorLine, graphColorPoint, graphDivideFactorStiffness, graphDivideFactorPiezo, graphDivideFactorDielectric, graphDivideFactorYoung, graphDivideFactorPoison, id)
 
     //    suspend fun updateMaterialGraph() {
 //        viewModelScope.launch {

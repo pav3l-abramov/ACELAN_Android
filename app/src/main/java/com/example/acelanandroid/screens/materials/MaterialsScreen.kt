@@ -323,6 +323,8 @@ fun MaterialsScreen(
                 val error = state.error
                 materialViewModel.typeError(error)
             }
+
+            else -> {}
         }
     }
 }

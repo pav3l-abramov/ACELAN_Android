@@ -1,5 +1,6 @@
 package com.example.acelanandroid.data
 
+import androidx.compose.ui.graphics.Color
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
@@ -52,5 +53,14 @@ data class UserData(
     @PrimaryKey(autoGenerate = false)
     val id :Int?=null,
     val email:String?="",
-    val token: String? = null
+    val token: String? = null,
+    val graphTypeXLabel: Int=0,
+    val graphLineShow: Int=1,
+    val graphColorLine: Int = 1,
+    val graphColorPoint: Int = 0,
+    val graphDivideFactorStiffness: Int = 9,
+    val graphDivideFactorPiezo: Int = -12,
+    val graphDivideFactorDielectric: Int = -12,
+    val graphDivideFactorYoung: Int = 9,
+    val graphDivideFactorPoison: Int = 1
 )

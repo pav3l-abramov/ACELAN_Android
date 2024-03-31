@@ -1,5 +1,6 @@
 package com.example.acelanandroid.room
 
+import androidx.compose.ui.graphics.Color
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -28,6 +29,19 @@ interface Dao {
     @Query("SELECT * FROM $USER")
     fun getUser(): Flow<UserData>
 
+    @Query("UPDATE $USER SET graphTypeXLabel=:graphTypeXLabel,graphLineShow=:graphLineShow,graphColorLine=:graphColorLine,graphColorPoint=:graphColorPoint,graphDivideFactorStiffness=:graphDivideFactorStiffness,graphDivideFactorPiezo=:graphDivideFactorPiezo, graphDivideFactorDielectric=:graphDivideFactorDielectric,graphDivideFactorYoung=:graphDivideFactorYoung,graphDivideFactorPoison=:graphDivideFactorPoison  WHERE id=:id")
+    fun updateGraphSetting(
+        graphTypeXLabel: Int,
+        graphLineShow: Int,
+        graphColorLine: Int,
+        graphColorPoint: Int ,
+        graphDivideFactorStiffness: Int,
+        graphDivideFactorPiezo: Int,
+        graphDivideFactorDielectric: Int,
+        graphDivideFactorYoung: Int,
+        graphDivideFactorPoison: Int,
+        id: Int
+    )
 
     //material and task
     @Insert(onConflict = OnConflictStrategy.IGNORE)

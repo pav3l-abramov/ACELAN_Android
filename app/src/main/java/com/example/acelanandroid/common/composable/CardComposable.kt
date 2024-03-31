@@ -530,6 +530,22 @@ fun HomeCard(
         }
     }
 }
+
+@Composable
+fun GraphSettingBoolean(
+    content: String,
+    valueParam:Int
+){}
+@Composable
+fun GraphSettingColor(
+    content: String,
+    valueParam:Int
+){}
+@Composable
+fun GraphSettingDivide(
+    content: String,
+    valueParam:Int
+){}
 @Preview
 @Composable
 fun checkCard() {

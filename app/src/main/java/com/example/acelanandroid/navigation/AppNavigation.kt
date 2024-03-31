@@ -7,7 +7,6 @@ import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.padding
@@ -17,11 +16,8 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -35,12 +31,14 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.acelanandroid.GRAPH_SCREEN
+import com.example.acelanandroid.GRAPH_SETTING_SCREEN
 import com.example.acelanandroid.OPEN_MATERIAL_SCREEN
 import com.example.acelanandroid.OPEN_TASK_SCREEN
 import com.example.acelanandroid.SPLASH_SCREEN
 import com.example.acelanandroid.screens.MainViewModel
 import com.example.acelanandroid.screens.home.HomeScreen
 import com.example.acelanandroid.screens.materials.GraphScreen
+import com.example.acelanandroid.screens.materials.GraphSettingScreen
 import com.example.acelanandroid.screens.materials.MaterialsScreen
 import com.example.acelanandroid.screens.materials.OpenMaterialScreen
 import com.example.acelanandroid.screens.profile.ProfileScreen
@@ -62,6 +60,7 @@ fun AppNavigation(context:Context) {
             if (currentDestination != null) {
                 if(currentDestination.route?.contains(OPEN_MATERIAL_SCREEN, ignoreCase = true) == false &&
                     currentDestination.route?.contains(GRAPH_SCREEN, ignoreCase = true) == false &&
+                    currentDestination.route?.contains(GRAPH_SETTING_SCREEN, ignoreCase = true) == false &&
                     currentDestination.route?.contains(SPLASH_SCREEN, ignoreCase = true) == false &&
                     currentDestination.route?.contains(OPEN_TASK_SCREEN, ignoreCase = true) == false){
             NavigationBar {
@@ -137,6 +136,9 @@ fun AppNavigation(context:Context) {
             }
             composable(route = GRAPH_SCREEN) {
                 GraphScreen(context = context,navController = navController,mainViewModel = mainViewModel)
+            }
+            composable(route = GRAPH_SETTING_SCREEN) {
+                GraphSettingScreen(mainViewModel = mainViewModel,navController = navController)
             }
         }
 

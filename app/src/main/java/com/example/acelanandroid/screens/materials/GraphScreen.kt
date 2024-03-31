@@ -40,8 +40,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.acelanandroid.GRAPH_SETTING_SCREEN
+import com.example.acelanandroid.OPEN_MATERIAL_SCREEN
 import com.example.acelanandroid.common.composable.DrawTableToGraph
+import com.example.acelanandroid.common.composable.InterfaceButton
 import com.example.acelanandroid.common.composable.PointChart
+import com.example.acelanandroid.common.composable.SettingButton
 import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.common.composable.TextCardWithSubstring
 import com.example.acelanandroid.common.composable.TextGraphMaterialType
@@ -102,7 +106,11 @@ fun GraphScreen(
                             )
                         }
                     },
-                    //actions = {}
+                    actions = {
+                        SettingButton(
+                            onCancelMain = {navController.navigate(route = GRAPH_SETTING_SCREEN )}
+                        )
+                    },
                 )
             }
         },
