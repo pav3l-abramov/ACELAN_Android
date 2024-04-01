@@ -29,3 +29,13 @@ val DarkText = Color(0xFF363636)
 
 val LightEmerald = Color(0xFF22684C)
 val DarkEmerald = Color(0xFF36AC7D)
+
+val GraphBlack = Color(0xFF000000)
+val GraphWhite = Color(0xFFFFFFFF)
+val GraphRed = Color(0xFFFF0000)
+val GraphBlue = Color(0xFF0049FF)
+val GraphYellow = Color(0xFFFFDF00)
+val GraphGreen = Color(0xFF51B313)
+val GraphOrange = Color(0xFFFF5100)
+val GraphCian = Color(0xFF00FFC4)
+val GraphPurple = Color(0xFFCF00FF)

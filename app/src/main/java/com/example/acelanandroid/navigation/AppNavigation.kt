@@ -138,7 +138,7 @@ fun AppNavigation(context:Context) {
                 GraphScreen(context = context,navController = navController,mainViewModel = mainViewModel)
             }
             composable(route = GRAPH_SETTING_SCREEN) {
-                GraphSettingScreen(mainViewModel = mainViewModel,navController = navController)
+                GraphSettingScreen(mainViewModel = mainViewModel,navController = navController,context = context)
             }
         }
 

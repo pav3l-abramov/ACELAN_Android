@@ -61,3 +61,15 @@ fun SettingButton(
     )
   }
 }
+@Composable
+fun SaveButton(
+  onCancelMain: () -> Unit
+){
+  IconButton(onClick = { onCancelMain() }) {
+    Icon(
+      painter = painterResource( R.drawable.baseline_save_24 ),
+      contentDescription = null,
+      modifier=Modifier.fillMaxSize().padding(5.dp)
+    )
+  }
+}

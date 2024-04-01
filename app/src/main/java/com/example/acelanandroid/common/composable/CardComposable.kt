@@ -1,33 +1,42 @@
 package com.example.acelanandroid.common.composable
 
-import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Card
-import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.acelanandroid.R
 import com.example.acelanandroid.common.ext.fieldModifier
+import com.example.acelanandroid.screens.materials.ColorProvider
+import com.example.acelanandroid.screens.materials.GraphSettingViewModel
 import com.example.acelanandroid.ui.theme.DarkBlue
 import com.example.acelanandroid.ui.theme.DarkGreen
 import com.example.acelanandroid.ui.theme.DarkRed
@@ -484,7 +493,9 @@ fun HomeCard(
 
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.padding(16.dp).fillMaxWidth()
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
 
                 ) {
 
@@ -518,7 +529,8 @@ fun HomeCard(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.padding(start=16.dp,end= 16.dp, bottom = 16.dp)
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                 .fillMaxWidth()
         ) {
 
@@ -534,23 +546,170 @@ fun HomeCard(
 @Composable
 fun GraphSettingBoolean(
     content: String,
-    valueParam:Int
-){}
+    valueParam:Int,
+    numParam:Int,
+    onEditClick: (Int,Int) -> Unit,
+   // onEditClick: () -> Unit,
+    modifier: Modifier
+){
+    Card(
+        modifier = modifier
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.width(250.dp)
+            ) {
+                Text(
+                    text = content,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            }
+
+
+            Checkbox(
+                checked = valueParam==1,
+                onCheckedChange = { isChecked ->
+                    onEditClick(numParam,if (isChecked)1 else 0)
+                }
+            )
+        }
+    }
+
+}
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GraphSettingColor(
     content: String,
-    valueParam:Int
-){}
+    valueParam:Int,
+    numParam:Int,
+    onEditClick: (Int,Int) -> Unit,
+    modifier: Modifier
+){
+    var expanded by remember { mutableStateOf(false) }
+    Card(
+        modifier = modifier
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.width(150.dp)
+            ) {
+                Text(
+                    text = content,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            }
+            Box(modifier=Modifier.width(150.dp)) {
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = {
+                        expanded = !expanded
+                    }
+                ) {
+                    TextField(
+                        value = ColorProvider.listColor.first { it.numColor == valueParam }.nameColor,
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                        modifier = Modifier.menuAnchor()
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        ColorProvider.listColor.forEach { item ->
+                            DropdownMenuItem(
+                                text = { Text(text = item.nameColor) },
+                                onClick = {
+                                    onEditClick(numParam,item.numColor)
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+}
 @Composable
 fun GraphSettingDivide(
     content: String,
-    valueParam:Int
-){}
-@Preview
-@Composable
-fun checkCard() {
-    HomeCard("content","titleeeeeeeeeeeeeeee eeeeeeee",true,{},Modifier.fieldModifier())
+    valueParam:String,
+    numParam:Int,
+    onEditClick: (Int,String) -> Unit,
+    modifier: Modifier
+){
+    var expanded by remember { mutableStateOf(false) }
+    Card(
+        modifier = modifier
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.width(150.dp)
+            ) {
+                Text(
+                    text = content,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = if (expanded) Color.Red else MaterialTheme.colorScheme.onSurface
+                )
+
+            }
+            Column(modifier=Modifier.width(150.dp)) {
+                OutlinedTextField(
+                    singleLine = true,
+                    modifier = modifier,
+                    value = valueParam.toString(),
+                    onValueChange = {
+                        try {
+                        expanded=false
+                            val check = it.toInt()
+                        onEditClick(numParam,it)
+                    } catch(e: NumberFormatException) {
+                        expanded=true
+                        onEditClick(numParam,it)
+                    }
+
+                                    },
+                    placeholder = {Text("Divide") },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal,
+                        imeAction = ImeAction.Done),
+                )
+            }
+
+
+        }
+    }
 }
+
+//@Preview
+//@Composable
+//fun checkCard() {
+//    GraphSettingBoolean("content",1,1,{},Modifier.fieldModifier())
+//}
 
 
 
