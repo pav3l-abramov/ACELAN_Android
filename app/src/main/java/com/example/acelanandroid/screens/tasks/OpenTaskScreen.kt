@@ -36,6 +36,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextOverflow
@@ -57,6 +58,7 @@ import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.retrofit.GetStateTaskDetail
 import com.example.acelanandroid.screens.DataDetailCard
 import com.example.acelanandroid.screens.MainViewModel
+import com.example.acelanandroid.screens.materials.ColorProvider
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.CoroutineScope
@@ -226,7 +228,11 @@ fun OpenTaskScreen(
                                                             "x",
                                                             "y",
                                                             false,
-                                                            listOf()
+                                                            listOf(),
+                                                            Color.Red,
+                                                            Color.Black,
+                                                            true,
+                                                            true
                                                         )
                                                     }
                                                 }
@@ -285,7 +291,11 @@ fun OpenTaskScreen(
                                                     "x",
                                                     "y",
                                                     false,
-                                                    listOf()
+                                                    listOf(),
+                                                    Color.Red,
+                                                    Color.Black,
+                                                    true,
+                                                    true
                                                 )
                                             }
                                         }

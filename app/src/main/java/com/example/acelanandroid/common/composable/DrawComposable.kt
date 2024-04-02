@@ -292,19 +292,19 @@ const val stepsY = 6
 //    }
 //}
 
-@Composable
-@Preview
-fun qweqw() {
-    PointChart(
-        120.dp,
-        listOf(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f),
-        listOf(0.0f, 2.0f, 3.0f, 10.0f, 5.0f, 4.0f),
-        "x,n",
-        "y,n",
-        true,
-        listOf("pzt1", "pzt2", "pzt3", "pzt4", "pzt5")
-    )
-}
+//@Composable
+//@Preview
+//fun qweqw() {
+//    PointChart(
+//        120.dp,
+//        listOf(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f),
+//        listOf(0.0f, 2.0f, 3.0f, 10.0f, 5.0f, 4.0f),
+//        "x,n",
+//        "y,n",
+//        true,
+//        listOf("pzt1", "pzt2", "pzt3", "pzt4", "pzt5")
+//    )
+//}
 
 @Composable
 fun PointChart(
@@ -315,6 +315,10 @@ fun PointChart(
     yLabelName: String,
     isMaterial: Boolean,
     materialNameList: List<String>,
+    colorLine:Color,
+    colorPoint:Color,
+    showLine: Boolean,
+    showMaterialName : Boolean
 ) {
     val maxValueX = xValues.maxOrNull() ?: 1f
     val maxValueY = yValues.maxOrNull() ?: 1f
@@ -403,7 +407,7 @@ fun PointChart(
 
                 for (i in xValuesLabelMaterial.indices) {
                     drawContext.canvas.nativeCanvas.drawText(
-                        String.format(materialNameList[i]),
+                        String.format((if (showMaterialName)materialNameList[i] else i+1).toString()),
                         i * (size.width - padding * 2 - scale.toPx() / 2) / sizeMaterial + padding + scale.toPx() / 2,
                         size.height + padding / 2 - scale.toPx() / 2,
                         textPaint
@@ -508,18 +512,20 @@ if (isMaterial) {
             }
             coordinates.forEach { coord ->
                 drawCircle(
-                    color = Color.Black,
+                    color = colorPoint,
                     center = Offset(coord.x, coord.y),
                     radius = 20f
                 )
             }
 
 
-            drawPath(
-                path = bezierPath,
-                color = Color.Red,
-                style = Stroke(width = 5f)
-            )
+            if(showLine) {
+                drawPath(
+                    path = bezierPath,
+                    color = colorLine,
+                    style = Stroke(width = 5f)
+                )
+            }
         }
     }
 }

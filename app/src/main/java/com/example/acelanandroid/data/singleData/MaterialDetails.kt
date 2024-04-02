@@ -18,5 +18,5 @@ data class Properties(
     val stiffness: List<Float>? = null,//1x36
     val piezo: List<Float>? = null,//1x18
     val dielectric: List<Float>? = null,//1x9
-    val dielectricScalar: Float? = null//1x9
+    val dielectricScalar: Float? = null
 )

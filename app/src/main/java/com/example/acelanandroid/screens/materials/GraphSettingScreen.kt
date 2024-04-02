@@ -87,8 +87,8 @@ fun GraphSettingScreen(
         GraphSettingDivideList("Divide factor stiffness", settingGraphDivideFactorStiffness,0),
         GraphSettingDivideList("Divide factor piezomodul", settingGraphDivideFactorPiezo,1),
         GraphSettingDivideList("Divide factor dielectric", settingGraphDivideFactorDielectric,2),
-        GraphSettingDivideList("Divide factor poison", settingGraphDivideFactorYoung,3),
-        GraphSettingDivideList("Divide factor young modulus", settingGraphDivideFactorPoison,4),
+        GraphSettingDivideList("Divide factor young modulus", settingGraphDivideFactorYoung,3),
+        GraphSettingDivideList("Divide factor poison", settingGraphDivideFactorPoison,4),
     )
     val state = rememberLazyStaggeredGridState()
     val configuration = LocalConfiguration.current

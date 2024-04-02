@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.pow
 
 @HiltViewModel
 class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
@@ -313,7 +314,7 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
 //            _materialGraphDB.value = database.dao.getDrawMain()
 //        }
 //    }
-    suspend fun getDataToGraph() {
+    suspend fun getDataToGraph(userData: UserData) {
         val nameIsotropicList = mutableListOf<String>()
         val youngList = mutableListOf<Float>()
         val poisonList = mutableListOf<Float>()
@@ -325,14 +326,14 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
         _materialListDBDraw.value.forEach { material ->
             if(material.type!!.contains("Isotropic")) {
                 nameIsotropicList.add(material.name!!)
-                youngList.add(material.young!!.toFloat() / 1E9f)
-                poisonList.add(material.poison!!.toFloat())
+                youngList.add((material.young!!.toFloat()/10.0.pow(userData.graphDivideFactorYoung)).toFloat())
+                poisonList.add((material.poison!!.toFloat()/10.0.pow(userData.graphDivideFactorPoison)).toFloat())
             }
             else if (material.type!!.contains("Anisotropic")){
                 nameAnisotropicList.add(material.name!!)
-                stiffnessList.add(material.stiffness!!)
-                piezoList.add(material.piezo!!)
-                dielectricList.add(material.dielectric!!)
+                stiffnessList.add(material.stiffness!!.map { it / 10.0.pow(userData.graphDivideFactorStiffness).toFloat() })
+                piezoList.add(material.piezo!!.map { it / 10.0.pow(userData.graphDivideFactorPiezo).toFloat() })
+                dielectricList.add(material.dielectric!!.map { it / 10.0.pow(userData.graphDivideFactorDielectric).toFloat() })
             }
         }
         _materialIsotropicListDraw.value =    GraphListIsotropic(nameIsotropicList, youngList, poisonList)

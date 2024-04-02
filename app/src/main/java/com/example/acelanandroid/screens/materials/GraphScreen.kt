@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -44,8 +45,10 @@ import com.example.acelanandroid.GRAPH_SETTING_SCREEN
 import com.example.acelanandroid.OPEN_MATERIAL_SCREEN
 import com.example.acelanandroid.common.composable.DrawTableToGraph
 import com.example.acelanandroid.common.composable.InterfaceButton
+import com.example.acelanandroid.common.composable.MaterialDetailCard
 import com.example.acelanandroid.common.composable.PointChart
 import com.example.acelanandroid.common.composable.SettingButton
+import com.example.acelanandroid.common.composable.TextCard
 import com.example.acelanandroid.common.composable.TextCardStandart
 import com.example.acelanandroid.common.composable.TextCardWithSubstring
 import com.example.acelanandroid.common.composable.TextGraphMaterialType
@@ -65,6 +68,7 @@ fun GraphScreen(
     graphViewModel: GraphViewModel = hiltViewModel(),
     context: Context
 ) {
+    val userDB by mainViewModel.userDB.collectAsState()
     val materialIsotropicListDraw by mainViewModel.materialIsotropicListDraw.collectAsState()
     val materialAnisotropicListDraw by mainViewModel.materialAnisotropicListDraw.collectAsState()
     val elasticPropertiesList by graphViewModel.elasticPropertiesList.collectAsState()
@@ -73,7 +77,7 @@ fun GraphScreen(
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
-            mainViewModel.getDataToGraph()
+            mainViewModel.getDataToGraph(userDB)
         }
     }
     val scrollState = rememberLazyListState()
@@ -108,7 +112,7 @@ fun GraphScreen(
                     },
                     actions = {
                         SettingButton(
-                            onCancelMain = {navController.navigate(route = GRAPH_SETTING_SCREEN )}
+                            onCancelMain = { navController.navigate(route = GRAPH_SETTING_SCREEN) }
                         )
                     },
                 )
@@ -128,7 +132,8 @@ fun GraphScreen(
                     materialIsotropicListDraw.nameList?.let { it2 ->
                         GraphMaterialData(
                             it1,
-                            "μ",
+                            graphViewModel.getYTitle("μ",userDB.graphDivideFactorPoison.toString(),"")
+                            ,
                             "Poison Coefficient",
                             it2
                         )
@@ -138,7 +143,8 @@ fun GraphScreen(
                     materialIsotropicListDraw.nameList?.let { it2 ->
                         GraphMaterialData(
                             it1,
-                            "E, 10⁹ N/m²",
+                            graphViewModel.getYTitle("E",userDB.graphDivideFactorYoung.toString(),"N/m²")
+                            ,
                             "Young Modulus",
                             it2
                         )
@@ -198,6 +204,19 @@ fun GraphScreen(
 
                     1 -> item { TextCardStandart("Add another material", Modifier.fieldModifier()) }
                     else -> {
+                        if (!listGraphMaterialIsotropic[0]?.materialNameList.isNullOrEmpty() && userDB.graphTypeXLabel == 0) {
+                            listGraphMaterialIsotropic[0]?.let { it1 ->
+                                itemsIndexed(it1.materialNameList) { index, data ->
+                                    MaterialDetailCard(
+                                        "  ${index + 1}",
+                                        data,
+                                        false,
+                                        Modifier.fieldModifier(),
+                                        false
+                                    )
+                                }
+                            }
+                        }
                         items(listGraphMaterialIsotropic) { data ->
                             if (data != null) {
                                 TextCardStandart(data.paramName, Modifier.fieldModifier())
@@ -210,7 +229,11 @@ fun GraphScreen(
                                             "name material",
                                             data.yLabelName,
                                             true,
-                                            data.materialNameList
+                                            data.materialNameList,
+                                            ColorProvider.listColor.first { it.numColor == userDB.graphColorLine }.color,
+                                            ColorProvider.listColor.first { it.numColor == userDB.graphColorPoint }.color,
+                                            userDB.graphLineShow == 1,
+                                            userDB.graphTypeXLabel == 1,
                                         )
                                     } else {
                                         TextCardStandart(
@@ -242,6 +265,17 @@ fun GraphScreen(
 
                     1 -> item { TextCardStandart("Add another material", Modifier.fieldModifier()) }
                     else -> {
+                        if (!materialAnisotropicListDraw.nameList.isNullOrEmpty() && userDB.graphTypeXLabel == 0) {
+                            itemsIndexed(materialAnisotropicListDraw.nameList!!) { index, data ->
+                                MaterialDetailCard(
+                                    "  ${index + 1}",
+                                    data,
+                                    false,
+                                    Modifier.fieldModifier(),
+                                    false
+                                )
+                            }
+                        }
                         item {
                             DrawTableToGraph(
                                 param = "d",
@@ -268,19 +302,13 @@ fun GraphScreen(
 
                             if (!listPiezo.isNullOrEmpty()) {
                                 if (listPiezo.toSet().size > 1) {
-                                    val annotatedString = buildAnnotatedString {
-                                        append("d")
-                                        // withStyle(style = SpanStyle(baselineShift = BaselineShift.Subscript)) {
-                                        append(
-                                            "${graphViewModel.getSubShiftString(rowIndex + 1)}${
-                                                graphViewModel.getSubShiftString(
-                                                    colIndex + 1
-                                                )
-                                            }"
-                                        )
-                                        // }
-                                        append(",C/N")
-                                    }
+                                    val annotatedString =
+                                        graphViewModel.getYTitle("d${graphViewModel.getSubShiftString(rowIndex + 1)}${
+                                            graphViewModel.getSubShiftString(
+                                                colIndex + 1
+                                            )
+                                        }",userDB.graphDivideFactorPiezo.toString(),"C/N")
+
 
                                     materialAnisotropicListDraw.nameList?.let { it1 ->
                                         PointChart(
@@ -288,9 +316,14 @@ fun GraphScreen(
                                             listOf(),
                                             listPiezo,
                                             "name material",
-                                            annotatedString.text,
+
+                                            annotatedString,
                                             true,
-                                            it1
+                                            it1,
+                                            ColorProvider.listColor.first { it.numColor == userDB.graphColorLine }.color,
+                                            ColorProvider.listColor.first { it.numColor == userDB.graphColorPoint }.color,
+                                            userDB.graphLineShow == 1,
+                                            userDB.graphTypeXLabel == 1,
                                         )
                                     }
                                 } else {
@@ -334,19 +367,12 @@ fun GraphScreen(
 
                             if (!listElastic.isNullOrEmpty()) {
                                 if (listElastic.toSet().size > 1) {
-                                    val annotatedString = buildAnnotatedString {
-                                        append("C")
-                                        // withStyle(style = SpanStyle(baselineShift = BaselineShift.Subscript)) {
-                                        append(
-                                            "${graphViewModel.getSubShiftString(rowIndex + 1)}${
-                                                graphViewModel.getSubShiftString(
-                                                    colIndex + 1
-                                                )
-                                            }"
-                                        )
-                                        // }
-                                        append(",10⁹ N/m²")
-                                    }
+                                    val annotatedString =
+                                        graphViewModel.getYTitle("C${graphViewModel.getSubShiftString(rowIndex + 1)}${
+                                            graphViewModel.getSubShiftString(
+                                                colIndex + 1
+                                            )
+                                        }",userDB.graphDivideFactorStiffness.toString(),"N/m²")
 
                                     materialAnisotropicListDraw.nameList?.let { it1 ->
                                         PointChart(
@@ -354,9 +380,13 @@ fun GraphScreen(
                                             listOf(),
                                             listElastic,
                                             "name material",
-                                            annotatedString.text,
+                                            annotatedString,
                                             true,
-                                            it1
+                                            it1,
+                                            ColorProvider.listColor.first { it.numColor == userDB.graphColorLine }.color,
+                                            ColorProvider.listColor.first { it.numColor == userDB.graphColorPoint }.color,
+                                            userDB.graphLineShow == 1,
+                                            userDB.graphTypeXLabel == 1,
                                         )
                                     }
                                 } else {
@@ -401,19 +431,13 @@ fun GraphScreen(
 
                             if (!listDielectric.isNullOrEmpty()) {
                                 if (listDielectric.toSet().size > 1) {
-                                    val annotatedString = buildAnnotatedString {
-                                        append("ε")
-                                        // withStyle(style = SpanStyle(baselineShift = BaselineShift.Subscript)) {
-                                        append(
-                                            "${graphViewModel.getSubShiftString(rowIndex + 1)}${
-                                                graphViewModel.getSubShiftString(
-                                                    colIndex + 1
-                                                )
-                                            }"
-                                        )
-                                        // }
-                                        append(",F/m∙ε₀")
-                                    }
+                                    val annotatedString =
+                                        graphViewModel.getYTitle("ε${graphViewModel.getSubShiftString(rowIndex + 1)}${
+                                            graphViewModel.getSubShiftString(
+                                                colIndex + 1
+                                            )
+                                        }",userDB.graphDivideFactorDielectric.toString(),"F/m∙ε₀")
+
 
                                     materialAnisotropicListDraw.nameList?.let { it1 ->
                                         PointChart(
@@ -421,9 +445,13 @@ fun GraphScreen(
                                             listOf(),
                                             listDielectric,
                                             "name material",
-                                            annotatedString.text,
+                                            annotatedString,
                                             true,
-                                            it1
+                                            it1,
+                                            ColorProvider.listColor.first { it.numColor == userDB.graphColorLine }.color,
+                                            ColorProvider.listColor.first { it.numColor == userDB.graphColorPoint }.color,
+                                            userDB.graphLineShow == 1,
+                                            userDB.graphTypeXLabel == 1,
                                         )
                                     }
                                 } else {

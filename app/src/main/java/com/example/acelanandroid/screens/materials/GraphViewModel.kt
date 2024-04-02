@@ -1,12 +1,9 @@
 package com.example.acelanandroid.screens.materials
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.lifecycle.ViewModel
-import com.example.acelanandroid.data.TaskMain
-import com.example.acelanandroid.data.UserData
-import com.example.acelanandroid.retrofit.AppRetrofit
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -60,6 +57,30 @@ class GraphViewModel @Inject constructor() : ViewModel() {
         }
         return listParam
     }
+
+    fun getYTitle(mainParam:String, divideFactor:String, dimension:String):String{
+        val annotatedString = buildAnnotatedString {
+            append(mainParam)
+            if (divideFactor!="0" || dimension!=""){
+                append(", ")
+            }
+            if (divideFactor!="0") {
+                append("10")
+                for (ch in divideFactor.iterator()) {
+                    if (ch== '-' ||ch== '+'){
+                        append(getUpShiftSign(ch))
+                    }
+                    else {
+                        append(getUpShiftString(ch))
+                    }
+                }
+                append(" ")
+            }
+            append(dimension)
+        }
+        return annotatedString.text
+    }
+
     fun getSubShiftString(param:Int):String{
         var subString =""
         when (param){
@@ -73,6 +94,30 @@ class GraphViewModel @Inject constructor() : ViewModel() {
             7->{subString="₇"}
             8->{subString="₈"}
             9->{subString="₉"}
+        }
+        return subString
+    }
+    fun getUpShiftString(param:Char):String{
+        var subString =""
+        when (param){
+            '0'->{subString="⁰"}
+            '1'->{subString="¹"}
+            '2'->{subString="²"}
+            '3'->{subString="³"}
+            '4'->{subString="⁴"}
+            '5'->{subString="⁵"}
+            '6'->{subString="⁶"}
+            '7'->{subString="⁷"}
+            '8'->{subString="⁸"}
+            '9'->{subString="⁹"}
+        }
+        return subString
+    }
+    fun getUpShiftSign(param: Char):String{
+        var subString =""
+        when (param){
+            '-'->{subString="⁻"}
+            '+'->{subString="⁺"}
         }
         return subString
     }
