@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -333,7 +336,13 @@ fun PointChart(
     val screenMin = listOf(configuration.screenHeightDp.dp, configuration.screenWidthDp.dp).min()
     val density = LocalDensity.current
     val coordinates = mutableListOf<PointF>()
-    val bezierPath = remember { Path() }
+    val bezierPath = remember { mutableStateOf(Path()) }
+
+    LaunchedEffect(Unit) {
+
+            bezierPath.value.reset()
+        
+    }
     val scale= paddingSpace+screenMin*0.05f
 
 
@@ -353,6 +362,7 @@ fun PointChart(
     }
 
     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+
         Canvas(
             modifier = Modifier
                 .height(screenMin)
@@ -492,12 +502,12 @@ if (isMaterial) {
         coordinates.add(PointF(pointX, pointY))
     }
             }
-            if (bezierPath.isEmpty) {
+            if (bezierPath.value.isEmpty) {
                 for (i in coordinates.indices) {
                     if (i == 0) {
-                        bezierPath.moveTo(coordinates[i].x, coordinates[i].y)
+                        bezierPath.value.moveTo(coordinates[i].x, coordinates[i].y)
                     } else {
-                        bezierPath.cubicTo(
+                        bezierPath.value.cubicTo(
                             coordinates[i - 1].x,
                             coordinates[i - 1].y,
                             coordinates[i - 1].x + 30f,
@@ -521,7 +531,7 @@ if (isMaterial) {
 
             if(showLine) {
                 drawPath(
-                    path = bezierPath,
+                    path = bezierPath.value,
                     color = colorLine,
                     style = Stroke(width = 5f)
                 )
