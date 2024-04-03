@@ -96,10 +96,16 @@ private fun TaskCardMain(
 
             ) {
                 if (content.isNotBlank()) {
-                    Text(
-                        text = content,
-                        fontWeight = FontWeight.Bold, fontSize = 24.sp
-                    )
+                    Column(
+                        modifier = Modifier
+                            .width(200.dp),
+                    ) {
+
+                        Text(
+                            text = content,
+                            fontWeight = FontWeight.Bold, fontSize = 24.sp
+                        )
+                    }
                 }
                 Column(
                     modifier = Modifier
