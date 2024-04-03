@@ -3,9 +3,6 @@ precision mediump float;
 uniform vec4 u_ambientColor;
 varying vec4 v_Color;
 
-/*
-Dmitry Brant, 2021
-*/
 void main()
 {
     float maxDepth = 50.0;

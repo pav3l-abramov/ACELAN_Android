@@ -341,7 +341,7 @@ fun PointChart(
     LaunchedEffect(Unit) {
 
             bezierPath.value.reset()
-        
+
     }
     val scale= paddingSpace+screenMin*0.05f
 

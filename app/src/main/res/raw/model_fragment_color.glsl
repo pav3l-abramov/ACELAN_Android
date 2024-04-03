@@ -8,9 +8,6 @@ varying vec3 v_Normal;
 varying vec3 v_Position;
 varying vec4 v_Color;
 
-/*
-Dmitry Brant, 2017
-*/
 void main()
 {
     vec3 lightPosNorm = normalize(u_LightPos);

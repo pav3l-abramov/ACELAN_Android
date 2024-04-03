@@ -8,9 +8,6 @@ const float specular_exp = 16.0;
 varying vec3 v_Normal;
 varying vec3 v_Position;
 
-/*
-Dmitry Brant, 2017
-*/
 void main()
 {
     vec3 lightPosNorm = normalize(u_LightPos);
