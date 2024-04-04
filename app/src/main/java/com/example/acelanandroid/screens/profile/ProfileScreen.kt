@@ -45,6 +45,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.lang.Exception
 
 @OptIn(DelicateCoroutinesApi::class)
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -141,13 +142,13 @@ fun ProfileScreen(
                 context.startActivity(intent)
             }
         } else {
-            LaunchedEffect(Unit) {
-                withContext(Dispatchers.IO) {
-                    mainViewModel.getUserDB()
-                }
-            }
+//            LaunchedEffect(Unit) {
+//                withContext(Dispatchers.IO) {
+//                    mainViewModel.getUserDB()
+//                }
+//            }
             if (userDB.email!=null) {
-                userDB.email?.let { TextHello(Modifier.fieldModifier(), it) }
+                userDB.email?.let { TextHello(Modifier.fieldModifier(), it.toString()) }
 //                 Text(text = "Hello ${userDB.email}")
             }
                 BasicButton("Log Out", Modifier.basicButton()) {
