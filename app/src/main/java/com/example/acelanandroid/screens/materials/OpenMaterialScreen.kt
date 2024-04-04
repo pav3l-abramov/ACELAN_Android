@@ -143,7 +143,7 @@ fun OpenMaterialScreen(
                     )
             },
             floatingActionButton = {
-                if (isShowButton.value) {
+                if (isShowButton.value && (materialDetailDB.piezo?.isEmpty()==false|| materialDetailDB.young != null)) {
 
                     FABOpenMaterialComposable(
                         mainButtonOn = materialDetailDB.isDraw==1,
