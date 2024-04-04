@@ -22,6 +22,7 @@ data class MaterialMain(
     val core: Boolean? = null,
     val young:String?=null,
     val poison:String?=null,
+    val density: Int? = null,
     @TypeConverters(FloatListConverter::class)
     val stiffness: List<Float>? = null,
     @TypeConverters(FloatListConverter::class)
@@ -56,11 +57,11 @@ data class UserData(
     val token: String? = null,
     val graphTypeXLabel: Int=0,
     val graphLineShow: Int=1,
-    val graphColorLine: Int = 1,
+    val graphColorLine: Int = 2,
     val graphColorPoint: Int = 0,
     val graphDivideFactorStiffness: Int = 9,
-    val graphDivideFactorPiezo: Int = -12,
-    val graphDivideFactorDielectric: Int = -12,
+    val graphDivideFactorPiezo: Int = -1,
+    val graphDivideFactorDielectric: Int = -1,
     val graphDivideFactorYoung: Int = 9,
     val graphDivideFactorPoison: Int = 1
 )

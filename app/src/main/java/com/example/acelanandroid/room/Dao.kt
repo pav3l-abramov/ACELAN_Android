@@ -1,6 +1,5 @@
 package com.example.acelanandroid.room
 
-import androidx.compose.ui.graphics.Color
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -84,13 +83,14 @@ interface Dao {
         core: Boolean?=null,
         id: Int
     )
-    @Query("UPDATE $MATERIAL SET young=:young,poison=:poison,stiffness=:stiffness,piezo=:piezo,dielectric=:dielectric,dielectricScalar=:dielectricScalar  WHERE id=:id")
+    @Query("UPDATE $MATERIAL SET young=:young,poison=:poison,density=:density ,stiffness=:stiffness,piezo=:piezo,dielectric=:dielectric,dielectricScalar=:dielectricScalar  WHERE id=:id")
     fun updateMaterialDetailMain(
         young: String?=null,
         poison: String?=null,
-        stiffness: List<Float>?=null,
-        piezo: List<Float>?=null,
-        dielectric: List<Float>?=null,
+        density: Int? = null,
+        stiffness: List<Float?>,
+        piezo: List<Float?> ,
+        dielectric: List<Float?> ,
         dielectricScalar: Float?=null,
         id: Int
     )

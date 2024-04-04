@@ -99,7 +99,7 @@ fun OpenMaterialScreen(
         }
     } else {
         LaunchedEffect(materialDetailDB) {
-            if (materialDetailDB.young == null && materialDetailDB.id != null) {
+            if (materialDetailDB.piezo?.isEmpty()==true&& materialDetailDB.young == null && materialDetailDB.id != null) {
                 openMaterialViewModel.getListMaterialDetailWithRetry(
                     userDB.token.toString(),
                     idMaterial,
@@ -248,19 +248,7 @@ fun OpenMaterialScreen(
                         ),
                     )
 
-                    val paramIsotropicToTable = listOf(
-                        materialDetailDB.stiffness?.let { it1 ->
-                            TableList(
-                                param = "C",
-                                row = 1,
-                                col = 2,
-                                item = it1,
-                                maxItemsInRow = 2,
-                                description = "Elastic Properties: ",
-                                dimension = "10⁹ N/m²"
-                            )
-                        }
-                    )
+
                     val paramAnisotropicToTable = listOf(
                         materialDetailDB.piezo?.let { it1 ->
                             TableList(
@@ -335,22 +323,18 @@ fun OpenMaterialScreen(
                                                     true
                                                 )
                                             }
-                                            items(paramIsotropicToTable){ data ->
-                                                if (data != null) {
-                                                    DrawTable(
-                                                        param = data.param,
-                                                        row = data.row,
-                                                        col = data.col,
-                                                        item = data.item,
-                                                        maxItemsInRow = data.maxItemsInRow,
-                                                        modifier = Modifier.fieldModifier(),
-                                                        description = data.description,
-                                                        dimension = data.dimension
-                                                    )
-                                                }
-                                            }
+
                                         }
                                         if (materialDetailDB.type?.contains("Anisotropic") == true) {
+                                            item(span = StaggeredGridItemSpan.FullLine) {
+                                                MaterialDetailCard(
+                                                    "Density, kg/m³:",
+                                                    materialDetailDB.density.toString(),
+                                                    false,
+                                                    Modifier.fieldModifier(),
+                                                    true
+                                                )
+                                            }
                                             items(paramAnisotropicToTable){ data ->
                                                 if (data != null) {
                                                     DrawTable(
@@ -395,22 +379,17 @@ fun OpenMaterialScreen(
                                             true
                                         )
                                     }
-                                    items(paramIsotropicToTable){ data ->
-                                        if (data != null) {
-                                            DrawTable(
-                                                param = data.param,
-                                                row = data.row,
-                                                col = data.col,
-                                                item = data.item,
-                                                maxItemsInRow = data.maxItemsInRow,
-                                                modifier = Modifier.fieldModifier(),
-                                                description = data.description,
-                                                dimension = data.dimension
-                                            )
-                                        }
-                                    }
                                 }
                                 if (materialDetailDB.type?.contains("Anisotropic") == true) {
+                                    item {
+                                        MaterialDetailCard(
+                                            "Density, kg/m³:",
+                                            materialDetailDB.density.toString(),
+                                            false,
+                                            Modifier.fieldModifier(),
+                                            true
+                                        )
+                                    }
                                     items(paramAnisotropicToTable){ data ->
                                         if (data != null) {
                                             DrawTable(

@@ -100,7 +100,6 @@ private fun TaskCardMain(
                         modifier = Modifier
                             .width(200.dp),
                     ) {
-
                         Text(
                             text = content,
                             fontWeight = FontWeight.Bold, fontSize = 24.sp

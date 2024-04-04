@@ -240,12 +240,13 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
     private fun updateMaterialDetail(
         young: String? = null,
         poison: String? = null,
-        stiffness: List<Float>? = null,
-        piezo: List<Float>? = null,
-        dielectric: List<Float>? = null,
+        density: Int?=null,
+        stiffness: List<Float?> ,
+        piezo: List<Float?>,
+        dielectric: List<Float?>,
         dielectricScalar: Float? = null,
         id: Int
-    ) = database.dao.updateMaterialDetailMain(young, poison, stiffness, piezo, dielectric,dielectricScalar, id)
+    ) = database.dao.updateMaterialDetailMain(young, poison,density, stiffness, piezo, dielectric,dielectricScalar, id)
 
 
     suspend fun handleSuccessStateMaterialScreen(state: GetStateMaterial.Success) {
@@ -269,12 +270,62 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
 
     fun handleSuccessStateOpenMaterialScreen(state: GetStateMaterialDetail.Success) {
         val materialDetail = state.materialDetails
+        val listStiffness = if ( materialDetail.properties?.stiffness!=null) listOf(
+            materialDetail.properties.stiffness.c11,
+            materialDetail.properties.stiffness.c12,
+            materialDetail.properties.stiffness.c13,
+            0f,0f,0f,
+            materialDetail.properties.stiffness.c12,
+            materialDetail.properties.stiffness.c22,
+            materialDetail.properties.stiffness.c23,
+            0f,0f,0f,
+            materialDetail.properties.stiffness.c13,
+            materialDetail.properties.stiffness.c23,
+            materialDetail.properties.stiffness.c33,
+            0f,0f,0f,
+            0f,0f,0f,
+            materialDetail.properties.stiffness.c44,
+            0f,0f,
+            0f,0f,0f,0f,
+            materialDetail.properties.stiffness.c55,
+            0f,
+            0f,0f,0f,0f,0f,
+            materialDetail.properties.stiffness.c66,
+        ) else listOf()
+        val listPiezo =if ( materialDetail.properties?.piezo!=null)  listOf(
+            materialDetail.properties.piezo.e11,
+            materialDetail.properties.piezo.e12,
+            materialDetail.properties.piezo.e13,
+            materialDetail.properties.piezo.e14,
+            materialDetail.properties.piezo.e15,
+            materialDetail.properties.piezo.e16,
+            materialDetail.properties.piezo.e21,
+            materialDetail.properties.piezo.e22,
+            materialDetail.properties.piezo.e23,
+            materialDetail.properties.piezo.e24,
+            materialDetail.properties.piezo.e25,
+            materialDetail.properties.piezo.e26,
+            materialDetail.properties.piezo.e31,
+            materialDetail.properties.piezo.e32,
+            materialDetail.properties.piezo.e33,
+            materialDetail.properties.piezo.e34,
+            materialDetail.properties.piezo.e35,
+            materialDetail.properties.piezo.e36,
+        ) else listOf()
+        val listDielectric =if ( materialDetail.properties?.dielectric!=null) listOf(
+            materialDetail.properties.dielectric.k11,
+            0f,0f,0f,
+            materialDetail.properties.dielectric.k22,
+            0f,0f,0f,
+            materialDetail.properties.dielectric.k33,
+        ) else listOf()
         updateMaterialDetail(
             materialDetail.properties?.young,
             materialDetail.properties?.poison,
-            materialDetail.properties?.stiffness,
-            materialDetail.properties?.piezo,
-            materialDetail.properties?.dielectric,
+            materialDetail.properties?.density,
+            listStiffness,
+            listPiezo,
+            listDielectric,
             materialDetail.properties?.dielectricScalar,
             materialDetail.id!!
         )
@@ -331,7 +382,7 @@ class MainViewModel @Inject constructor(val database: MainDB) : ViewModel() {
             }
             else if (material.type!!.contains("Anisotropic")){
                 nameAnisotropicList.add(material.name!!)
-                stiffnessList.add(material.stiffness!!.map { it / 10.0.pow(userData.graphDivideFactorStiffness).toFloat() })
+                stiffnessList.add(material.stiffness!!.map { it / 10.0.pow(userData.graphDivideFactorStiffness-9).toFloat() })
                 piezoList.add(material.piezo!!.map { it / 10.0.pow(userData.graphDivideFactorPiezo).toFloat() })
                 dielectricList.add(material.dielectric!!.map { it / 10.0.pow(userData.graphDivideFactorDielectric).toFloat() })
             }
