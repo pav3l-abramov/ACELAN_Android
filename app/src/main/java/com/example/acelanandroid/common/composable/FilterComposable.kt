@@ -1,6 +1,7 @@
 package com.example.acelanandroid.common.composable
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -75,7 +76,8 @@ fun FilterDialogMaterial(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp, 0.dp)
+                        .padding(16.dp, 0.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(
                         text = "Type",
@@ -125,7 +127,8 @@ fun FilterDialogMaterial(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp, 0.dp)
+                        .padding(16.dp, 0.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(
                         text = "Core",
@@ -148,7 +151,7 @@ fun FilterDialogMaterial(
                                 onValueChange = {},
                                 readOnly = true,
                                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedCore) },
-                                modifier = Modifier.menuAnchor()
+                                modifier = Modifier.menuAnchor().align(Alignment.Center)
                             )
 
                             ExposedDropdownMenu(
@@ -309,7 +312,8 @@ fun FilterDialogTask(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp, 0.dp)
+                        .padding(16.dp, 0.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(
                         text = "Status",
@@ -366,7 +370,8 @@ fun FilterDialogTask(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp, 0.dp)
+                        .padding(16.dp, 0.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(
                         text = "Sorted by",
