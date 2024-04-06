@@ -39,9 +39,9 @@ fun FilterDialogMaterial(
 //    youngMax: String,
 //    youngOn: Boolean,
     core: String,
-    type: String,
+    type: Int,
 //    onNewValueMainYoungFilter: () -> Unit,
-    onNewValueTypeFilter: (String) -> Unit,
+    onNewValueTypeFilter: (Int) -> Unit,
     onNewValueCoreFilter: (String) -> Unit,
 //    onNewValueYoungMinFilter: (String) -> Unit,
 //    onNewValueYoungMaxFilter: (String) -> Unit,
@@ -52,6 +52,7 @@ fun FilterDialogMaterial(
     var expanded by remember { mutableStateOf(false) }
     var expandedCore by remember { mutableStateOf(false) }
     val materialType = arrayOf("All", "Isotropic", "Anisotropic", "Liquid")
+
     val materialCore = arrayOf("All", "Yes", "No")
     Dialog(
         onDismissRequest = onCancel,
@@ -93,7 +94,7 @@ fun FilterDialogMaterial(
                             }
                         ) {
                             TextField(
-                                value = type,
+                                value = materialType[type],
                                 onValueChange = {},
                                 readOnly = true,
                                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -104,11 +105,11 @@ fun FilterDialogMaterial(
                                 expanded = expanded,
                                 onDismissRequest = { expanded = false }
                             ) {
-                                materialType.forEach { item ->
+                                materialType.forEachIndexed { index, item ->
                                     DropdownMenuItem(
                                         text = { Text(text = item) },
                                         onClick = {
-                                            onNewValueTypeFilter(item)
+                                            onNewValueTypeFilter(index)
                                             expanded = false
                                         }
                                     )

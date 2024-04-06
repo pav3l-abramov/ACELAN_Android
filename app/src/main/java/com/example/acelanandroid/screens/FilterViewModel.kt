@@ -23,9 +23,10 @@ class FilterViewModel @Inject constructor() : ViewModel() {
         return (item.core == true && filterParam == "Yes") || (item.core==false && filterParam == "No") || filterParam == "All"
     }
 
-    fun checkTypeFilter(item: MaterialMain, filterParam:String): Boolean {
-        return (item.type?.contains(filterParam, ignoreCase = true) == true) ||
-                filterParam == "All"
+    fun checkTypeFilter(item: MaterialMain, filterParam:Int): Boolean {
+        val materialTypeFull = arrayOf("All", "Materials::IsotropicMaterial", "Materials::AnisotropicMaterial", "Liquid")
+        return (item.type?.contains(materialTypeFull[filterParam], ignoreCase = true) == true) ||
+                filterParam == 0
     }
 
     fun onNewValueStatusFilter(newValue: String) {
@@ -38,7 +39,7 @@ class FilterViewModel @Inject constructor() : ViewModel() {
     fun onCoreFilterChange(newValue: String) {
         uiStateFilter.value = uiStateFilter.value.copy(filterCore = newValue)
     }
-    fun onTypeFilterChange(newValue: String) {
+    fun onTypeFilterChange(newValue: Int) {
         uiStateFilter.value = uiStateFilter.value.copy(filterType = newValue)
     }
     fun onYoungMinFilterChange(newValue: String) {

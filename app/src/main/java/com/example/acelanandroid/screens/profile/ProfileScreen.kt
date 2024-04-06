@@ -3,6 +3,7 @@ package com.example.acelanandroid.screens.profile
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.database.SQLException
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
@@ -147,9 +148,9 @@ fun ProfileScreen(
 //                    mainViewModel.getUserDB()
 //                }
 //            }
-            if (userDB.email!=null) {
-                userDB.email?.let { TextHello(Modifier.fieldModifier(), it.toString()) }
-//                 Text(text = "Hello ${userDB.email}")
+
+            if (userDB?.email != null) {
+                userDB.email?.let { TextHello(Modifier.fieldModifier(), it) }
             }
                 BasicButton("Log Out", Modifier.basicButton()) {
                     CoroutineScope(Job()).launch {
