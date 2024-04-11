@@ -3,7 +3,6 @@ package com.example.acelanandroid.data.singleData
 data class Materials(
     val materials: List<Material>
 )
-
 data class Material(
     val id: Int,
     val name: String,

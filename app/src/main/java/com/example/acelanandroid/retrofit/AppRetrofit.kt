@@ -14,7 +14,6 @@ class AppRetrofit @Inject constructor() {
         .baseUrl(HOST_NAME)
         .client(buildOkHttpClient())
         .addConverterFactory(GsonConverterFactory.create()).build()
-
     private fun buildOkHttpClient(): OkHttpClient {
         val interceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY

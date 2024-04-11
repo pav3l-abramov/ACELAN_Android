@@ -11,5 +11,4 @@ import javax.inject.Singleton
 interface PostDataApi {
     @POST("/api/token")
     suspend fun auth(@Body login: Login): Response<Token>
-
 }

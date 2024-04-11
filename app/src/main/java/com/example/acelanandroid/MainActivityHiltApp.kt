@@ -14,12 +14,10 @@ import dagger.hilt.components.SingletonComponent
 @HiltAndroidApp
 class MainActivityHiltApp : Application() {
     val database by lazy { MainDB.createDataBase(this) }
-
     override fun onCreate() {
         super.onCreate()
         instance = this
     }
-
     companion object {
         lateinit var instance: MainActivityHiltApp
         var currentModel: Model? = null
