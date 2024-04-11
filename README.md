@@ -23,30 +23,30 @@ This app can be installed on Android with version  8.0 or newer.
 
 <p align="center">
     <img src="https://github.com/pav3l-abramov/ACELAN_Android/blob/main/gif/short%20start.gif" alt="login screen" width="170" />
-  $~~~~~~~~~~~~~~~~~$
+  $~~~~~~~~~~~~$
     <img src="https://github.com/pav3l-abramov/ACELAN_Android/blob/main/gif/full%20start.gif" alt="login screen" width="600" />
 </p>
 
 <p align="center">
     <img src="https://github.com/pav3l-abramov/ACELAN_Android/blob/main/gif/short%20after%20start.gif" alt="login screen" width="170" />
-  $~~~~~~~~~~~~~~~~~$
+ $~~~~~~~~~~~~$
     <img src="https://github.com/pav3l-abramov/ACELAN_Android/blob/main/gif/full%20after%20start.gif" alt="login screen" width="600" />
 </p>
 
 <p align="center">
     <img src="https://github.com/pav3l-abramov/ACELAN_Android/blob/main/gif/short%20material%20screen2.gif" alt="login screen" width="170" />
-  $~~~~~~~~~~~~~~~~~$
+  $~~~~~~~~~~~~$
     <img src="https://github.com/pav3l-abramov/ACELAN_Android/blob/main/gif/full%20material%20screen2.gif" alt="login screen" width="600" />
 </p>
 
 <p align="center">
     <img src="https://github.com/pav3l-abramov/ACELAN_Android/blob/main/gif/short%20graph.gif" alt="login screen" width="170" />
-  $~~~~~~~~~~~~~~~~~$
+  $~~~~~~~~~~~~$
     <img src="https://github.com/pav3l-abramov/ACELAN_Android/blob/main/gif/full%20graph.gif" alt="login screen" width="600" />
 </p>
 
 <p align="center">
     <img src="https://github.com/pav3l-abramov/ACELAN_Android/blob/main/gif/short%20task.gif" alt="login screen" width="170" />
-  $~~~~~~~~~~~~~~~~~$
+  $~~~~~~~~~~~~$
     <img src="https://github.com/pav3l-abramov/ACELAN_Android/blob/main/gif/full%20task%20(1).gif" alt="login screen" width="600" />
 </p>
